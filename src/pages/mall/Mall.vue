@@ -1,8 +1,13 @@
 <template>
   <div class="store-con" v-cloak>
-    <group class="list-modal">
-      <cell title="店铺公告" link="/store_topic">
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>
+    <group class="list-modal"><cell title="Banner管理" link="/store_topic">
+      <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-photo"></i>
+    </cell>
+      <cell title="头条管理" link="/store_topic">
+        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-newspaper-o"></i>
+      </cell>
+      <cell title="首页商品" link="/goods">
+        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-archive"></i>
       </cell>
       <cell title="优惠管理" link="/coupons">
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>
@@ -18,7 +23,7 @@
   import {Grid, GridItem, Group, Cell} from 'vux'
 
   export default {
-    name: 'store',
+    name: 'mall',
     data () {
       return {
         sellerName: '水一波旗舰店',

@@ -23,14 +23,14 @@ Vue.use(AlertPlugin)
 Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(VueScroller)
- //Vue.use(AMap)
- //AMap.initAMapApiLoader({
- //  key: '5472f8bd49fabbd0fa3b9f13b74532c7',
- //  plugin: ['Autocomplete', 'PlaceSearch', 'Geolocation', 'Scale', 'ToolBar', 'MapType', 'PolyEditor', 'AMap.CircleEditor']
- //});
+//Vue.use(AMap)
+//AMap.initAMapApiLoader({
+//  key: '5472f8bd49fabbd0fa3b9f13b74532c7',
+//  plugin: ['Autocomplete', 'PlaceSearch', 'Geolocation', 'Scale', 'ToolBar', 'MapType', 'PolyEditor', 'AMap.CircleEditor']
+//});
 Vue.config.productionTip = false
 let me = window.me
-
+let vm
 // 在路由路由跳转前判断一些东西
 router.beforeEach((to, from, next) => {
   /* 判断页面的方向 */
@@ -81,33 +81,55 @@ router.beforeEach((to, from, next) => {
 Vue.prototype.weui = weui
 Vue.prototype.$axios = Axios
 Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
+  params = params || {}
   setTimeout(function () {
     $.extend(params, window.youniMall.userAuth)
+    var localGeo = me.sessions.get('cur5656Geo') ? JSON.parse(me.sessions.get('cur5656Geo')) : {}
+    var localIps = me.sessions.get('cur5656Ips') ? JSON.parse(me.sessions.get('cur5656Ips')) : {}
+    var localParams = {
+      ip: localIps.cip,
+      cityCode: localGeo.cityCode||localIps.cid,
+      lon: localGeo.lng,
+      lat: localGeo.lat
+    }
     // console.log('%c'+JSON.stringify(params, null, 2), 'color:#fff;background:purple')
-    $.post(url, {'requestapp': params ? JSON.stringify(params) : '{}'},
-      function (res) {
-        if (res.success) {
-          sucCb ? sucCb(res) : console.log(res, '接口的res')
-        } else {
-          errCb ? errCb(res) : console.error('请求失败！')
+    $.ajax({
+      url: url + me.param(localParams, '?'),
+      type: type || 'POST',
+      data: {'requestapp': JSON.stringify(params ? params : {})},
+      dataType: "JSON",
+      cache: false,
+      headers: {token: window.youniMall.userAuth.openid},
+      success: function (res) {
+        // 检测是否登录
+        if(res.message === '要求登录'){
+          vm.processing(0, 1)
+          vm.confirm('温馨提示','请先登录！',function(){
+            vm.$router.push({path:'/login'})
+          })
         }
+        try{
+          sucCb ? sucCb(res) : console.log(res, '接口的res')
+        }catch(e){
+           // console.log(e)
+        }
+      },
+      error: function (res) {
+        errCb ? errCb(res) : console.error('请求失败！')
       }
-    )
-    /* Axios.post(url, {'requestapp': '{}'}).then(function (res) {
+    });
+    /*Axios({
+     method: type || 'POST',
+     url: url,
+     data: {requestapp: params ? params : {}},
+     responseType: 'JSON',
+     cache: false,
+     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'token': window.youniMall.userAuth.openid}
+     }).then(function (res) {
      sucCb ? sucCb(res) : console.log(res, '接口的res')
      }).catch(function (error) {
      errCb ? errCb(error) : console.error(error, '错误信息')
-     }) */
-   /* Axios({
-      method: type || 'POST',
-      url: url,
-      data: {'requestapp': params ? JSON.stringify(params) : '{}'},
-      responseType: 'JSON'
-    }).then(function (res) {
-      sucCb ? sucCb(res) : console.log(res, '接口的res')
-    }).catch(function (error) {
-      errCb ? errCb(error) : console.error(error, '错误信息')
-    })*/
+     })*/
   }, 0)
 }
 /* alert */
@@ -125,12 +147,14 @@ Vue.prototype.alert = function (title, content, showCb, hideCb) {
   })
 }
 /* confirm */
-Vue.prototype.confirm = function (title, content, confirmCb, cancelCb) {
+Vue.prototype.confirm = function (title, content, confirmCb, cancelCb, confirmtext, canelText) {
   const _this = this
   _this.$vux.confirm.show({
     theme: 'ios',
     title: title || '',
     content: content || '',
+    confirmText: confirmtext || '确定',
+    cancelText: canelText || '取消',
     onCancel() {
       cancelCb ? cancelCb() : null
     },
@@ -198,6 +222,13 @@ Vue.prototype.processing = function (content, isClose, cb, timeCb) {
     }, 2000)
   }
 }
+Vue.prototype.jump = function (name, params) {
+  if (name.indexOf('/') > -1) {
+    this.$router.push({path: name, query: params || ''})
+  } else {
+    this.$router.push({name: name, query: params || ''})
+  }
+}
 /* ----- 封装一些指令 -------- */
 // 自定义跳转指令(eg: v-jump="[pathName,paramArr,type]" ,[param是个参数名的数组];[type=2] 1:'path'2:'name',3:'query')
 Vue.directive('jump', {
@@ -242,6 +273,12 @@ Vue.directive('jump', {
           }
           if (type === 3) {
             vm.$router.push({path: '/' + pathName, query: param || ''})
+          } else {
+            if (pathName.indexOf('/') > -1) {
+              vm.$router.push({path: pathName})
+            } else {
+              vm.$router.push({name: pathName})
+            }
           }
         } else {
           console.warn('好歹给个pathName啊！')
@@ -274,6 +311,11 @@ Vue.filter('couponType', function (type) {
       return '其它'
   }
 })
+/* 保留小数位 */
+Vue.filter('toFixed', function (data,num) {
+  // return data ? data.toFixed(num ||2 ) : ''
+  return data.toFixed(num ||2 )
+})
 // main.js
 new Vue({
   el: '#app',
@@ -282,6 +324,7 @@ new Vue({
   template: '<App/>',
   components: {App},
   mounted() {
+    vm=this
     // console.log(XXX)
     // GET
     /* this.$axios.get('/user', {

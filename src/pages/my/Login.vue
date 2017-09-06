@@ -1,5 +1,5 @@
 <template>
-  <div class="login-con">
+  <div class="login-con" v-cloak>
     <group>
       <x-input title="手机号：" placeholder="您的手机号" required type="tel" text-align="right" v-model="params.phone">
         <!--<img slot="label" style="padding-right:10px;display:block;" src="http://dn-placeholder.qbox.me/110x110/FF2D55/000" width="24" height="24">-->
@@ -38,6 +38,8 @@
     mounted() {
       vm = this
       me.attachClick()
+      vm.params.phone = vm.$route.query.phone || null
+      vm.params.passwd = vm.$route.query.psw || null
       // vm.userId = vm.$route.query.userId
     },
     methods: {
@@ -57,12 +59,13 @@
         }
         vm.isPosting = true
         vm.processing()
-        vm.loadData(userApi.login, {userId: vm.userId, nickName: vm.nickName}, 'POST', function (res) {
+        vm.loadData(userApi.login, vm.params, 'POST', function (res) {
           console.log(res, '修改用户信息')
-          this.$store.commit('updateNickName', vm.nickName)
-          vm.$router.back()
-          vm.isPosting = false
           vm.processing(0, 1)
+          vm.toast('登录成功 ！')
+//          this.$store.commit('updateNickName', vm.nickName)
+          vm.jump('home')
+          vm.isPosting = false
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)

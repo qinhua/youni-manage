@@ -15,13 +15,13 @@ window.youniMall = {
 const homeApi = {
   banner: host + '/home/banner',
   topNotice: host + '/home/topNotice',
-  goodsList: host + '/home/goodsList',
-  dict: host + '/common/dictList'
+  goodsList: host + '/home/goodsList'
 }
 const goodsApi = {
   list: host + '/goods/list',
   add: host + '/goods/add',
-  update: host + '/goods/update'
+  update: host + '/goods/update',
+  setSaleStatus: host + '/goods/setSaleStatus'
 }
 const nearbyApi = {
   shopsList: host + '/home/shopsList'
@@ -30,7 +30,12 @@ const ticketApi = {
   tickets: host + '/home/tickets'
 }
 const orderApi = {
-  orders: host + '/home/order',
+  list: host + '/order/list',
+  del: host + '/order/del',
+  push: host + '/order/push',
+  cancel: host + '/order/cancel',
+  dispatchList: host + '/orderDispatchProgess/list',
+  dispatch: host + '/orderDispatchProgess/add',
   updateOrder: host + '/home/updateOrder'
 }
 const clientApi = {
@@ -40,17 +45,27 @@ const clientApi = {
 const userApi = {
   login: host + '/seller/login',
   regist: host + '/seller/applySeller',
+  view: host + '/seller/view',
+  set: host + '/seller/set',
   code: host + '/seller/code',
   userInfo: host + '/seller/userInfo',
   updateSeller: host + '/seller/updateSeller',
-  coupons: host + '/user/coupons'
+  couponsList: host + '/sellerCoupon/get',
+  addCoupon: host + '/sellerCoupon/add',
+  updateCoupon: host + '/sellerCoupon/update',
+  delCoupon: host + '/sellerCoupon/del',
+  getFloor: host + '/floorCost/get',
+  addFloor: host + '/floorCost/add',
 }
 const statisticApi = {
   list: host + '/seller/statistic',
 }
-const fileApi = {
-  uploadImg: host + '/file/uploadImage'
+const commonApi = {
+  dict: host + '/common/dictList',
+  uploadImg: host + '/file/uploadImage',
+  sendSms: host + '/common/sendSms',
+  checkCode: host + '/common/checkSmsCode'
 }
 console.log('当前域名：%c' + host, 'color:red;font-size:14px;font-weight:bold')
 // console.log('当前API：%c' + JSON.stringify(homeApi, null, 2), 'color:orange;font-size:14px')
-export {homeApi, nearbyApi, ticketApi, orderApi, clientApi, userApi, goodsApi,statisticApi, fileApi}
+export {commonApi, homeApi, nearbyApi, ticketApi, orderApi, clientApi, userApi, goodsApi,statisticApi}

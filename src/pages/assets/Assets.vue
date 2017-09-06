@@ -1,5 +1,5 @@
 <template>
-  <div class="assets-con">
+  <div class="assets-con" v-cloak>
     <group class="list-modal">
       <div class="withdraw-modal">
         <div class="left">
@@ -103,7 +103,7 @@
         padding: 80/@rem 24/@rem !important;
         .cf;
         /*.bdiy(#FE6246);*/
-        background: #FE6246 url(../../../static/img/sw_d.png) no-repeat 96% bottom;
+        background: #4670fe url(../../../static/img/sw_d.png) no-repeat 96% bottom;
         .rbg-size(32%);
         .left {
           .borBox;

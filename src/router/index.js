@@ -7,8 +7,8 @@ import Home from '@/pages/Home'
 import NearBy from '@/pages/NearBy'
 import Ticket from '@/pages/Ticket'
 import Order from '@/pages/Order'
-import Map from '@/pages/Map'
-import Geo from '@/pages/Geo'
+import Map from '@/components/Amap'
+import Geo from '@/components/Geo'
 import My from '@/pages/My'
 import EditUser from '@/pages/my/EditUser'
 import EditAddress from '@/pages/my/EditAddress'
@@ -21,9 +21,10 @@ import About from '@/pages/my/About'
 import GoodsDetail from '@/pages/goods/Detail'
 
 import Store from '@/pages/store/Store'
-import Topic from '@/pages/store/Topic'
-import Coupons from '@/pages/store/Coupons'
-import EditCoupon from '@/pages/store/EditCoupon'
+import Topic from '@/pages/mall/Topic'
+import Coupons from '@/pages/mall/Coupons'
+import EditCoupon from '@/pages/mall/EditCoupon'
+import Mall from '@/pages/mall/Mall'
 import Goods from '@/pages/goods/Goods'
 import EditGoods from '@/pages/goods/Edit'
 import Clients from '@/pages/clients/Clients'
@@ -79,7 +80,7 @@ export default new Router({
       redirect: '/home',
       component: Home,
       meta: {
-        title: '我的小店',
+        title: '商城后台',
         keepAlive: false
       }
     },
@@ -88,7 +89,7 @@ export default new Router({
       name: 'home',
       component: Home,
       meta: {
-        title: '我的小店',
+        title: '商城后台',
         keepAlive: false
       }
     },
@@ -193,6 +194,15 @@ export default new Router({
       component: EditCoupon,
       meta: {
         title: '优惠编辑',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/mall',
+      name: 'mall',
+      component: Mall,
+      meta: {
+        title: '商城管理',
         keepAlive: false
       }
     },

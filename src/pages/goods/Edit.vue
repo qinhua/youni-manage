@@ -1,10 +1,12 @@
 <template>
-  <div class="goods-edit-con">
+  <div class="goods-edit-con" v-cloak>
     <group>
+      <popup-picker title="品牌" :data="brands" :columns="1" v-model="tmpBrand" ref="picker1" @on-show=""
+                    @on-hide="" @on-change="changeBrand"></popup-picker>
       <x-input title="商品名称：" placeholder="商品名称" required text-align="right" v-model="params.name"></x-input>
       <!--<selector placeholder="商品分类" v-model="params.goodsType" title="商品分类" name="goodsType" :options="types"-->
       <!--@on-change="changeType"></selector>-->
-      <popup-picker title="商品分类" :data="types" :columns="1" v-model="tmpType" ref="picker3" @on-show=""
+      <popup-picker title="商品分类" :data="types" :columns="1" v-model="tmpType" ref="picker2" @on-show=""
                     @on-hide="" @on-change="changeType"></popup-picker>
       <popup-picker title="商品类目" :data="categories" :columns="1" v-model="tmpCat" ref="picker3" @on-show=""
                     @on-hide="" @on-change="changeCategory"></popup-picker>
@@ -20,33 +22,16 @@
           </checker-item>
         </checker>
       </div>
-      <div class="upload-group">
-        <div class="weui-cells weui-cells_form" id="uploader">
-          <div class="weui-cell">
-            <div class="weui-cell__bd">
-              <div class="weui-uploader">
-                <div class="weui-uploader__hd"><p class="weui-uploader__title">图片上传</p>
-                  <div class="weui-uploader__info"><span id="uploadCount">1</span>/5</div>
-                </div>
-                <div class="weui-uploader__bd">
-                  <ul class="weui-uploader__files" id="uploaderFiles"></ul>
-                  <div class="weui-uploader__input-box"><input id="uploaderInput" class="weui-uploader__input"
-                                                               type="file" accept="image/*" multiple=""></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <x-input title="折扣价：" placeholder="折扣价" text-align="right" v-model="params.discountPrice"></x-input>
+      <img-uploader title="商品头图" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
+      <!--<x-input title="折扣价：" placeholder="折扣价" text-align="right" v-model="params.discountPrice"></x-input>
       <x-textarea title="折扣说明：" :max="20" placeholder="折扣说明" @on-blur="" v-model="params.discountNote"
-                  show-clear></x-textarea>
+                  show-clear></x-textarea>-->
     </group>
     <group class="bottom">
       <div class="tags-group">
         <label>商品标签</label>
         <div class="tags-cons">
-          <tags-input :tags="tags" placeholder="商品标签" @focus="handleFocus" @blur="handleBlur"
+          <tags-input :tags="tags" placeholder="商品标签（3~5字最佳）" @focus="handleFocus" @blur="handleBlur"
                       @tags-change="changeTags"></tags-input>
         </div>
       </div>
@@ -81,14 +66,14 @@
     Checker,
     CheckerItem,
     Selector,
-    XSwitch,
     PopupPicker,
     XTextarea,
     XAddress,
     ChinaAddressV3Data
   } from 'vux'
+  import imgUploader from '../../components/ImgUploader.vue'
   import {VueEditor} from 'vue2-editor'
-  import {goodsApi, fileApi} from '../../service/main.js'
+  import {goodsApi, commonApi} from '../../service/main.js'
 
   export default {
     name: 'goods-edit',
@@ -96,26 +81,69 @@
       return {
         onFetching: false,
         isPosting: false,
-        goodsId: null,
+        lineData: null,
+        fileApi: commonApi.uploadImg,
         addressData: ChinaAddressV3Data,
-        types: [{key: 1, value: '饮料', name: '饮料'}, {key: 2, value: '食品', name: '食品'}],
-        categories: [{key: 1, value: '水', name: '水'}, {key: 2, value: '奶制品', name: '奶制品'}],
+        brands: [{
+          key: '028283447c4311e7aa18d8cb8a971933',
+          value: '一方人',
+          name: '一方人'
+        }, {
+          key: '038283447c4311e7aa18d8cb8a971936',
+          value: '娃哈哈',
+          name: '娃哈哈'
+        }, {
+          key: '018283447c4311e7aa18d8cb8a941930',
+          value: '蒙牛',
+          name: '蒙牛'
+        }, {
+          key: '038283447c4311e7aa18d8cb8a941939',
+          value: '康师傅',
+          name: '康师傅'
+        }, {
+          key: '058283447c4311e7aa18d8cb8a971935',
+          value: '花果山',
+          name: '花果山'
+        }, {
+          key: '028283447c4311e7ab18d8cb8a971932',
+          value: '怡宝',
+          name: '怡宝'
+        }, {
+          key: '018283447c4311e7aa18d8cb8a971932',
+          value: '百岁山',
+          name: '百岁山'
+        }, {
+          key: '068283447c4311e7aa18d8cb8a971943',
+          value: '昆仑山',
+          name: '昆仑山'
+        }],
+        types: [{key: 'goods_type.1', value: '水', name: '水'}, {
+          key: 'goods_type.2',
+          value: '奶',
+          name: '奶'
+        }, {key: 'goods_type.3', value: '水票', name: '水票'}],
+        categories: [{key: 'goods_category.1', value: '瓶装', name: '瓶装'}, {
+          key: 'goods_category.2',
+          value: '桶装',
+          name: '桶装'
+        }, {key: 'goods_category.3', value: '其它', name: '其它'}],
         status: [{key: 1, value: '在售'}, {key: 2, value: '停售'}],
         params: {
-          sellerId: null,
+          brandId: null,
           name: '',
-          goodsType: 1,
+          type: 1,
           category: 2,
           stock: '',
           price: null,
           imgurl: '',
           saleStatus: 1,
           label: '',
-          discountPrice: null,
-          discountNote: '',
+          /*discountPrice: null,
+           discountNote: '',*/
           note: ''
         },
         tags: ['标签一'],
+        tmpBrand: [],
         tmpType: [],
         tmpCat: [],
         customToolbar: [
@@ -132,14 +160,14 @@
       Cell,
       XInput,
       Checker,
-      Selector,
-      XSwitch,
-      PopupPicker,
       CheckerItem,
+      Selector,
+      PopupPicker,
       XTextarea,
       XAddress,
       ChinaAddressV3Data,
       VueEditor,
+      imgUploader,
       'tags-input': require('vue-tagsinput/src/input.vue')
     },
     beforeMount() {
@@ -148,104 +176,26 @@
     mounted() {
       vm = this
       // me.attachClick()
-      vm.params.sellerId = vm.$store.state.global.sellerId
-      vm.goodsId = this.$route.query.id || ''
-      vm.goodsId ? vm.getGoods() : null
-      vm.initImgPicker()
+      // vm.params.sellerId = vm.$store.state.global.sellerId
+      vm.getGoods()
     },
     computed: {},
+    watch: {
+      '$route'(to, from) {
+        vm.getGoods()
+      }
+    },
     methods: {
-      initImgPicker() {
-        /* 图片自动上传 */
-        var uploadCount = 0, uploadList = []
-        var uploadCountDom = document.getElementById("uploadCount")
-        vm.weui.uploader('#uploader', {
-          url: fileApi.uploadImg,
-          auto: true,
-          type: 'file',
-          fileVal: 'image',
-          compress: {
-            width: 1600,
-            height: 1600,
-            quality: .8
-          },
-          onBeforeQueued: function (files) {
-            if (["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0) {
-              vm.weui.alert('请上传图片')
-              return false
-            }
-            if (this.size > 10 * 1024 * 1024) {
-              vm.weui.alert('请上传不超过10M的图片')
-              return false
-            }
-            if (files.length > 5) { // 防止一下子选中过多文件
-              vm.weui.alert('最多只能上传5张图片，请重新选择')
-              return false
-            }
-            if (uploadCount + 1 > 5) {
-              vm.weui.alert('最多只能上传5张图片')
-              return false
-            }
-            ++uploadCount
-            uploadCountDom.innerHTML = uploadCount
-          },
-          onQueued: function () {
-            uploadList.push(this)
-            // console.log(this)
-          },
-          onBeforeSend: function (data, headers) {
-            // console.log(this, data, headers)
-            // $.extend(data, { test: 1 }) // 可以扩展此对象来控制上传参数
-            // $.extend(headers, { Origin: 'http://127.0.0.1' }) // 可以扩展此对象来控制上传头部
-            // return false // 阻止文件上传
-          },
-          onProgress: function (procent) {
-            // console.log(this, procent)
-          },
-          onSuccess: function (ret) {
-            vm.params.imgUrl = window.youniMall.host + '/' + ret.imageUrl
-            console.info(window.youniMall.host + '/' + ret.imageUrl)
-          },
-          onError: function (err) {
-            console.log(this, err)
-          }
-        })
-        // 缩略图预览
-        document.querySelector('#uploaderFiles').addEventListener('click', function (e) {
-          var target = e.target
-          while (!target.classList.contains('weui-uploader__file') && target) {
-            target = target.parentNode
-          }
-          if (!target) return
-
-          var url = target.getAttribute('style') || ''
-          var id = target.getAttribute('data-id')
-          if (url) {
-            url = url.match(/url\((.*?)\)/)[1].replace(/"/g, '')
-          }
-          var gallery = vm.weui.gallery(url, {
-            className: 'custom-name',
-            onDelete: function () {
-              vm.weui.confirm('确定删除该图片？', function () {
-                --uploadCount
-                uploadCountDom.innerHTML = (uploadCount >= 0) ? uploadCount : 0
-                for (var i = 0, len = uploadList.length; i < len; ++i) {
-                  var file = uploadList[i]
-                  if (file.id == id) {
-                    file.stop()
-                    break
-                  }
-                }
-                target.remove()
-                gallery.hide()
-              })
-            }
-          })
-        })
+      getImgUrl(data) {
+        if (me.isArray(data)) {
+          vm.params.imgurl = data.join(',')
+        } else {
+          vm.params.imgurl = ''
+        }
       },
-      switchData(data, value, target) {
+      switchData(data, value, target, isUpdate) {
         let tmp
-        if (typeof value === 'number') {
+        if (isUpdate) {
           tmp = []
           for (let i = 0; i < data.length; i++) {
             if (value === data[i].key) {
@@ -264,14 +214,54 @@
         }
       },
       getGoods() {
-        if (vm.onFetching) return false
+        vm.lineData = vm.$route.query.linedata ? JSON.parse(decodeURIComponent(vm.$route.query.linedata)) : ''
+        console.log(vm.lineData)
+        if (vm.lineData&&vm.lineData.id) {
+          vm.params = {
+            id: vm.lineData.id,
+            brandId: vm.lineData.brandId,
+            name: vm.lineData.name,
+            type: vm.lineData.type,
+            category: vm.lineData.category,
+            stock: vm.lineData.stock,
+            price: vm.lineData.price,
+            imgurl: vm.lineData.imgurl,
+            saleStatus: vm.lineData.saleStatus,
+            label: null,
+            /*discountPrice: null,
+             discountNote: '',*/
+            note: vm.lineData.note
+          }
+          vm.switchData(vm.brands, vm.lineData.brandId, 'tmpBrand', 1)
+          vm.switchData(vm.types, vm.lineData.type, 'tmpType', 1)
+          vm.switchData(vm.categories, vm.lineData.category, 'tmpCat', 1)
+          vm.renderTags(vm.lineData.label)
+        }else{
+          vm.params={
+              brandId: null,
+              name: '',
+              type: 1,
+              category: 2,
+              stock: '',
+              price: null,
+              imgurl: '',
+              saleStatus: 1,
+              label: '',
+              note: ''
+          }
+          vm.tags= ['标签一']
+          vm.tmpBrand=[]
+          vm.tmpType= []
+          vm.tmpCat= []
+        }
+        /*if (vm.onFetching) return false
         vm.onFetching = true
-        vm.loadData(goodsApi.get, {sellerId: vm.params.sellerId, id: vm.goodsId}, 'POST', function (res) {
+        vm.loadData(goodsApi.list, {id: vm.params.id}, 'POST', function (res) {
           if (res) {
             let resD = res.data.itemList
-            /*此处转换一些字段类型*/
-            // a.比如把goodsType和goodsCategory转换成数组
-            vm.switchData(vm.types, vm.params.goodsType, 'tmpType')
+            /!*此处转换一些字段类型*!/
+            // a.比如把type和goodsCategory转换成数组
+            vm.switchData(vm.types, vm.params.type, 'tmpType')
             vm.switchData(vm.categories, vm.params.category, 'tmpCat')
             vm.renderTags(resD.label)
             vm.goods = resD
@@ -280,31 +270,35 @@
           vm.onFetching = false
         }, function () {
           vm.onFetching = false
-        })
+        })*/
       },
       validate() {
-        if (!vm.params.name) {
-          vm.toast('请填写商品名！')
+        if (vm.params.brandId === '') {
+          vm.toast('请选择品牌！','warn')
           return false
         }
-        if (!vm.params.goodsType) {
-          vm.toast('请选择商品分类！')
+        if (!vm.params.name) {
+          vm.toast('请填写商品名！','warn')
+          return false
+        }
+        if (!vm.params.type) {
+          vm.toast('请选择商品分类！','warn')
           return false
         }
         if (!vm.params.category) {
-          vm.toast('请选择商品类目！')
+          vm.toast('请选择商品类目！','warn')
           return false
         }
         if (!vm.params.stock) {
-          vm.toast('请输入库存！')
+          vm.toast('请输入库存！','warn')
           return false
         }
         if (!vm.params.price) {
-          vm.toast('请指定价格！')
+          vm.toast('请指定价格！','warn')
           return false
         }
         if (!vm.params.note) {
-          vm.toast('请填写商品详情！')
+          vm.toast('请填写商品详情！','warn')
           return false
         }
         return true
@@ -312,29 +306,21 @@
       updateGoods() {
         if (vm.isPosting || !vm.validate()) return false
         /*此处转换一些字段类型*/
-        // a.比如把goodsType和goodsCategory转换成对应的数值
         let curApi
-        vm.switchData(vm.types, vm.tmpType, 'goodsType')
-        vm.switchData(vm.categories, vm.tmpCat, 'category')
         vm.formatNewTag()
-        if (vm.goodsId) {
+        if (vm.lineData.id) {
           curApi = goodsApi.update
-          vm.params.id = vm.goodsId
         } else {
           curApi = goodsApi.add
         }
         console.log('最后选择的数据：', vm.params)
         vm.isPosting = true
         vm.processing()
-        if (vm.goodsId) {
-
-        } else {
-
-        }
         vm.loadData(curApi, vm.params, 'POST', function (res) {
+          vm.processing(0, 1)
+          vm.toast(' ')
           vm.$router.back()
           vm.isPosting = false
-          vm.processing(0, 1)
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -345,19 +331,30 @@
       },
       changeArea(ids, names) {
         console.log(ids, names)
-        // vm.area = names.join('')
+        vm.params.province = ids[0]
+        vm.params.city = ids[1]
+      },
+      changeBrand(val) {
+        vm.switchData(vm.brands, vm.tmpBrand, 'brandId')
+        console.log(val, vm.params.brandId)
       },
       changeType(val) {
-        console.log(val, vm.params.goodsType)
+        vm.switchData(vm.types, vm.tmpType, 'type')
+        console.log(val, vm.params.type)
       },
       changeStatus(value, disabled) {
         // console.log(value, disabled)
       },
       changeCategory(val) {
-        console.log(val)
+        vm.switchData(vm.categories, vm.tmpCat, 'category')
+        console.log(val, vm.params.category)
       },
       changeTags(index, text) {
         console.log(index, text)
+        if(index===3){
+          vm.toast('最多3个标签！','warn')
+          return
+        }
         if (text) {
           this.tags.splice(index, 0, text)
         } else {
@@ -382,7 +379,7 @@
         // formData.append('file', file)
         var formData = new FormData();
         formData.append('image', file)
-        vm.loadData(fileApi.uploadImg, formData, 'POST', function (res) {
+        vm.loadData(commonApi.uploadImg, formData, 'POST', function (res) {
           let url = res.data.url // Get url from response
           console.log(res)
           Editor.insertEmbed(cursorLocation, 'image', url);
@@ -393,8 +390,6 @@
           vm.isPosting = false
           vm.processing(0, 1)
         })
-      },
-      preFormat() {
       }
     }
   }
