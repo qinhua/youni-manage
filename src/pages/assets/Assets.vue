@@ -8,23 +8,23 @@
         </div>
         <div class="right">提现</div>
       </div>
-      <cell title="不可用金额" link="/coupons">￥250
+      <cell title="不可用金额" link="">￥20000
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-cube"></i>
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="已结算收入" link="/store_topic">200
+      <cell title="已结算收入" link="">￥25000
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>
       </cell>
-      <cell title="未结算收入" link="/coupons">10
+      <cell title="未结算收入" link="">￥18560
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="收支明细" link="/store_topic">200
+      <cell title="收支明细" link="">
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>
       </cell>
-      <cell title="提现记录" link="/coupons">10
+      <cell title="提现记录" link="">
         <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>
       </cell>
     </group>
@@ -51,13 +51,11 @@
     },
     mounted() {
       // me.attachClick()
-      this.count = this.$store.state.cart.count
     },
-    watch: {
+    /*watch: {
       '$route'(to, from) {
-        this.count = this.$store.state.cart.count
       }
-    },
+    },*/
     computed: {},
     methods: {
       // 向父组件传值

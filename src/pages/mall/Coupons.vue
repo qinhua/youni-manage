@@ -1,6 +1,6 @@
 <template>
   <div class="my-coupons" v-cloak>
-    <tab class="order-tab" active-color="#f34c18">
+    <tab class="order-tab" active-color="#4670fe">
       <tab-item :selected="!params.type?true:false" @on-item-click="onItemClick">全部</tab-item>
       <tab-item :selected="params.type==1?true:false" @on-item-click="onItemClick(1)">优惠券</tab-item>
       <tab-item :selected="params.type==1?true:false" @on-item-click="onItemClick(2)">满减</tab-item>
@@ -413,6 +413,6 @@
     .center;
     .cf;
     .fz(28);
-    .bdiy(@c2);
+    .bdiy(#4670fe);
   }
 </style>

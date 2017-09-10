@@ -42,9 +42,13 @@ const clientApi = {
   list: host + '/home/order',
   updateOrder: host + '/home/updateOrder'
 }
+const storeApi = {
+  list: host + '/admin/sellerList',
+  update: host + '/admin/updateSellerStatus',
+  auth: host + '/admin/seller/auth',
+  del: host + '/admin/seller/del'
+}
 const userApi = {
-  login: host + '/seller/login',
-  regist: host + '/seller/applySeller',
   view: host + '/seller/view',
   set: host + '/seller/set',
   code: host + '/seller/code',
@@ -61,6 +65,9 @@ const statisticApi = {
   list: host + '/seller/statistic',
 }
 const commonApi = {
+  wxAuth: host + '/weixin/auth',
+  login: host + '/seller/login',
+  regist: host + '/seller/applySeller',
   dict: host + '/common/dictList',
   uploadImg: host + '/file/uploadImage',
   sendSms: host + '/common/sendSms',
@@ -68,4 +75,4 @@ const commonApi = {
 }
 console.log('当前域名：%c' + host, 'color:red;font-size:14px;font-weight:bold')
 // console.log('当前API：%c' + JSON.stringify(homeApi, null, 2), 'color:orange;font-size:14px')
-export {commonApi, homeApi, nearbyApi, ticketApi, orderApi, clientApi, userApi, goodsApi,statisticApi}
+export {commonApi, homeApi, nearbyApi, ticketApi, orderApi, clientApi, storeApi, userApi, goodsApi, statisticApi}

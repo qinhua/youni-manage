@@ -6,24 +6,24 @@
        <swiper ref="slider01" skey="s01" :slides="banner" autoPlay="2500"></swiper>
      </div>-->
     <div class="overview">
-      <a href="#/user"><i class="fa fa-user-circle-o user-center"></i></a>
+      <!--<a href="#/user"><i class="fa fa-user-circle-o user-center"></i></a>-->
       <div class="top">
-        <p class="today">今日收入(元)</p>
+        <p class="today">今日营业额(元)</p>
         <h2>
-          <countup :start-val="0" :end-val="120500" :decimals="2" :duration="2"></countup>
+          <countup :start-val="0" :end-val="2200500" :decimals="2" :duration="2"></countup>
         </h2>
-        <p class="yesterday">昨日：10.00</p>
+        <p class="yesterday">昨日：{{2020201|toFixed}}</p>
       </div>
       <div class="bottom">
         <div class="col left-col">
           <p class="today">成交数</p>
           <h2 class="total">1105</h2>
-          <p class="yesterday">昨日25</p>
+          <p class="yesterday">昨日2510</p>
         </div>
         <div class="col right-col">
           <p class="today">浏览数</p>
-          <h2 class="total">2020</h2>
-          <p class="yesterday">昨日1550</p>
+          <h2 class="total">3820</h2>
+          <p class="yesterday">昨日4420</p>
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
         <grid-item label="商城管理" link="/mall">
           <img slot="icon" src="../../static/img/item_mall.png">
         </grid-item>
-        <grid-item label="店铺管理" link="/store">
+        <grid-item label="店铺管理" link="/sellers">
           <img slot="icon" src="../../static/img/item_store.png">
         </grid-item>
         <grid-item label="客户管理" link="/clients">
@@ -65,14 +65,14 @@
     <!--订单列表-->
     <div class="orders-list-con">
       <sticky ref="sticky">
-        <tab class="order-tab" ref="orderTab" active-color="#FE6246" v-if="!isMilk">
+        <tab class="order-tab" ref="orderTab" active-color="#4670fe" v-if="!isMilk">
           <tab-item :selected="!params.status?true:false" @on-item-click="onItemClick">全部</tab-item>
           <tab-item :selected="params.status==1?true:false" @on-item-click="onItemClick(1)">待支付</tab-item>
           <tab-item :selected="params.status==2?true:false" @on-item-click="onItemClick(2)">待派送</tab-item>
           <tab-item :selected="params.status==3?true:false" @on-item-click="onItemClick(3)">派送中</tab-item>
           <tab-item :selected="params.status==4?true:false" @on-item-click="onItemClick(4)">已完成</tab-item>
         </tab>
-        <tab class="order-tab" ref="orderTab" active-color="#FE6246" v-else>
+        <tab class="order-tab" ref="orderTab" active-color="#4670fe" v-else>
           <tab-item :selected="!params.status?true:false" @on-item-click="onItemClick">全部</tab-item>
           <tab-item :selected="params.status==1?true:false" @on-item-click="onItemClick(1)">配送中</tab-item>
           <tab-item :selected="params.status==2?true:false" @on-item-click="onItemClick(2)">已暂停</tab-item>
@@ -231,7 +231,7 @@
         scrollTop: 0,
         isPosting: false,
         params: {
-          userType: 1,
+          userType: 3,
           goodsType: 'water',
           pagerSize: 10,
           pageNo: 1
@@ -583,8 +583,8 @@
     .vux-x-switch {
       .fz(24) !important;
       .weui-switch:checked {
-        border-color: #fe6246;
-        background-color: #fe6246;
+        border-color: #4670fe;
+        background-color: #4670fe;
       }
     }
 

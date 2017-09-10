@@ -1,6 +1,6 @@
 <template>
   <div class="goods-con" v-cloak>
-    <tab class="goods-tab" bar-active-color="#f34c18">
+    <tab class="goods-tab" active-color="#4670fe">
       <tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus"><i class="fa fa-th-large"></i>&nbsp;全部
       </tab-item>
       <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)"><i
@@ -65,16 +65,14 @@
     name: 'goods',
     data() {
       return {
-        curTicketFilter: '',
         goods: [],
         params: {
           type: 0,
           pagerSize: 10,
           pageNo: 1,
-          saleStatus: 0,
-          category: ''
+          saleStatus: 0
         },
-        onFetching: false,
+        noMore: false,
         isPosting: false
       }
     },
@@ -109,19 +107,27 @@
         vm.$router.push({path: '/detail/' + id})
       },
       getGoods(isLoadMore, status) {
-        vm.params.type = this.$route.params.type || 0
-        if (vm.onFetching) return false
-        vm.onFetching = true
+        if (vm.isPosting) return false
+        !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
+        vm.isPosting = true
         vm.loadData(goodsApi.list, vm.params, 'POST', function (res) {
+          vm.isPosting = false
+          vm.processing(0, 1)
+          var resD = res.data.pager
           if (!isLoadMore) {
-            vm.goods = res.data.pager.itemList
+            if (resD.totalCount < vm.params.pageSize) {
+              vm.noMore = true
+            } else {
+              vm.noMore = false
+            }
+            vm.goods = resD.itemList
           } else {
-            vm.goods.push(res.data.pager.itemList)
+            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
           }
           console.log(vm.goods, '商品数据')
-          vm.onFetching = false
+          vm.isPosting = false
         }, function () {
-          vm.onFetching = false
+          vm.isPosting = false
         })
       },
       refresh(done) {
@@ -140,7 +146,7 @@
       },
       filterStatus(status) {
         vm.params.saleStatus = status || 0
-        vm.getGoods(false, vm.filterStatus)
+        vm.getGoods()
       },
       delGoods(id) {
         if (vm.isPosting) return false
@@ -195,9 +201,9 @@
     z-index: 10;
     .vux-tab-item {
       &.vux-tab-selected {
-        .cdiy(#f34c18) !important;
-        /*   .cf!important;
-           background: #f34c18 !important;*/
+        /* .cdiy(#f34c18) !important;
+        .cf!important;
+          background: #f34c18 !important;*/
       }
     }
   }
@@ -345,6 +351,6 @@
     .center;
     .cf;
     .fz(28);
-    .bdiy(@c2);
+    .bdiy(#4670fe);
   }
 </style>

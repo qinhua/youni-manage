@@ -21,6 +21,7 @@ import About from '@/pages/my/About'
 import GoodsDetail from '@/pages/goods/Detail'
 
 import Store from '@/pages/store/Store'
+import Sellers from '@/pages/store/Sellers'
 import Topic from '@/pages/mall/Topic'
 import Coupons from '@/pages/mall/Coupons'
 import EditCoupon from '@/pages/mall/EditCoupon'
@@ -165,6 +166,15 @@ export default new Router({
       path: '/store',
       name: 'store',
       component: Store,
+      meta: {
+        title: '店铺管理',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/sellers',
+      name: 'sellers',
+      component: Sellers,
       meta: {
         title: '店铺管理',
         keepAlive: false

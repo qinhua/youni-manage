@@ -55,6 +55,7 @@
         tickets: [],
         params: {
           type: 0,
+          userType: 1,
           pagerSize: 10,
           pageNo: 1,
           goodsType: 'XXX',

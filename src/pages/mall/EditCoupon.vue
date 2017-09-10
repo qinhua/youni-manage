@@ -286,7 +286,7 @@
       .center;
       .cf;
       .fz(28);
-      .bdiy(@c2);
+      .bdiy(#4670fe);
     }
   }
 

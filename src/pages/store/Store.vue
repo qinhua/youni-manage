@@ -31,13 +31,11 @@
     },
     mounted () {
       // me.attachClick()
-      this.count = this.$store.state.cart.count
     },
-    watch: {
+    /*watch: {
       '$route' (to, from) {
-        this.count = this.$store.state.cart.count
       }
-    },
+    },*/
     computed: {},
     methods: {
       // 向父组件传值

@@ -51,11 +51,9 @@
     mounted() {
       // me.attachClick()
       vm = this
-      vm.sellerId = vm.$store.state.global.sellerId
     },
     /* watch: {
        '$route'(to, from) {
-         this.count = this.$store.state.cart.count
        }
      },*/
     computed: {},
