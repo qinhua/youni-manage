@@ -9,8 +9,11 @@
     </group>
     <div class="btn btn-login" @click="login">登录</div>
     <div class="btn btn-regist" v-jump="['regist']">注册</div>
-    <a class="forgetPsw" href="#/reset_psw">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>
-    <p class="b-txt">连你生活 | 开启崭新生活</p>
+    <div class="bottom-col">
+      <a class="loginType" href="javascript:;" @click="changeLogin" v-if="">{{loginText}}</a>
+      <a class="forgetPsw" href="#/reset_psw">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>
+    </div>
+    <p class="b-txt">友你生活 | 开启崭新生活</p>
   </div>
 </template>
 
@@ -26,9 +29,11 @@
     data() {
       return {
         isPosting: false,
+        loginText: '密码登录',
         params: {
           phone: null,
-          passwd: null
+          passwd: null,
+          logintype: 1
         }
       }
     },
@@ -41,9 +46,16 @@
       me.attachClick()
       vm.params.phone = vm.$route.query.phone || null
       vm.params.passwd = vm.$route.query.psw || null
-      // vm.userId = vm.$route.query.userId
+    },
+    computed: {
+      logintype() {
+        return vm.loginText = (vm.logintype === 1) ? '密码登录' : '验证码登录'
+      }
     },
     methods: {
+      changeLogin() {
+        vm.isCodeMode=true
+      },
       login() {
         if (vm.isPosting) return false
         if (!vm.params.phone) {
@@ -117,10 +129,20 @@
       .bor;
       .borR(4px);
     }
-    .forgetPsw {
+    .bottom-col {
+      padding: 10/@rem;
+      overflow: hidden;
+    }
+    .loginType {
+      .fl;
       .c6;
       .fz(24);
+      padding: 10/@rem;
+    }
+    .forgetPsw {
       .fr;
+      .c6;
+      .fz(24);
       padding: 10/@rem;
     }
     .b-txt {
