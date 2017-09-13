@@ -52,7 +52,6 @@
       vm = this
       vm.initImgPicker()
       /*vm.$nextTick(function () {})*/
-      vm.initImgPicker()
     },
     /*computed: {},*/
     /*watch: {},*/
@@ -165,6 +164,9 @@
     .rel;
     padding: 0 30/@rem;
     .fz(26);
+    .weui-uploader__title{
+      text-align: left;
+    }
     #uploader {
       margin-top: 0;
       .weui-cell {

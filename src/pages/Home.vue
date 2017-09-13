@@ -1,6 +1,5 @@
 <template>
   <div class="home-con" ref="home" v-cloak>
-    <geo :visible="false" :cache="true" @on-geo-end="getMap"></geo>
     <!--banner-->
     <!-- <div class="swiper-home">
        <swiper ref="slider01" skey="s01" :slides="banner" autoPlay="2500"></swiper>
@@ -202,7 +201,6 @@
   let me
   let vm
   import Swiper from '../components/Swiper'
-  import Geo from '../components/Geo'
   import {
     Group,
     GroupTitle,
@@ -224,8 +222,8 @@
     data() {
       return {
         geo: null,
-        isMilk: false,
         location: '',
+        isMilk: false,
         type: 0,
         orders: [],
         scrollTop: 0,
@@ -259,7 +257,6 @@
       }
     },
     components: {
-      Geo,
       Group,
       GroupTitle,
       Grid,
@@ -297,11 +294,6 @@
       }
     },
     methods: {
-      // 全局定位
-      getMap(data) {
-        console.log(data, 'home geo info')
-        this.geo = data
-      },
       // 向父组件传值
       setPageStatus(data) {
         this.$emit('listenPage', data)

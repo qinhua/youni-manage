@@ -10,8 +10,8 @@
                     @on-hide="" @on-change="changeType"></popup-picker>
       <popup-picker title="商品类目" :data="categories" :columns="1" v-model="tmpCat" ref="picker3" @on-show=""
                     @on-hide="" @on-change="changeCategory"></popup-picker>
-      <x-input title="库存：" placeholder="库存" required text-align="right" v-model="params.stock"></x-input>
-      <x-input title="价格：" placeholder="价格" required text-align="right" v-model="params.price"></x-input>
+      <x-input title="库存：" placeholder="库存" required text-align="right" type="number" v-model="params.stock"></x-input>
+      <x-input title="价格：" placeholder="价格" required text-align="right" type="number" v-model="params.price"></x-input>
     </group>
     <group class="bottom">
       <div class="checker-group">

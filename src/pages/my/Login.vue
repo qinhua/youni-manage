@@ -76,6 +76,8 @@
           vm.isPosting = false
           vm.processing(0, 1)
           vm.toast('登录成功 ！')
+          /* 保存用户信息 */
+          me.locals.set('ynManageLogin', me.formatDate(new Date(), null, 1))
           vm.$store.commit('storeData', {key: 'isLogin', data: true})
           // vm.jump('home')
           vm.$router.back()

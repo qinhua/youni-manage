@@ -1,17 +1,20 @@
 <template>
-  <div class="s-topic" v-cloak>
-    <div class="topic-col">
+  <div class="s-banner" v-cloak>
+    <div class="banner-col">
       <group>
-        <x-input title="公告标题：" placeholder="标题（15字左右）" required text-align="right" v-model="params.name"></x-input>
-        <x-input title="公告链接：" placeholder="跳转链接" text-align="right" v-model="params.url"></x-input>
-        <button type="button" class="btn btn-save" @click="add" :disabled="topics.length===4"><i class="fa fa-plus"></i>&nbsp;添加（最多4个）
+        <img-uploader title="banner图片：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
+        <!--<x-input title="banner标题：" placeholder="banner标题" required text-align="right"
+                 v-model="params.title"></x-input>-->
+        <x-input title="banner链接：" placeholder="跳转链接" text-align="right" v-model="params.linkUrl"></x-input>
+        <button type="button" class="btn btn-save" @click="add" :disabled="banners.length===4"><i
+          class="fa fa-plus"></i>&nbsp;添加（最多4个）
         </button>
       </group>
     </div>
 
-    <ul class="topic-list" v-if="topics.length">
+    <ul class="banner-list" v-if="banners.length">
       <swipeout>
-        <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in topics"
+        <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in banners"
                        :data-id="item.id" key="index">
           <div slot="right-menu">
             <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
@@ -19,7 +22,9 @@
           </div>
           <div slot="content" class="demo-content vux-1px-t">
             <li>
-              <p><a :href="item.url">{{index+1}}.{{item.name}}</a></p>
+              <div class="img-con" :style="'background-image:url('+item.image+')'"></div>
+              <div class="right-con">
+                <p>{{item.linkUrl}}</p></div>
             </li>
           </div>
         </swipeout-item>
@@ -40,18 +45,19 @@
     XTextarea,
     Swipeout, SwipeoutItem, SwipeoutButton
   } from 'vux'
-  import {commonApi, topicApi} from '../../service/main.js'
+  import {commonApi, bannerApi} from '../../service/main.js'
 
   export default {
-    name: 's-topic',
+    name: 's-banner',
     data() {
       return {
         isPosting: false,
         fileApi: commonApi.uploadImg,
-        topics: [],
+        banners: [],
         params: {
-          name: '',
-          url: ''
+          // title: '',
+          image: '',
+          linUrl: ''
         }
       }
     },
@@ -87,22 +93,26 @@
         }
       },
       validate() {
-        if (vm.topics.length === 4) {
+        if (vm.banners.length === 4) {
           vm.toast('最多添加4个！')
           return false
         }
-        if (!vm.params.name) {
-          vm.toast('请填写标题！')
+        if (!vm.params.image) {
+          vm.toast('请选择图片！')
           return false
         }
-        if (!vm.params.url) {
+        /*if (!vm.params.title) {
+          vm.toast('请填写标题！')
+          return false
+        }*/
+        if (!vm.params.linkUrl) {
           vm.toast('请填写链接！')
           return false
         }
-        if (vm.topics.length) {
-          for (let i = 0; i < vm.topics.length; i++) {
-            let cur = vm.topics[i];
-            if (cur.name === vm.params.name && cur.url === vm.params.url) {
+        if (vm.banners.length) {
+          for (let i = 0; i < vm.banners.length; i++) {
+            let cur = vm.banners[i];
+            if (cur.image === vm.params.image && cur.linkUrl === vm.params.linkUrl) {
               vm.toast('请修改后再提交！')
               return false
             }
@@ -114,10 +124,10 @@
         if (vm.isPosting) return false
         vm.isPosting = true
         vm.processing()
-        vm.loadData(topicApi.list, null, 'POST', function (res) {
+        vm.loadData(bannerApi.list, null, 'POST', function (res) {
           vm.isPosting = false
 //          vm.processing(0, 1)
-          vm.topics = res.data.itemList
+          vm.banners = res.data.itemList
           vm.params = {}
         }, function () {
           vm.isPosting = false
@@ -129,7 +139,7 @@
           if (vm.isPosting) return false
           vm.isPosting = true
           // vm.processing()
-          vm.loadData(topicApi.add, vm.params, 'POST', function (res) {
+          vm.loadData(bannerApi.add, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
             vm.getBanners()
@@ -144,7 +154,7 @@
         vm.confirm('确认删除？', '', function () {
           vm.isPosting = true
           // vm.processing()
-          vm.loadData(topicApi.del, {bannerId: id}, 'POST', function (res) {
+          vm.loadData(bannerApi.del, {bannerId: id}, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
             vm.getBanners()
@@ -159,7 +169,7 @@
           if (vm.isPosting) return false
           vm.isPosting = true
           vm.processing()
-          vm.loadData(topicApi.update, vm.params, 'POST', function (res) {
+          vm.loadData(bannerApi.update, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
             vm.getBanners()
@@ -172,8 +182,8 @@
       onButtonClick(type, id) {
         if (type === 'edit') {
           vm.params = {}
-          for (let i = 0; i < vm.topics.length; i++) {
-            let cur = vm.topics[i];
+          for (let i = 0; i < vm.banners.length; i++) {
+            let cur = vm.banners[i];
             if (cur.id === id) {
               for (var val in cur) {
                 console.log(val, cur[val], 5)
@@ -195,31 +205,45 @@
 <style lang='less'>
   @import '../../../static/css/tools.less';
 
-  .s-topic {
+  .s-banner {
     height: 100%;
     padding-bottom: 50px;
-    .topic-col {
+    .banner-col {
       margin-bottom: 14/@rem;
     }
-    .topic-list {
+    .weui-label {
+      .left;
+    }
+    .weui-uploader__file {
+      width: 100% !important;
+      height: 200/@rem !important;
+    }
+    .banner-list {
       .borBox;
       .bf;
+      padding-left: 20/@rem;
       .bor-t(2px, solid, #9cb3ff);
       .vux-swipeout-button-primary {
         background: orange;
       }
       li {
         .rel;
-        padding: 20/@rem 0;
+        padding: 14/@rem 0;
+        height: 130/@rem;
         .bor-b;
-        p {
+        .img-con {
+          .abs-center-vertical;
+          left: 0;
+          .size(130, 130);
+          background-position: center;
+          -webkit-background-size: cover;
+          background-size: cover;
+        }
+        .right-con {
           .borBox;
-          padding: 0 20/@rem;
-          .ellipsis-clamp-2;
-          a{
-            .block;
-            .c3;
-            .fz(26);
+          padding: 0 18/@rem 0 150/@rem;
+          p {
+            .ellipsis-clamp-3;
           }
         }
       }

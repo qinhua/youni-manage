@@ -37,7 +37,8 @@
           // wx授权页面
           vm.getWxInfo(function (info) {
             /* 保存用户信息 */
-            me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: new Date().getTime()}))
+            alert(JSON.stringify(info))
+            me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
             vm.$router.push({path: '/home'})
             // vm.$router.back()
           })
@@ -61,7 +62,7 @@
             'subscribeTime': null,
             'unionid': null
           }
-          me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: new Date().getTime()}))
+          me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
           vm.$router.push({path: '/home'})
         }
      /* } else {

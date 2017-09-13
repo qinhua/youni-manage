@@ -109,7 +109,7 @@ Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
     var localIps = me.sessions.get('cur5656Ips') ? JSON.parse(me.sessions.get('cur5656Ips')) : {}
     var localParams = {
       ip: localIps.cip,
-      cityCode: localGeo.cityCode||localIps.cid,
+      cityCode: localGeo.cityCode || localIps.cid,
       lon: localGeo.lng,
       lat: localGeo.lat
     }
@@ -125,16 +125,16 @@ Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
       success: function (res) {
         // 检测是否登录
         if (res.message.indexOf('登录') > -1) {
-          if(vm.$route.name === 'regist') return
+          if (vm.$route.name === 'regist') return
           vm.processing(0, 1)
           // vm.confirm('温馨提示','请先登录！',function(){
           vm.$router.push({path: '/login'})
           // })
         }
-        try{
+        try {
           sucCb ? sucCb(res) : console.log(res, '接口的res')
-        }catch(e){
-           // console.log(e)
+        } catch (e) {
+          // console.log(e)
         }
       },
       error: function (res) {
@@ -345,9 +345,9 @@ Vue.filter('couponType', function (type) {
   }
 })
 /* 保留小数位 */
-Vue.filter('toFixed', function (data,num) {
+Vue.filter('toFixed', function (data, num) {
   // return data ? data.toFixed(num ||2 ) : ''
-  return data.toFixed(num ||2 )
+  return data.toFixed(num || 2)
 })
 // main.js
 new Vue({
@@ -366,7 +366,7 @@ new Vue({
     }*/
   },
   mounted() {
-    vm=this
+    vm = this
     // console.log(XXX)
     // GET
     /* this.$axios.get('/user', {
@@ -402,19 +402,23 @@ new Vue({
   },
   methods: {
     isLogin() {
-      if(vm.$route.name === 'regist') return
-      // 检测是否登录
-      vm.loadData(commonApi.login, null, 'POST', function (res) {
-        if (res.data.success) {
-          vm.$store.commit('storeData', {key: 'isLogin', data: true})
-          if (vm.$route.name === 'login' || vm.$route.name === 'regist') {
-            vm.$router.push({path: '/home'})
+      /* 检查登录session是否过期(7天保质期) */
+      var isLogin = me.locals.get('ynVendorLogin') ? me.locals.get('ynVendorLogin') : null
+      if (isLogin && me.getDiffDay(isLogin) > 6) {
+        if (vm.$route.name === 'regist') return
+        // 检测是否登录
+        vm.loadData(commonApi.login, null, 'POST', function (res) {
+          if (res.data.success) {
+            vm.$store.commit('storeData', {key: 'isLogin', data: true})
+            if (vm.$route.name === 'login' || vm.$route.name === 'regist') {
+              vm.$router.push({path: '/home'})
+            }
+          } else {
+            vm.$router.push({path: '/login'})
           }
-        } else {
-          vm.$router.push({path: '/login'})
-        }
-      }, function () {
-      })
+        }, function () {
+        })
+      }
     },
     getDict() {
       vm.loadData(commonApi.dict, {}, 'POST', function (res) {

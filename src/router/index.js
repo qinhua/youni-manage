@@ -26,6 +26,7 @@ import Topic from '@/pages/mall/Topic'
 import Coupons from '@/pages/mall/Coupons'
 import EditCoupon from '@/pages/mall/EditCoupon'
 import Mall from '@/pages/mall/Mall'
+import Banner from '@/pages/mall/Banner'
 import Goods from '@/pages/goods/Goods'
 import EditGoods from '@/pages/goods/Edit'
 import Clients from '@/pages/clients/Clients'
@@ -72,6 +73,15 @@ export default new Router({
       component: Login,
       meta: {
         title: '登录',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/banner',
+      name: 'banner',
+      component: Banner,
+      meta: {
+        title: '首页banner图片',
         keepAlive: false
       }
     },
@@ -181,11 +191,11 @@ export default new Router({
       }
     },
     {
-      path: '/store_topic',
-      name: 'store_topic',
+      path: '/mall_topic',
+      name: 'mall_topic',
       component: Topic,
       meta: {
-        title: '店铺公告',
+        title: '商城公告',
         keepAlive: false
       }
     },

@@ -13,9 +13,17 @@ window.youniMall = {
 // import '../../mock/mock.js'
 
 const homeApi = {
-  banner: host + '/home/banner',
-  topNotice: host + '/home/topNotice',
   goodsList: host + '/home/goodsList'
+}
+const bannerApi = {
+  list: host + '/home/banner',
+  add: host + '/admin/addBanner',
+  del: host + '/admin/delBanner'
+}
+const topicApi = {
+  list: host + '/home/topNotice',
+  add: host + '/admin/addNotice',
+  del: host + '/admin/delNotice'
 }
 const goodsApi = {
   list: host + '/goods/list',
@@ -66,7 +74,7 @@ const statisticApi = {
 }
 const commonApi = {
   wxAuth: host + '/weixin/auth',
-  login: host + '/seller/login',
+  login: host + '/admin/login',
   regist: host + '/seller/applySeller',
   dict: host + '/common/dictList',
   uploadImg: host + '/file/uploadImage',
@@ -75,4 +83,17 @@ const commonApi = {
 }
 console.log('当前域名：%c' + host, 'color:red;font-size:14px;font-weight:bold')
 // console.log('当前API：%c' + JSON.stringify(homeApi, null, 2), 'color:orange;font-size:14px')
-export {commonApi, homeApi, nearbyApi, ticketApi, orderApi, clientApi, storeApi, userApi, goodsApi, statisticApi}
+export {
+  commonApi,
+  homeApi,
+  bannerApi,
+  topicApi,
+  nearbyApi,
+  ticketApi,
+  orderApi,
+  clientApi,
+  storeApi,
+  userApi,
+  goodsApi,
+  statisticApi
+}
