@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="btn flush-button" onclick="javascript:me.locals.clear();me.sessions.clear();me.lightPop('ok,已清理');">清理缓存</div>
+    <!--<div class="btn flush-button s02" onclick="javascript:me.locals.clear();me.sessions.clear();me.lightPop('ok,已清理');">清理缓存</div>-->
     <!--地图容器-->
     <!--<div id="mapContainer"></div>-->
     <!--标签栏-->
