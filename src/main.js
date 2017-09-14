@@ -104,14 +104,14 @@ Vue.prototype.$axios = Axios
 Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
   params = params || {}
   setTimeout(function () {
-    var winAuth = window.youniMall.userAuth
+    var winAuth = me.locals.get('ynWxUser') ? JSON.parse(me.locals.get('ynWxUser')) : store.state.global.wxInfo
     var localGeo = me.sessions.get('cur5656Geo') ? JSON.parse(me.sessions.get('cur5656Geo')) : {}
     var localIps = me.sessions.get('cur5656Ips') ? JSON.parse(me.sessions.get('cur5656Ips')) : {}
     var localParams = {
-      ip: localIps.cip,
-      cityCode: localGeo.cityCode || localIps.cid,
-      lon: localGeo.lng,
-      lat: localGeo.lat
+      ip: localIps.cip || '',
+      cityCode: localGeo.cityCode || (localIps.cid || '100000'),
+      lon: localGeo.lng || '',
+      lat: localGeo.lat || ''
     }
     $.extend(params, winAuth)
     // console.log('%c'+JSON.stringify(params, null, 2), 'color:#fff;background:purple')
@@ -403,7 +403,7 @@ new Vue({
   methods: {
     isLogin() {
       /* 检查登录session是否过期(7天保质期) */
-      var isLogin = me.locals.get('ynVendorLogin') ? me.locals.get('ynVendorLogin') : null
+      var isLogin = me.locals.get('ynVendorLogin') || false
       if (isLogin && me.getDiffDay(isLogin) > 6) {
         if (vm.$route.name === 'regist') return
         // 检测是否登录
