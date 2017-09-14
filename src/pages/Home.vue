@@ -11,7 +11,7 @@
         <h2>
           <countup :start-val="0" :end-val="2200500" :decimals="2" :duration="2"></countup>
         </h2>
-        <p class="yesterday">昨日：{{2020201|toFixed}}</p>
+        <p class="yesterday">昨日：{{2020201 | toFixed}}</p>
       </div>
       <div class="bottom">
         <div class="col left-col">
@@ -58,9 +58,11 @@
         </div>
       </div>-->
     </div>
+
     <group>
       <x-switch :title="'订单类别 ['+(isMilk?'奶':'水')+']'" v-model="isMilk" @on-click="changeType"></x-switch>
     </group>
+
     <!--订单列表-->
     <div class="orders-list-con">
       <sticky ref="sticky">
@@ -69,13 +71,13 @@
           <tab-item :selected="params.status==1?true:false" @on-item-click="onItemClick(1)">待支付</tab-item>
           <tab-item :selected="params.status==2?true:false" @on-item-click="onItemClick(2)">待派送</tab-item>
           <tab-item :selected="params.status==3?true:false" @on-item-click="onItemClick(3)">派送中</tab-item>
-          <tab-item :selected="params.status==4?true:false" @on-item-click="onItemClick(4)">已完成</tab-item>
+          <tab-item :selected="params.status==5?true:false" @on-item-click="onItemClick(5)">已完成</tab-item>
         </tab>
         <tab class="order-tab" ref="orderTab" active-color="#4670fe" v-else>
           <tab-item :selected="!params.status?true:false" @on-item-click="onItemClick">全部</tab-item>
-          <tab-item :selected="params.status==1?true:false" @on-item-click="onItemClick(1)">配送中</tab-item>
-          <tab-item :selected="params.status==2?true:false" @on-item-click="onItemClick(2)">已暂停</tab-item>
-          <tab-item :selected="params.status==4?true:false" @on-item-click="onItemClick(4)">已完成</tab-item>
+          <tab-item :selected="params.status==3?true:false" @on-item-click="onItemClick(3)">配送中</tab-item>
+          <tab-item :selected="params.status==4?true:false" @on-item-click="onItemClick(4)">已暂停</tab-item>
+          <tab-item :selected="params.status==5?true:false" @on-item-click="onItemClick(5)">已完成</tab-item>
         </tab>
       </sticky>
       <div :class="'order-list' + (orders.length?' hasContent':'')">
@@ -111,24 +113,23 @@
               <div class="total-price">
                 共{{item.buyCount}}件商品&nbsp;合计：<span>￥{{(item.goodsPrice * item.goodsAmount) | toFixed}}</span>（含上楼费）
               </div>
-              <div class="btns" v-if="item.status===-1">
-                <a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>
-              </div>
-              <!--<div class="btns" v-if="item.status===0">
-                <a class="btn btn-pay" @click="payOrder(item.orderId)">支付</a>
-                <a class="btn btn-cancel" @click="cancelOrder(item.orderId)">取消订单</a>
-              </div>-->
+              <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
+              <!--<a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>-->
               <div class="btns" v-if="item.status===1">
                 <a class="btn btn-cancel" @click="pushPay(item.orderId)">提醒支付</a>
-                <a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>
+                <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
               </div>
               <div class="btns" v-if="item.status===2">
                 <a class="btn btn-cancel" @click="dispatchOrder(item.orderId)">派送</a>
-                <a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>
+                <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
               </div>
-              <div class="btns" v-if="item.status===4">
-                <a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>
-              </div>
+              <!--<div class="btns" v-if="item.status===3">-->
+              <!--<a class="btn btn-cancel" @click="dispatchOrder(item.orderId)">查看</a>-->
+              <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
+              <!--</div>-->
+              <!--<div class="btns" v-if="item.status===5">-->
+              <!--<a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>-->
+              <!--</div>-->
             </section>
           </section>
         </scroller>
@@ -174,19 +175,19 @@
               </div>-->
               <div class="btns" v-if="item.status===1">
                 <a class="btn btn-cancel" @click="pushPay(item.orderId)">提醒支付</a>
-                <a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>
+                <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
               </div>
               <div class="btns" v-if="item.status===2">
                 <a class="btn btn-cancel" @click="dispatchOrder(item.orderId)">派送</a>
-                <a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>
-              </div>
-              <div class="btns" v-if="item.status===3">
-                <a class="btn btn-cancel" @click="dispatchOrder(item.orderId)">恢复派送</a>
-                <a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>
+                <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
               </div>
               <div class="btns" v-if="item.status===4">
-                <a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>
+                <a class="btn btn-cancel" @click="dispatchOrder(item.orderId)">恢复派送</a>
+                <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
               </div>
+              <!--<div class="btns" v-if="item.status===5">
+                <a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>
+              </div>-->
             </section>
           </section>
         </scroller>
@@ -228,31 +229,12 @@
         orders: [],
         scrollTop: 0,
         isPosting: false,
+        noMore: false,
         params: {
           userType: 3,
-          goodsType: 'water',
+          goodsType: 'goods_type.1',
           pagerSize: 10,
           pageNo: 1
-        },
-        noMore: false,
-        pulldownConfig: {
-          content: '下拉刷新',
-          height: 60,
-          autoRefresh: false,
-          downContent: '下拉刷新',
-          upContent: '松开以加载',
-          loadingContent: '加载中…',
-          clsPrefix: 'xs-plugin-pulldown-'
-        },
-        pullupConfig: {
-          content: '上滑加载更多',
-          height: 40,
-          pullUpHeight: 60,
-          autoRefresh: false,
-          downContent: '上滑加载',
-          upContent: '上滑加载',
-          loadingContent: '加载中…',
-          clsPrefix: 'xs-plugin-pullup-'
         }
       }
     },
@@ -277,19 +259,23 @@
       me.attachClick()
       vm.getOrders()
       vm.$nextTick(function () {
-        vm.$nextTick(function () {
+        try {
           vm.$refs.orderScroller.finishInfinite(true)
           vm.$refs.orderScroller.resize()
-        })
+        } catch (e) {
+        }
       })
     },
-    computed: {},
+    /*computed: {},*/
     watch: {
       '$route'(to, from) {
-        vm.getOrders()
+        if (to.name === 'home') {
+          vm.getOrders()
+        }
       },
       isMilk() {
-        vm.params.goodsType = vm.isMilk ? 'milk' : 'water'
+        delete vm.params.status
+        vm.params.goodsType = vm.isMilk ? 'goods_type.2' : 'goods_type.1'
         vm.getOrders()
       }
     },
@@ -298,74 +284,18 @@
       setPageStatus(data) {
         this.$emit('listenPage', data)
       },
-      scrollHandler() {
-        // 监听dom的scroll事件
-        setTimeout(function () {
-          let scrollTop = vm.$refs.home.scrollTop
-          let target = vm.$refs.orderTab
-          let list = vm.$refs.goodsList
-          if (vm.showFilterCon) {
-            vm.hideFilter()
-          }
-          if (scrollTop >= vm.orderOffset) {
-            target.classList.add('fixed')
-            list.classList.add('fixed')
-          } else {
-            target.classList.remove('fixed')
-            list.classList.remove('fixed')
-          }
-        }, 300)
-      },
       /* 页面数据 */
-      changeType() {
-        // vm.getOrders()
-      },
+      changeType() {},
       /* 上下拉刷新 */
-      onPullDown() {
-        if (vm.isPosting) return false
-        // this.isPosting = true
-        setTimeout(function () {
-          vm.getGoods()
-          vm.$nextTick(function () {
-            vm.$refs.myScroll.reset({top: 0})
-            vm.$refs.myScroll.donePullup()
-            vm.$refs.myScroll.donePulldown()
-          })
-        }, 1500)
-      },
-      onPullUp() {
-        if (vm.isPosting) {
-          // do nothing
-          return false
-        } else {
-          /* if(vm.$refs.myScroll.top<500){
-           return
-           } */
-          // vm.isPosting = true
-          setTimeout(function () {
-            vm.getGoods(true)
-            vm.$nextTick(function () {
-              vm.$refs.myScroll.reset({bottom: 0})
-              vm.$refs.myScroll.donePullup()
-              vm.$refs.myScroll.donePulldown()
-            })
-          }, 200)
-        }
-      },
-      onScroll(pos) {
-        this.scrollTop = pos.top
-        vm.factive = ''
-        vm.showFilterCon ? vm.showFilterCon = false : null
-      },
       refresh(done) {
-        console.log('下拉加载')
+        // console.log('下拉加载')
         setTimeout(function () {
           vm.getOrders()
           vm.$refs.orderScroller.finishPullToRefresh()
         }, 1200)
       },
       infinite(done) {
-        console.log('无限滚动')
+        // console.log('无限滚动')
         setTimeout(function () {
           vm.getOrders(true)
           vm.$refs.orderScroller.finishInfinite(true)
@@ -373,6 +303,7 @@
       },
       getOrders(isLoadMore) {
         if (vm.isPosting) return false
+        !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
         vm.processing()
         vm.isPosting = true
         vm.loadData(orderApi.list, vm.params, 'POST', function (res) {
@@ -383,9 +314,6 @@
             for (var i = 0; i < resD.itemList.length; i++) {
               var cur = resD.itemList[i]
               switch (cur.status) {
-                case -1:
-                  cur.statusName = '已取消'
-                  break
                 case 1:
                   cur.statusName = '待支付'
                   break
@@ -395,10 +323,10 @@
                 case 3:
                   cur.statusName = '派送中'
                   break
-                /*case 3:
-                  cur.statusName = '待评价'
-                  break*/
                 case 4:
+                  cur.statusName = '已暂停'
+                  break
+                case 5:
                   cur.statusName = '已完成'
                   break
               }
@@ -448,14 +376,14 @@
         })
       },
       pushPay(id) {
-        if (vm.isPosting) return false
-          vm.isPosting = true
-          vm.loadData(orderApi.push, {id: id}, 'POST', function (res) {
-            vm.toast('提醒成功')
-            vm.isPosting = false
-          }, function () {
-            vm.isPosting = false
-          })
+        /*if (vm.isPosting) return false
+        vm.isPosting = true
+        vm.loadData(orderApi.push, {id: id}, 'POST', function (res) {*/
+          vm.toast('提醒成功')
+         /* vm.isPosting = false
+        }, function () {
+          vm.isPosting = false
+        })*/
       },
       dispatchOrder(id) {
         if (vm.isPosting) return false
@@ -483,8 +411,10 @@
 
   .home-con {
     height: 100%;
-    overflow-y: scroll; // 此两个属性至关重要，不写@scroll监听不到滚动
+    /*overflow-y: scroll; // 此两个属性至关重要，不写@scroll监听不到滚动*/
+
     .orders-list-con {
+      height: 100%;
     }
 
     .overview {
@@ -575,8 +505,8 @@
     .vux-x-switch {
       .fz(24) !important;
       .weui-switch:checked {
-        border-color: #4670fe;
-        background-color: #4670fe;
+        border-color: #7894f3;
+        background-color: #7894f3;
       }
     }
 
@@ -610,7 +540,8 @@
           margin-bottom: 20/@rem;
           /*padding: 0 20/@rem 20/@rem;*/
           .bf;
-          .bsd(0, 2px, 10px, 0, #ccc);
+          /*.bsd(0, 2px, 10px, 0, #ccc);*/
+          .bor-t(1px, solid, #ddd);
           .item-top {
             padding: 14/@rem 20/@rem;
             .txt-normal;
@@ -639,6 +570,7 @@
             .img-con {
               .rel;
               .size(130, 130);
+              overflow: hidden;
               img {
                 width: 100%;
                 .abs-center-vh;
@@ -741,7 +673,6 @@
       }
     }
   }
-
 
 
 </style>

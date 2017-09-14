@@ -4,14 +4,18 @@
       <x-input title="手机号：" placeholder="您的手机号" required type="tel" text-align="right" v-model="params.phone">
         <!--<img slot="label" style="padding-right:10px;display:block;" src="http://dn-placeholder.qbox.me/110x110/FF2D55/000" width="24" height="24">-->
       </x-input>
+      <x-input title="验证码：" class="weui-vcode" v-model="params.passwd" v-if="params.logintype===2">
+        <x-button class="btn-vercode" slot="right" type="primary" mini :disabled="btnStatus" @click.native="getCode">{{btnText}}
+        </x-button>
+      </x-input>
       <x-input title="密码：" placeholder="密码" required type="password" text-align="right"
-               v-model="params.passwd"></x-input>
+               v-model="params.passwd" v-else></x-input>
     </group>
     <div class="btn btn-login" @click="login">登录</div>
     <div class="btn btn-regist" v-jump="['regist']">注册</div>
     <div class="bottom-col">
-      <a class="loginType" href="javascript:;" @click="changeLogin" v-if="">{{loginText}}</a>
-      <a class="forgetPsw" href="#/reset_psw">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>
+      <a class="loginType" href="javascript:;" @click="changeLogin" v-if="">{{loginText}}[切换]</a>
+      <a class="forgetPsw" href="#/password">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>
     </div>
     <p class="b-txt">友你生活 | 开启崭新生活</p>
   </div>
@@ -21,7 +25,7 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import {Group, Cell, XInput} from 'vux'
+  import {Group, Cell, XInput, XButton} from 'vux'
   import {commonApi} from '../../service/main.js'
 
   export default {
@@ -29,15 +33,16 @@
     data() {
       return {
         isPosting: false,
-        loginText: '密码登录',
         params: {
           phone: null,
           passwd: null,
           logintype: 1
-        }
+        },
+        btnText: '发送验证码',
+        btnStatus: false
       }
     },
-    components: {Group, Cell, XInput},
+    components: {Group, Cell, XInput, XButton},
     beforeMount() {
       me = window.me
     },
@@ -48,13 +53,34 @@
       vm.params.passwd = vm.$route.query.psw || null
     },
     computed: {
-      logintype() {
-        return vm.loginText = (vm.logintype === 1) ? '密码登录' : '验证码登录'
+      loginText() {
+        return this.params.logintype === 1 ? '密码登录' : '验证码登录'
       }
     },
     methods: {
       changeLogin() {
-        vm.isCodeMode=true
+        vm.params.logintype = (vm.params.logintype === 1) ? 2 : 1
+      },
+      getCode() {
+        if (vm.isPosting) return false
+        if (!vm.params.phone) {
+          vm.toast('请填写手机号 ！', 'warn')
+          return false
+        }
+        if (!vm.params.phone.match(/^(13|15|18|17)\d{9}$/)) {
+          vm.toast('请填写正确的手机号 ！', 'warn')
+          return false
+        }
+        vm.isPosting = true
+        vm.loadData(commonApi.sendSms, {phone: vm.params.phone, useType: 1}, 'POST', function (res) {
+          vm.btnStatus = true
+          me.verCodeBtn(60, '.btn-vercode', function () {
+            vm.btnStatus = false
+          })
+          vm.isPosting = false
+        }, function () {
+          vm.isPosting = false
+        })
       },
       login() {
         if (vm.isPosting) return false
@@ -66,8 +92,12 @@
           vm.toast('请填写正确的手机号 ！', 'warn')
           return false
         }
-        if (!vm.params.passwd) {
+        if (vm.params.logintype === 1 && !vm.params.passwd) {
           vm.toast('请填写密码 ！', 'warn')
+          return false
+        }
+        if (vm.params.logintype === 2 && !vm.params.passwd) {
+          vm.toast('请填写验证码 ！', 'warn')
           return false
         }
         vm.isPosting = true
@@ -75,12 +105,20 @@
         vm.loadData(commonApi.login, vm.params, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
-          vm.toast('登录成功 ！')
-          /* 保存用户信息 */
-          me.locals.set('ynManageLogin', me.formatDate(new Date(), null, 1))
-          vm.$store.commit('storeData', {key: 'isLogin', data: true})
-          // vm.jump('home')
-          vm.$router.back()
+          if (res.success) {
+            vm.isPosting = false
+            vm.toast('登录成功 ！')
+            /* 保存用户信息 */
+            // me.locals.set('ynManageLogin', me.formatDate(new Date(), null, 1))
+            vm.$store.commit('storeData', {key: 'isLogin', data: true})
+            // if (vm.lastPage === 'regist' || vm.lastPage === 'login') {
+            vm.jump('home')
+            /*} else {
+              vm.$router.back()
+            }*/
+          } else {
+            vm.toast(res.message || '手机号或密码错误 ！')
+          }
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -137,9 +175,14 @@
     }
     .loginType {
       .fl;
-      .c6;
-      .fz(24);
+      .c3;
+      .fw(600);
+      .fz(26);
       padding: 10/@rem;
+      i {
+        font-style: normal;
+        font-weight: normal;
+      }
     }
     .forgetPsw {
       .fr;

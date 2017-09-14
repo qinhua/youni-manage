@@ -13,7 +13,10 @@ window.youniMall = {
 // import '../../mock/mock.js'
 
 const homeApi = {
-  goodsList: host + '/home/goodsList'
+  goodsList: host + '/home/goodsList',
+  getGoods: host + '/admin/homeGoodsIdsList',
+  addGoods: host + '/admin/addHomeGoods',
+  delGoods: host + '/admin/delHomeGoods'
 }
 const bannerApi = {
   list: host + '/home/banner',
@@ -42,7 +45,7 @@ const orderApi = {
   del: host + '/order/del',
   push: host + '/order/push',
   cancel: host + '/order/cancel',
-  dispatchList: host + '/orderDispatchProgess/list',
+  dispatcher: host + '/orderDispatchProgess/list',
   dispatch: host + '/orderDispatchProgess/add',
   updateOrder: host + '/home/updateOrder'
 }
@@ -52,8 +55,8 @@ const clientApi = {
 }
 const storeApi = {
   list: host + '/admin/sellerList',
-  update: host + '/admin/updateSellerStatus',
-  auth: host + '/admin/seller/auth',
+  updateStatus: host + '/admin/updateSellerStatus',
+  audit: host + '/admin/seller/auth',
   del: host + '/admin/seller/del'
 }
 const userApi = {

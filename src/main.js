@@ -104,7 +104,7 @@ Vue.prototype.$axios = Axios
 Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
   params = params || {}
   setTimeout(function () {
-    var winAuth = me.locals.get('ynWxUser') ? JSON.parse(me.locals.get('ynWxUser')) : store.state.global.wxInfo
+    var winAuth = window.youniMall.userAuth || (me.locals.get('ynWxUser') ? JSON.parse(me.locals.get('ynWxUser')) : null)
     var localGeo = me.sessions.get('cur5656Geo') ? JSON.parse(me.sessions.get('cur5656Geo')) : {}
     var localIps = me.sessions.get('cur5656Ips') ? JSON.parse(me.sessions.get('cur5656Ips')) : {}
     var localParams = {
@@ -170,7 +170,7 @@ Vue.prototype.alert = function (title, content, showCb, hideCb) {
   })
 }
 /* confirm */
-Vue.prototype.confirm = function (title, content, confirmCb, cancelCb, confirmtext, canelText) {
+Vue.prototype.confirm = function (title, content, confirmCb, cancelCb, confirmtext, canelText, noAutoClose) {
   const _this = this
   _this.$vux.confirm.show({
     theme: 'ios',
@@ -178,6 +178,7 @@ Vue.prototype.confirm = function (title, content, confirmCb, cancelCb, confirmte
     content: content || '',
     confirmText: confirmtext || '确定',
     cancelText: canelText || '取消',
+    closeOnConfirm: !noAutoClose,
     onCancel() {
       cancelCb ? cancelCb() : null
     },
@@ -359,54 +360,23 @@ new Vue({
     vm = this
     window.youniMall.userAuth = vm.$store.state.global.wxInfo || (me.sessions.get('ynWxUser') ? JSON.parse(me.sessions.get('ynWxUser')) : null)
     !vm.$store.state.global.dict ? vm.getDict() : null
-    /*/!* 特定条件下才检查是否登录 *!/
-    if(!vm.$store.state.global.isLogin){
-      this.isLogin()
-    }*/
   },
+  /*watch: {
+    '$route'(to, from) {
+      this.checkLogin()
+    }
+  },*/
   mounted() {
     vm = this
-    // console.log(XXX)
-    // GET
-    /* this.$axios.get('/user', {
-     params: {
-     ID: 12345
-     }
-     }).then(function (response) {
-     console.log(response)
-     }).catch(function (error) {
-     console.log(error)
-     })
-     // POST
-     this.$axios.post('/user', {
-     firstName: 'Fred',
-     lastName: 'Flintstone'
-     }).then(function (response) {
-     console.log(response)
-     }).catch(function (error) {
-     console.log(error)
-     })
-     // 多个
-     function getUserAccount() {
-     return axios.get('/user/12345')
-     }
-     function getUserPermissions() {
-     return axios.get('/user/12345/permissions')
-     }
-     axios.all([getUserAccount(), getUserPermissions()])
-     .then(axios.spread(function (acct, perms) {
-     // Both requests are now complete
-     }))
-     */
+    this.checkLogin()
   },
   methods: {
-    isLogin() {
-      /* 检查登录session是否过期(7天保质期) */
-      var isLogin = me.locals.get('ynVendorLogin') || false
-      if (isLogin && me.getDiffDay(isLogin) > 6) {
-        if (vm.$route.name === 'regist') return
+    checkLogin() {
+      //var isLogin = me.locals.get('ynManageLogin') || false
+      if (!vm.$store.state.global.isLogin && vm.$route.name !== 'login' && vm.$route.name !== 'regist' && vm.$route.name !== 'password') {
         // 检测是否登录
         vm.loadData(commonApi.login, null, 'POST', function (res) {
+          // alert(JSON.stringify(res))
           if (res.data.success) {
             vm.$store.commit('storeData', {key: 'isLogin', data: true})
             if (vm.$route.name === 'login' || vm.$route.name === 'regist') {
@@ -418,6 +388,16 @@ new Vue({
         }, function () {
         })
       }
+
+      /*/!* 检查登录session是否过期(7天保质期) *!/
+       if (isLogin) {
+       if (me.getDiffDay(isLogin) > 6) {
+       vm.$router.push({path: '/login'})
+       }
+       } else {
+       if (vm.$route.name === 'login' || vm.$route.name === 'regist') return
+       vm.$router.push({path: '/login'})
+       }*/
     },
     getDict() {
       vm.loadData(commonApi.dict, {}, 'POST', function (res) {

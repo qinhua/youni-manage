@@ -37,6 +37,7 @@
           // wx授权页面
           vm.getWxInfo(function (info) {
             /* 保存用户信息 */
+            window.youniMall.userAuth = vm.$store.state.global.wxInfo = info
             me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
             vm.$router.push({path: '/home'})
             // vm.$router.back()
@@ -61,6 +62,7 @@
             'subscribeTime': null,
             'unionid': null
           }
+          window.youniMall.userAuth = vm.$store.state.global.wxInfo = info
           me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
           vm.$router.push({path: '/home'})
         }

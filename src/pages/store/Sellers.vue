@@ -12,7 +12,7 @@
     <div class="sellers-list">
       <scroller class="inner-scroller" ref="sellersScroller" height="100%" :on-refresh="refresh" :on-infinite="infinite"
                 refreshText="下拉刷新"
-                noDataText="没有更多数据"
+                noDataText="就这么多了"
                 snapping>
         <!-- content goes here -->
         <section class="v-items" v-for="(item, index) in sellers" :data-id="item.id"
@@ -95,9 +95,6 @@
       setPageStatus(data) {
         this.$emit('listenPage', data)
       },
-      buy(id) {
-        vm.$router.push({path: '/detail/' + id})
-      },
       getSellers(isLoadMore, status) {
         if (vm.isPosting) return false
         !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
@@ -165,7 +162,7 @@
       setState(id, status) {
         if (vm.isPosting) return false
         vm.isPosting = true
-        vm.loadData(storeApi.setSaleStatus, {sellerId: id, status: status}, 'POST', function (res) {
+        vm.loadData(storeApi.updateStatus, {sellerId: id, status: status}, 'POST', function (res) {
           vm.isPosting = false
           vm.toast(status === 3 ? '已冻结' : '已恢复')
           vm.getSellers()
@@ -178,7 +175,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
           vm.isPosting = true
-          vm.loadData(goodsApi.auth,{sellerId:id}, 'POST', function (res) {
+          vm.loadData(storeApi.audit,{sellerId:id}, 'POST', function (res) {
             vm.isPosting = false
             vm.toast('已审核')
             vm.getSellers()
