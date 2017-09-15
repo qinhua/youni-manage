@@ -362,13 +362,13 @@ new Vue({
     !vm.$store.state.global.dict ? vm.getDict() : null
   },
   /*watch: {
-    '$route'(to, from) {
-      this.checkLogin()
-    }
-  },*/
+   '$route'(to, from) {
+   this.checkLogin()
+   }
+   },*/
   mounted() {
     vm = this
-    this.checkLogin()
+    // this.checkLogin()
   },
   methods: {
     checkLogin() {
