@@ -105,7 +105,7 @@
         vm.loadData(commonApi.login, vm.params, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
-          if (res.success) {
+          if (res.data.success) {
             vm.isPosting = false
             vm.toast('登录成功 ！')
             /* 保存用户信息 */

@@ -15,6 +15,8 @@ import 'myMixin'
 import store from './store'
 import VueScroller from 'vue-scroller'
 import {AlertPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin} from 'vux'
+const FastClick = require('fastclick')
+FastClick.attach(document.body)
 
 Vue.use(require('vue-wechat-title'))
 Vue.use(ConfirmPlugin)
