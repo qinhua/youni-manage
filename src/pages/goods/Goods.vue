@@ -1,12 +1,17 @@
 <template>
   <div class="goods-con" v-cloak>
     <tab class="goods-tab" active-color="#4670fe">
-      <tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus"><i class="fa fa-th-large"></i>&nbsp;全部
+      <tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus">
+        <!--<i class="fa fa-th-large"></i>&nbsp;-->
+        全部
       </tab-item>
-      <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)"><i
-        class="fa fa-podcast"></i>&nbsp;出售
+      <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)">
+        <!--<i class="fa fa-podcast"></i>&nbsp;-->
+        出售
       </tab-item>
-      <tab-item :selected="params.saleStatus===2?true:false" @on-item-click="filterStatus(2)"><i class="fa fa-plug"></i>&nbsp;停售
+      <tab-item :selected="params.saleStatus===2?true:false" @on-item-click="filterStatus(2)">
+        <!--<i class="fa fa-plug"></i>&nbsp;-->
+        停售
       </tab-item>
     </tab>
     <div class="goods-list">

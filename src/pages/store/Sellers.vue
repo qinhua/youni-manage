@@ -1,12 +1,18 @@
 <template>
   <div class="sellers-con" v-cloak>
     <tab class="sellers-tab" active-color="#4670fe">
-      <tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)"><i class="fa fa-th-large"></i>&nbsp;全部
+      <!--<tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)"><i class="fa fa-th-large"></i>&nbsp;全部
       </tab-item>
       <tab-item :selected="type===1?true:false" @on-item-click="filterSeller(1)"><i
         class="fa fa-beer"></i>&nbsp;水
       </tab-item>
       <tab-item :selected="type===2?true:false" @on-item-click="filterSeller(2)"><i class="fa fa-flask"></i>&nbsp;奶
+      </tab-item> -->
+      <tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)">全部
+    </tab-item>
+      <tab-item :selected="type===1?true:false" @on-item-click="filterSeller(1)">水
+      </tab-item>
+      <tab-item :selected="type===2?true:false" @on-item-click="filterSeller(2)">奶
       </tab-item>
     </tab>
     <div class="sellers-list">

@@ -4,25 +4,30 @@
     <!-- <div class="swiper-home">
        <swiper ref="slider01" skey="s01" :slides="banner" autoPlay="2500"></swiper>
      </div>-->
-    <div class="overview">
-      <!--<a href="#/user"><i class="fa fa-user-circle-o user-center"></i></a>-->
+    <div class="overview" v-cloak>
+      <a href="#/user" class="top-seller-avatar">
+        <img :src="avatar" alt="店铺头像" v-if="avatar">
+        <i class="fa fa-user-circle-o user-center" v-else></i>
+      </a>
       <div class="top">
-        <p class="today">今日营业额(元)</p>
+        <p class="today">今日收入(元)</p>
         <h2>
-          <countup :start-val="0" :end-val="2200500" :decimals="2" :duration="2"></countup>
+          <countup :start-val="0" :end-val="overview.payAmount ? parseInt(overview.payAmount.toFixed(2)) : 0.00"
+                   :decimals="2"
+                   :duration="2"></countup>
         </h2>
-        <p class="yesterday">昨日：{{2020201 | toFixed}}</p>
+        <p class="yesterday">昨日：{{overview.payAmount ? parseInt(overview.payAmount.toFixed(2)) : 0.00}}</p>
       </div>
       <div class="bottom">
         <div class="col left-col">
           <p class="today">成交数</p>
-          <h2 class="total">1105</h2>
-          <p class="yesterday">昨日2510</p>
+          <h2 class="total">{{overview.payCount}}</h2>
+          <p class="yesterday">昨日{{overview.payCount}}</p>
         </div>
         <div class="col right-col">
-          <p class="today">浏览数</p>
-          <h2 class="total">3820</h2>
-          <p class="yesterday">昨日4420</p>
+          <p class="today">订单数</p>
+          <h2 class="total">{{overview.totalCount}}</h2>
+          <p class="yesterday">昨日{{overview.totalCount}}</p>
         </div>
       </div>
     </div>
@@ -225,6 +230,13 @@
       return {
         geo: null,
         location: '',
+        avatar: '',
+        overview: {
+          payAmount: 0,
+          payCount: 0,
+          totalAmount: 0,
+          totalCount: 0
+        },
         isMilk: false,
         type: 0,
         orders: [],
@@ -257,7 +269,7 @@
     },
     mounted() {
       vm = this
-      me.attachClick()
+      vm.getOverview()
       vm.getOrders()
       vm.$nextTick(function () {
         try {
@@ -271,6 +283,7 @@
     watch: {
       '$route'(to, from) {
         if (to.name === 'home') {
+          vm.getOverview()
           vm.getOrders()
         }
       },
@@ -301,6 +314,17 @@
           vm.getOrders(true)
           vm.$refs.orderScroller.finishInfinite(true)
         }, 1000)
+      },
+      getOverview() {
+        vm.avatar = me.sessions.get('ynManageInfo') ? JSON.parse(me.sessions.get('ynManageInfo')).headimgurl : '' || vm.$store.state.global.wxInfo.headimgurl
+        if (vm.isPosting) return false
+        vm.isPosting = true
+        vm.loadData(orderApi.count, null, 'POST', function (res) {
+          vm.isPosting = false
+          vm.overview = res.data
+        }, function () {
+          vm.isPosting = false
+        })
       },
       getOrders(isLoadMore) {
         if (vm.isPosting) return false
@@ -424,6 +448,13 @@
       padding: 30/@rem 30/@rem 20/@rem;
       .cf;
       .bdiy(#4670fe);
+      .top-seller-avatar {
+        img {
+          .size(50, 50);
+          .borR(50%);
+          .bor(1px, solid, #345fc1);
+        }
+      }
       .user-center {
         .abs;
         left: 0;

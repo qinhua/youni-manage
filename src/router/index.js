@@ -81,7 +81,7 @@ export default new Router({
       name: 'banner',
       component: Banner,
       meta: {
-        title: '首页banner图片',
+        title: '首页Banner',
         keepAlive: false
       }
     },

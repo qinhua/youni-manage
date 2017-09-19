@@ -176,8 +176,7 @@
     .loginType {
       .fl;
       .c3;
-      .fw(600);
-      .fz(26);
+      .fz(24);
       padding: 10/@rem;
       i {
         font-style: normal;

@@ -9,22 +9,25 @@
     </div>
     <group class="list-modal">
       <cell title="店铺资料" link="/edit_user/255">
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
       </cell>
       <cell title="押金列表" link="/myguarantee">
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
-      <cell title="使用帮助" link="/help"><i slot="icon" width="20" style="margin-right:5px;"
-                                         class="fa fa-question-circle"></i></cell>
-      <cell title="关于友你" link="/aboutus"><i slot="icon" width="20" style="margin-right:5px;"
-                                            class="fa fa-info-circle"></i></cell>
+      <cell title="使用帮助" link="/help">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-question-circle"></i>-->
+      </cell>
+      <cell title="关于友你" link="/aboutus">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-info-circle"></i>-->
+      </cell>
     </group>
     <group class="bottom">
-      <cell title="修改密码" style="color:#666" @click.native="modPassword"><i slot="icon" width="20"
-                                                                           style="margin-right:5px;"
-                                                                           class="fa fa-wrench"></i></cell>
-      <cell title="退出登录" style="color:#666" @click.native="logout"><i slot="icon" width="20" style="margin-right:5px;"
-                                                                      class="fa fa-sign-out"></i></cell>
+      <cell title="修改密码" style="color:#666" @click.native="modPassword">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-wrench"></i>-->
+      </cell>
+      <cell title="退出登录" style="color:#666" @click.native="logout">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
+      </cell>
     </group>
   </div>
 </template>
@@ -90,7 +93,7 @@
       .user-inner {
         .rel;
         z-index: 2;
-        padding: 50/@rem 20/@rem;
+        padding: 50/@rem 10/@rem;
         > img {
           .block;
           .size(130, 130);

@@ -130,7 +130,7 @@ Vue.prototype.loadData = function (url, params, type, sucCb, errCb) {
           if (vm.$route.name === 'regist') return
           vm.processing(0, 1)
           // vm.confirm('温馨提示','请先登录！',function(){
-          vm.$router.push({path: '/login'})
+          //vm.$router.push({path: '/login'})
           // })
         }
         try {

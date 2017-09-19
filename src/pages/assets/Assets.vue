@@ -4,28 +4,28 @@
       <div class="withdraw-modal">
         <div class="left">
           <h3>可提现金额</h3>
-          <p>￥2502066.00</p>
+          <p>￥0.00</p>
         </div>
         <div class="right">提现</div>
       </div>
-      <cell title="不可用金额" link="">￥20000
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-cube"></i>
+      <cell title="不可用金额" link="">￥0.00
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-cube"></i>-->
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="已结算收入" link="">￥25000
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>
+      <cell title="已结算收入" link="">￥0.00
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
       </cell>
-      <cell title="未结算收入" link="">￥18560
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>
+      <cell title="未结算收入" link="">￥0.00
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
     </group>
     <group class="list-modal bottom">
       <cell title="收支明细" link="">
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>-->
       </cell>
       <cell title="提现记录" link="">
-        <i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>-->
       </cell>
     </group>
   </div>
@@ -131,11 +131,9 @@
             border-style: solid;
             -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
             transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-            position: relative;
-            top: -2px;
             position: absolute;
             top: 50%;
-            margin-top: -4px;
+            margin-top: -6px;
             right: 2px;
           }
         }
