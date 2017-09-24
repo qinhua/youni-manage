@@ -5,29 +5,32 @@
        <swiper ref="slider01" skey="s01" :slides="banner" autoPlay="2500"></swiper>
      </div>-->
     <div class="overview" v-cloak>
-      <a href="#/user" class="top-seller-avatar">
-        <img :src="avatar" alt="店铺头像" v-if="avatar">
+      <!--<a href="#/user" class="top-seller-avatar">
+        <img :src="seller.headimgurl" alt="店铺头像" v-if="seller.headimgurl" v-cloak>
         <i class="fa fa-user-circle-o user-center" v-else></i>
-      </a>
+      </a>-->
       <div class="top">
         <p class="today">今日收入(元)</p>
         <h2>
-          <countup :start-val="0" :end-val="overview.payAmount ? parseInt(overview.payAmount.toFixed(2)) : 0.00"
+          <countup :start-val="0"
+                   :end-val="overview.today.totalPayAmount > 0? overview.today.totalPayAmount : 0.00"
                    :decimals="2"
                    :duration="2"></countup>
         </h2>
-        <p class="yesterday">昨日：{{overview.payAmount ? parseInt(overview.payAmount.toFixed(2)) : 0.00}}</p>
+        <p class="yesterday">
+          昨日：{{overview.yesterday.totalPayAmount > 0 ? overview.yesterday.totalPayAmount.toFixed(2) : 0.00}}</p>
       </div>
       <div class="bottom">
         <div class="col left-col">
           <p class="today">成交数</p>
-          <h2 class="total">{{overview.payCount}}</h2>
-          <p class="yesterday">昨日{{overview.payCount}}</p>
+          <h2 class="total">{{overview.today.payCount > 0 ? overview.today.payCount : 0}}</h2>
+          <p class="yesterday">昨日{{overview.yesterday.payCount > 0 ? overview.yesterday.payCount : 0}}</p>
         </div>
         <div class="col right-col">
           <p class="today">订单数</p>
-          <h2 class="total">{{overview.totalCount}}</h2>
-          <p class="yesterday">昨日{{overview.totalCount}}</p>
+          <h2 class="total">{{overview.today.orderCount > 0 ? overview.today.orderCount : 0}}</h2>
+          <p class="yesterday">
+            昨日{{overview.yesterday.orderCount > 0 ? overview.yesterday.orderCount : 0}}</p>
         </div>
       </div>
     </div>
@@ -232,10 +235,16 @@
         location: '',
         avatar: '',
         overview: {
-          payAmount: 0,
-          payCount: 0,
-          totalAmount: 0,
-          totalCount: 0
+          today: {
+            orderCount: 0,
+            payCount: 0,
+            totalPayAmount: 0
+          },
+          yesterday: {
+            orderCount: 0,
+            payCount: 0,
+            totalPayAmount: 0
+          }
         },
         isMilk: false,
         type: 0,
@@ -283,13 +292,14 @@
     watch: {
       '$route'(to, from) {
         if (to.name === 'home') {
-          vm.getOverview()
+          vm.getAdmin()
           vm.getOrders()
         }
       },
       isMilk() {
         delete vm.params.status
         vm.params.goodsType = vm.isMilk ? 'goods_type.2' : 'goods_type.1'
+        vm.getAdmin()
         vm.getOrders()
       }
     },
@@ -315,13 +325,33 @@
           vm.$refs.orderScroller.finishInfinite(true)
         }, 1000)
       },
-      getOverview() {
-        vm.avatar = me.sessions.get('ynManageInfo') ? JSON.parse(me.sessions.get('ynManageInfo')).headimgurl : '' || vm.$store.state.global.wxInfo.headimgurl
+      getAdmin() {
+        var localSeller = me.sessions.get('ynAdminInfo')
+        if (localSeller) {
+          vm.$store.commit('storeData', {key: 'userInfo', data: JSON.parse(localSeller)})
+          vm.seller = JSON.parse(localSeller)
+          vm.getOverview(JSON.parse(localSeller).id)
+          return false
+        } else {
+          vm.loadData(userApi.get, null, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success && res.data) {
+              vm.seller = res.data
+              vm.getOverview(res.data.id)
+              vm.$store.commit('storeData', {key: 'userInfo', data: res.data})
+              me.sessions.set('ynAdminInfo', JSON.stringify(res.data))
+            }
+          })
+        }
+      },
+      getOverview(id) {
         if (vm.isPosting) return false
         vm.isPosting = true
-        vm.loadData(orderApi.count, null, 'POST', function (res) {
+        vm.loadData(orderApi.count, {sellerId: id}, 'POST', function (res) {
           vm.isPosting = false
-          vm.overview = res.data
+          if (res.success) {
+            vm.overview = res.data
+          }
         }, function () {
           vm.isPosting = false
         })
