@@ -1,6 +1,5 @@
 <template>
   <div class="page-auth">
-    授权页面
     <div id="userInfo"></div>
   </div>
 </template>
@@ -32,43 +31,39 @@
     mounted() {
       vm = this
       // 检测用户是否登录
-//      if (vm.$store.state.global.wxInfo) {
-        if (me.isWeixin) {
-          // wx授权页面
-          vm.getWxInfo(function (info) {
-            /* 保存用户信息 */
-            window.youniMall.userAuth = vm.$store.state.global.wxInfo = info
-            me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
-            vm.$router.push({path: '/home'})
-            // vm.$router.back()
-          })
-        } else {
-          // 外部登录页面
-//          location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=123456&connect_redirect=1#wechat_redirect'
-
-          /*测试专用*/
-          var info={
-            'city': '武汉',
-            'country': '中国',
-            'errorCode': 0,
-            'errorMessage': null,
-            'headimgurl': 'http://wx.qlogo.cn/mmopen/QAm7hEbaujS41jY5T0icQd9ySS9FaRJibTiclJGyysBmLoFmswkhLemAHAibYOQml4hibx3BqD2u8NRIwrAhTyeLgjavI70oxia8uk/0',
-            'nickname': '覃华',
-            'openid': 'oGnE80ixTvBXjQ_Dql0BcTlx',
-            'privilege': [],
-            'province': '湖北',
-            'sex': '1',
-            'subscribe': 0,
-            'subscribeTime': null,
-            'unionid': null
-          }
+      // if (vm.$store.state.global.wxInfo) {
+      if (me.isWeixin) {
+        // wx授权页面
+        vm.getWxInfo(function (info) {
+          /* 保存用户信息 */
           window.youniMall.userAuth = vm.$store.state.global.wxInfo = info
           me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
-          vm.$router.push({path: '/home'})
+          vm.goBeforePage()
+        })
+      } else {
+        // 外部登录页面
+        // location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=123456&connect_redirect=1#wechat_redirect'
+
+        /*测试专用*/
+        var info = {
+          "openid": "oGnE80ixTvBXjQ_DqI0BcTlxqiu4",
+          "nickname": "覃华",
+          "sex": 1,
+          "language": "zh_CN",
+          "city": "武汉",
+          "province": "湖北",
+          "country": "中国",
+          "headimgurl": "http://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPsbt7BibERGzRjOLVtdWDp2W1chq8aoyMOz3sJYTqsHhmOjgugokeCiamkr0snBMNkUd6k2sHyELw/0",
+          "privilege": []
         }
-     /* } else {
-        vm.$router.push({path: '/home'})
-      }*/
+        window.youniMall.userAuth = vm.$store.state.global.wxInfo = info
+        me.locals.set('ynWxUser', JSON.stringify({data: info, timeStamp: me.formatDate(new Date(), null, 1)}))
+        // vm.jump('/home')
+        vm.goBeforePage()
+      }
+      /*} else {
+       vm.$router.push({path: '/home'})
+       }*/
     },
     computed: {},
     methods: {
@@ -85,7 +80,6 @@
             }
           }, function (res) {
             me.lightPop('拉取用户信息失败！')
-            // alert(JSON.stringify(res))
           })
           // window.location.href = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + vm.appId + '&secret=' + vm.appSecret + '&code=' + urlParam.code + '&grant_type=authorization_code'
           // location.href = 'https://api.weixin.qq.com/sns/userinfo?access_token=' + resD.access_token + '&openid=' + resD.openid + '&lang=zh_CN'
@@ -96,19 +90,20 @@
       // 02.wx外部登录
       login() {
       },
-      goBeforeLoginUrl() {
-        let url = me.locals.get('beforeLoginUrl')
-        if (!url || url.indexOf('/author') !== -1) {
-          this.$router.push({path: '/home'})
-        } else {
-          this.$router.push({path: url})
-          me.locals.set('beforeLoginUrl', '')
-        }
+      // 03.返回判断
+      goBeforePage() {
+        /*let url = me.locals.get('beforeLoginUrl') || '/login'
+         if (!url || url.indexOf('/author') !== -1) {*/
+        this.$router.push({path: '/home'})
+        /*} else {
+         this.$router.push({path: url})
+         me.locals.set('beforeLoginUrl', '')
+         }*/
       }
     },
     /*watch: {
-       '$route' (to, from) {}
-    }*/
+     '$route' (to, from) {}
+     }*/
   }
 </script>
 

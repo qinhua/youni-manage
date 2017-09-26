@@ -34,24 +34,21 @@ const goodsApi = {
   update: host + '/goods/update',
   setSaleStatus: host + '/goods/setSaleStatus'
 }
-const nearbyApi = {
-  shopsList: host + '/home/shopsList'
-}
 const ticketApi = {
   tickets: host + '/home/tickets'
 }
 const orderApi = {
   list: host + '/order/list',
+  view: host + '/order/view',
   del: host + '/order/del',
-  push: host + '/order/push',
   cancel: host + '/order/cancel',
   count: host + '/order/count',
   dispatcher: host + '/orderDispatchProgess/list',
   dispatch: host + '/orderDispatchProgess/add',
-  updateOrder: host + '/home/updateOrder'
+  updateOrderStatus: host + '/order/updateOrderStatus'
 }
 const clientApi = {
-  list: host + '/home/order',
+  list: host + '/admin/userList',
   updateOrder: host + '/home/updateOrder'
 }
 const storeApi = {
@@ -73,13 +70,24 @@ const userApi = {
   getFloor: host + '/floorCost/get',
   addFloor: host + '/floorCost/add',
 }
+const assetsApi = {
+  asset: host + '/seller/amount',
+  withDrawList: host + '/seller/statistic',
+  withDraw: host + '/common/top10'
+}
 const statisticApi = {
   list: host + '/seller/statistic',
+  top10: host + '/common/top10',
+  orderAnalysis: host + '/common/orderAnalysis',
+  saleAnalysis: host + '/common/saleAnalysis',
+  puvAnalysis: host + '/common/puvAnalysis'
 }
 const commonApi = {
   wxAuth: host + '/weixin/auth',
   login: host + '/admin/login',
+  logout: host + '/seller/logout',
   regist: host + '/seller/applySeller',
+  reset: host + '/seller/setPasswd',
   dict: host + '/common/dictList',
   uploadImg: host + '/file/uploadImage',
   sendSms: host + '/common/sendSms',
@@ -92,12 +100,12 @@ export {
   homeApi,
   bannerApi,
   topicApi,
-  nearbyApi,
   ticketApi,
   orderApi,
   clientApi,
   storeApi,
   userApi,
   goodsApi,
+  assetsApi,
   statisticApi
 }

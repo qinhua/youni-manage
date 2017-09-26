@@ -51,6 +51,11 @@
       me.attachClick()
       vm.params.phone = vm.$route.query.phone || null
       vm.params.passwd = vm.$route.query.psw || null
+      window.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) {
+          vm.login()
+        }
+      }, false)
     },
     computed: {
       loginText() {

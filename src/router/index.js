@@ -4,9 +4,6 @@ import Router from 'vue-router'
 import Auth from '@/pages/Auth'
 import Login from '@/pages/my/Login'
 import Home from '@/pages/Home'
-import NearBy from '@/pages/NearBy'
-import Ticket from '@/pages/Ticket'
-import Order from '@/pages/Order'
 import Map from '@/components/Amap'
 import Geo from '@/components/Geo'
 import My from '@/pages/My'
@@ -31,6 +28,9 @@ import Goods from '@/pages/goods/Goods'
 import EditGoods from '@/pages/goods/Edit'
 import Clients from '@/pages/clients/Clients'
 import Assets from '@/pages/assets/Assets'
+import Income from '@/pages/assets/income/Income'
+import WithDrawList from '@/pages/assets/withDraw/WithDrawList'
+import WithDraw from '@/pages/assets/withDraw/WithDraw'
 import Statistic from '@/pages/statistic/Statistic'
 import Regist from '@/pages/my/Regist'
 import Password from '@/pages/my/Password'
@@ -101,42 +101,6 @@ export default new Router({
       component: Home,
       meta: {
         title: '商城后台',
-        keepAlive: false
-      }
-    },
-    {
-      path: '/nearby',
-      name: 'nearby',
-      component: NearBy,
-      meta: {
-        title: '附近',
-        keepAlive: false
-      }
-    },
-    {
-      path: '/ticket',
-      name: 'ticket',
-      component: Ticket,
-      meta: {
-        title: '水票',
-        keepAlive: false
-      }
-    },
-    {
-      path: '/ticket/:type',
-      name: 'ticket',
-      component: Ticket,
-      meta: {
-        title: '水票',
-        keepAlive: false
-      }
-    },
-    {
-      path: '/order',
-      name: 'order',
-      component: Order,
-      meta: {
-        title: '订单',
         keepAlive: false
       }
     },
@@ -259,6 +223,33 @@ export default new Router({
       component: Assets,
       meta: {
         title: '资金管理',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/income_list',
+      name: 'income_list',
+      component: Income,
+      meta: {
+        title: '收支明细',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/with_draw',
+      name: 'with_draw',
+      component: WithDraw,
+      meta: {
+        title: '提现',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/with_draw_list',
+      name: 'with_draw_list',
+      component: WithDrawList,
+      meta: {
+        title: '提现记录',
         keepAlive: false
       }
     },

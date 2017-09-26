@@ -21,29 +21,35 @@
                 noDataText="就这么多了"
                 snapping>
         <!-- content goes here -->
-        <section class="v-items" v-for="(item, index) in sellers" :data-id="item.id"
-                 :data-orderNumber="item.orderNumber">
-          <h4 class="item-top"><i class="ico-store"></i>&nbsp;{{item.sellerName}}&nbsp;&nbsp;<i
-            class="fa fa-angle-right cc"></i><span>{{item.statusName}}</span></h4>
-          <section class="item-middle">
-            <div class="img-con">
-              <img :src="item.imgurl">
-            </div>
-            <div class="info-con">
-              <h3>{{item.name}}</h3>
+        <section class="v-items" v-for="(item, index) in sellers" :data-id="item.id" @click="toDetail(item.id)"
+            v-cloak>
+          <section class="wrap">
+            <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
+            <section class="infos">
+              <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
+                <span class="distance">{{(item.distance ? item.distance : 0) | toFixed(1, true)}}km</span>
+              </h3>
               <section class="middle">
-                <span class="unit-price">售价：￥{{item.price}}</span>
-                <span class="order-info">已售：{{item.saleCount}}</span>
+                <div class="score-con">
+                  <ol class="star" v-if="item.sellerScore" v-cloak>
+                    <li v-for="star in item.sellerScore">★</li>
+                  </ol>
+                  <ol class="star gray" v-else>
+                    <li v-for="star in 5">★</li>
+                  </ol>
+                  <span>{{item.sellerScore | toFixed(1)}}分</span>
+                </div>
+                <span class="hasSell">已售{{item.sellerCount}}单</span>
               </section>
-              <label>库存：{{item.stock}}</label>
-            </div>
-          </section>
-          <section class="item-bottom">
-            <div class="btns">
-              <a class="btn btn-del" @click="auth(item.id)" v-if="item.status===1">通过审核</a>
-              <a class="btn btn-del" @click="setState(item.id,3)" v-else>冻结</a>
-              <a class="btn btn-del" @click="setState(item.id,1)" v-else>恢复</a>
-              <a class="btn btn-del" @click="del(item.id)">删除</a>
+              <div class="tags">
+                <label :class="item.authLevelCls">{{item.authLevelName}}</label>
+                <span class="dispatchTime">平均{{item.dispatchTime || 22}}分钟送达</span>
+              </div>
+            </section>
+            <div class="bottom" v-if="item.ticket">
+              <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
+              <!--<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>-->
+              <span class="dispatchTime">{{item.label}}</span>
             </div>
           </section>
         </section>
@@ -64,7 +70,25 @@
     data() {
       return {
         type:3,
-        sellers: [],
+//        sellers: [],
+        sellers: [
+          {
+            "name": "张三",
+            "phone": "电话",
+            "companyName": "XX公司",
+            "address": "商家地址",
+            "type": "店铺分类(0全部，1水，2奶)",
+            "authLevel": "认证级别(1普通店，2官方认证，3金牌店)"
+          },
+          {
+            "name": "李四",
+            "phone": "电话",
+            "companyName": "XX公司",
+            "address": "商家地址",
+            "type": "店铺分类(0全部，1水，2奶)",
+            "authLevel": "认证级别(1普通店，2官方认证，3金牌店)"
+          }
+        ],
         params: {
           type: '',
           pagerSize: 10,
@@ -80,20 +104,15 @@
     },
     mounted() {
       vm = this
-      vm.getSellers()
-      vm.$nextTick(() => {
+//      vm.getSellers()
+      vm.$nextTick(function(){
         vm.$refs.sellersScroller.finishInfinite(true)
         vm.$refs.sellersScroller.resize()
       })
     },
-    /* computed: {
-     'params.type' () {
-     return this.$route.params.type
-     }
-     }, */
     watch: {
       '$route'(to, from) {
-        vm.getSellers()
+//        vm.getSellers()
       }
     },
     methods: {
@@ -216,128 +235,187 @@
         .borBox;
         padding: 44px 0 50px;
         .v-items {
-          .borBox;
-          margin-bottom: 10/@rem;
+          .rel;
+          padding: 20/@rem;
           .bf;
-          .item-top {
-            padding: 14/@rem 20/@rem;
-            .txt-normal;
-            .c3;
-            .fz(24);
+          &:not(:last-child) {
             .bor-b;
-            .ico-store {
-              .fl;
-              display: inline-block;
-              margin-top: 2/@rem;
-              font-size: inherit;
-              .size(30, 30);
-              background: url(../../../static/img/ico_store.png);
+          }
+          .sleep-tips {
+            .abs;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            .cf;
+            .fz(30);
+            .bdiy(rgba(0, 0, 0, .6));
+            .wrap {
+              .borBox;
+              padding: 0 30/@rem;
+              .abs-center-vertical;
+              width: 100%;
+            }
+            h3 {
+              .rel;
+              width: 100%;
+              .txt-normal;
+              span {
+                .fz(20)
+              }
+            }
+            .btn-reserve {
+              .abs-center-vertical;
+              right: 0;
+              .size(120, 60);
+              line-height: 60/@rem;
+              .fz(24);
+              .cf;
+              .borR(4px);
+              .bdiy(rgba(45, 199, 108, 0.5))
+            }
+          }
+          .wrap {
+            .rel;
+          }
+          .img-con {
+            .abs-center-vertical;
+            .size(140, 140);
+            overflow: hidden;
+            background: #f5f5f5 url(../../../static/img/bg_nopic.jpg) no-repeat center;
+            -webkit-background-size: cover;
+            background-size: cover;
+          }
+          .infos {
+            .flex;
+            .flex-d-v;
+            .borBox;
+            width: 100%;
+            .h(150);
+            padding-left: 170/@rem;
+            h3 {
+              .flex-r(1);
+              .fz(26);
+              .txt-normal;
+              .c3;
+              .ellipsis;
+            }
+            .middle {
+              .flex-r(1);
+              .price {
+              }
+              span {
+                &.price {
+                  .c3;
+                  .fz(24);
+                  .txt-del;
+                }
+                &.hasSell {
+                  padding-left: 30/@rem;
+                  .fz(22);
+                  .c9;
+                }
+              }
+              .score-con {
+                .fl;
+                overflow: hidden;
+                span {
+                  .fl;
+                  .fz(22);
+                  line-height: 2;
+                  .cdiy(#ff9900);
+                }
+                .star {
+                  .fl;
+                  overflow: hidden;
+                  &.gray {
+                    li {
+                      .c9;
+                    }
+                  }
+                  li {
+                    .fl;
+                    margin-right: 10/@rem;
+                    .rfz(16);
+                    .cdiy(#ff9900);
+                  }
+                }
+              }
+            }
+            .tags {
+              .flex-r(1);
+              label {
+                .fl;
+                margin-right: 10/@rem;
+                padding: 1px 8px;
+                line-height: 1.8;
+                .cf;
+                .fz(16);
+                .borR(4px);
+                &.c1 {
+                  .bdiy(#7facf9);
+                }
+                &.c2 {
+                  .bdiy(#84ce36);
+                }
+                &.c3 {
+                  .bdiy(#e8b52d);
+                }
+              }
+              .dispatchTime {
+                .fr;
+                padding-top: 10/@rem;
+                .c9;
+                .block;
+                .fz(20);
+              }
+            }
+            .distance {
+              .abs;
+              right: 0;
+              top: 0;
+              .c9;
+              .fz(20);
+            }
+          }
+          .bottom {
+            overflow: hidden;
+          }
+          .note {
+            .fl;
+            .rel;
+            padding: 10/@rem 0 0 30/@rem;
+            .c6;
+            .block;
+            .fz(20);
+            &:before {
+              .abs;
+              .block;
+              left: 0;
+              top: 12/@rem;
+              content: '';
+              .size(26, 26);
+              background: url(../../../static/img/ico_hui.png) center;
               .ele-base;
             }
-            span {
-              .fr;
-              .fz(22);
-              .cdiy(@c2);
-            }
           }
-          .item-middle {
-            padding: 14/@rem 20/@rem;
-            .flex;
-            .img-con {
-              .rel;
-              .size(130, 130);
-              img {
-                width: 100%;
-                .abs-center-vh;
-              }
-            }
-            .info-con {
-              .flex-r(2);
-              padding: 0 14/@rem;
-              h3 {
-                padding-bottom: 10/@rem;
-                .txt-normal;
-                .c3;
-                .fz(26);
-                .ellipsis-clamp-2;
-              }
-              .middle {
-                .c9;
-                .fz(20);
-                .ellipsis-clamp-2;
-                .unit-price {
-                  padding-right: 40/@rem;
-                  .c3;
-                }
-              }
-              label {
-                .fz(20);
-              }
-            }
-            .price-con {
-              .flex-r(1);
-              .right;
-              .price {
-                padding-bottom: 10/@rem;
-                .c3;
-                .fz(24);
-              }
-              .buy-count {
-                .c9;
-                .fz(22);
-              }
-            }
+        }
+        .service_type {
+          margin-left: 4px;
+          padding: 0 2px;
+          font-weight: normal;
+          .cf;
+          .fz(22);
+          background: #2acaad;
+          .borR(2px);
+          &.water {
+            background: #2acaad;
           }
-          .item-bottom {
-            .extra-info {
-              margin-top: 2px;
-              padding: 10/@rem 20/@rem;
-              .bf8;
-              p {
-                .fz(22);
-                .c3;
-                span {
-                  .fr;
-                }
-                &:not(:last-child) {
-                  padding-bottom: 10/@rem;
-                }
-              }
-            }
-            .total-price {
-              padding: 10/@rem 20/@rem;
-              .right;
-              .c3;
-              .fz(22);
-              .bor;
-              span {
-                .fz(30);
-              }
-            }
-            .btns {
-              padding: 20/@rem 20/@rem;
-              overflow: hidden;
-              .bor-t;
-              a {
-                .fr;
-                padding: 4px 40/@rem;
-                margin-left: 20/@rem;
-                .cf;
-                .fz(22);
-                .borR(50px);
-                &.btn-cancel, &.btn-del {
-                  .c6;
-                  .bor(1px, solid, #ccc);
-                }
-                &.btn-push, &.btn-appraise, &.btn-pay {
-                  .cdiy(@c2);
-                  .bor(1px, solid, @c2);
-                }
-              }
-            }
+          &.milk {
+            background: #74c361;
           }
-          &.grey {
-            .c9!important;
+          &.water-milk {
+            background: #ad64d2;
           }
         }
       }

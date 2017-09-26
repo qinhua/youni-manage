@@ -4,27 +4,28 @@
       <div class="withdraw-modal">
         <div class="left">
           <h3>可提现金额</h3>
-          <p>￥0.00</p>
+          <p>￥{{assets.waitTakeAmount > 0 ? assets.waitTakeAmount: 0.00}}<i>元</i></p>
         </div>
-        <div class="right">提现</div>
+        <div class="right" :data-amount="assets.waitTakeAmount" v-jump="['with_draw']">提现</div>
       </div>
-      <cell title="不可用金额" link="">￥0.00
+      <cell title="总收入" link="">
+        ￥{{assets.totalAmount > 0 ? assets.totalAmount : 0.00}}
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-cube"></i>-->
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="已结算收入" link="">￥0.00
+      <cell title="已结算收入" link="">￥{{assets.takeAmount > 0 ? assets.takeAmount : 0.00}}
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
       </cell>
-      <cell title="未结算收入" link="">￥0.00
+      <cell title="未结算收入" link="">￥{{assets.waitTakeAmount > 0 ? assets.waitTakeAmount : 0.00}}
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="收支明细" link="">
+      <cell title="收支明细" link="/income_list">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>-->
       </cell>
-      <cell title="提现记录" link="">
+      <cell title="提现记录" link="/with_draw_list">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>-->
       </cell>
     </group>
@@ -36,13 +37,20 @@
   let me
   let vm
   import {Grid, GridItem, Group, Cell} from 'vux'
+  import {assetsApi} from '../../service/main.js'
 
   export default {
     name: 'assets-con',
     data() {
       return {
-        sellerName: '水一波旗舰店',
-        count: 0
+        isPosting: false,
+        onFetching: false,
+        noMore: false,
+        assets: {
+          /*takeAmount: 0,
+           totalAmount: 0,
+           waitTakeAmount: 0*/
+        }
       }
     },
     components: {Grid, GridItem, Group, Cell},
@@ -50,31 +58,36 @@
       me = window.me
     },
     mounted() {
-      // me.attachClick()
+      vm = this
+      vm.getAssets()
     },
-    /*watch: {
+    watch: {
       '$route'(to, from) {
+        if (to.name === 'assets') {
+          vm.getAssets()
+        }
       }
-    },*/
-    computed: {},
+    },
+    /*computed: {},*/
     methods: {
-      // 向父组件传值
-      setPageStatus(data) {
-        this.$emit('listenPage', data)
+      getAssets() {
+        if (vm.onFetching) return false
+        vm.processing()
+        vm.onFetching = true
+        vm.loadData(assetsApi.asset, null, 'POST', function (res) {
+          vm.onFetching = false
+          vm.processing(0, 1)
+          vm.assets = res.data
+        }, function () {
+          vm.onFetching = false
+          vm.processing(0, 1)
+        })
       },
-      jumpTo(pathName, param, type) {
-        /* [type=2] 1:'path'2:'name',3:'query' */
-        type = type || 'name'
-        if (pathName) {
-          if (type === 1) {
-            this.$router.push({path: '/' + pathName + (param ? '/' + param : '')})
-          }
-          if (type === 2) {
-            this.$router.push({name: pathName, params: param || ''})
-          }
-          if (type === 3) {
-            this.$router.push({path: '/' + pathName, query: param || ''})
-          }
+      withDraw() {
+        if (vm.assets.waitTakeAmount > 0) {
+          vm.jump('with_draw')
+        } else {
+          vm.toast('当前无可提现金额', 'warn')
         }
       }
     }
@@ -91,6 +104,9 @@
       .weui-cells {
         margin-top: 10/@rem;
         padding: 0;
+        &:before {
+          .none;
+        }
       }
       .weui-cell {
         padding: 24/@rem !important;
@@ -100,7 +116,6 @@
         .rel;
         padding: 80/@rem 24/@rem !important;
         .cf;
-        /*.bdiy(#FE6246);*/
         background: #4670fe url(../../../static/img/sw_d.png) no-repeat 96% bottom;
         .rbg-size(32%);
         .left {
@@ -109,17 +124,22 @@
           padding-right: 100/@rem;
           h3 {
             .txt-normal;
-            .fz(30)
+            .fz(30);
           }
           p {
             padding-top: 40/@rem;
             .fz(50) !important;
+            i {
+              padding-left: 4px;
+              font-style: normal;
+              .fz(24);
+            }
           }
         }
         .right {
           .abs-center-vertical;
           right: 24/@rem;
-          padding-right: 12px;
+          padding: 20px 12px 20px 20px;
           .fz(28);
           &:after {
             content: " ";
@@ -133,7 +153,7 @@
             transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
             position: absolute;
             top: 50%;
-            margin-top: -6px;
+            margin-top: -4px;
             right: 2px;
           }
         }
