@@ -328,11 +328,13 @@
       a {
         &::after {
           .cf!important;
-          border: 1px solid #ff7029 !important;
+          /*border: 1px solid #ff7029 !important;*/
+          border: 1px solid #4670fe !important;
         }
       }
       a.vux-button-group-current {
-        background: #ff7029;
+        /*background: #ff7029;*/
+        background: #4670fe;
       }
     }
     .btn-tab-con {
@@ -395,8 +397,10 @@
           .borR(3px);
           &.active {
             .cf;
-            background: #ff7029;
-            .bor(1px, solid, #ff7029);
+            /*background: #ff7029;
+            .bor(1px, solid, #ff7029);*/
+            background: #4670fe;
+            .bor(1px, solid, #4670fe);
           }
         }
       }

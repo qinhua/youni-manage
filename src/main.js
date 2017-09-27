@@ -10,6 +10,7 @@ import 'ionicons/dist/css/ionicons.css'
 import 'weui/dist/style/weui.min.css'
 import weui from '../static/js/weui.js'
 import $ from 'jquery'
+import throttle from 'lodash.throttle'
 import '../static/js/fastclick.js'
 import 'myMixin'
 import store from './store'
@@ -140,8 +141,10 @@ router.beforeEach((to, from, next) => {
 /* ----- 封装一些方法 -------- */
 /* ajax请求 */
 Vue.prototype.weui = weui
+Vue.prototype.throttle = throttle
 Vue.prototype.$axios = Axios
 Vue.prototype.loadData = function (url, params, type, sucCb, errCb, noAuthInfo) {
+  if(!url) return
   params = params || {}
   var winAuth = window.youniMall.userAuth || (me.locals.get('ynWxUser') ? JSON.parse(me.locals.get('ynWxUser')).data : null)
   var localGeo = me.sessions.get('cur5656Geo') ? JSON.parse(me.sessions.get('cur5656Geo')) : {}

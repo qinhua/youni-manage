@@ -3,17 +3,18 @@
     <!--<router-view></router-view>-->
     <div class="user-modal">
       <div class="user-inner">
-        <img src="../../static/img/av.jpg">
-        <p class="user-name">{{sellerName}}</p>
+        <img :src="seller.headimgurl">
+        <p class="user-name">{{seller.name}}</p>
+        <!--<span><i class="fa fa-building-o"></i>&nbsp;{{seller.companyName}}</span>-->
       </div>
     </div>
     <group class="list-modal">
-      <cell title="店铺资料" link="/edit_user/255">
+      <cell title="店铺资料" link="/edit_user">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
       </cell>
-      <cell title="押金列表" link="/myguarantee">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
-      </cell>
+      <!--<cell title="押金列表" link="/myguarantee">
+        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>&ndash;&gt;
+      </cell>-->
       <cell title="使用帮助" link="/help">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-question-circle"></i>-->
       </cell>
@@ -22,8 +23,11 @@
       </cell>
     </group>
     <group class="bottom">
+      <!--<cell title="修改密码" style="color:#666" @click.native="modPassword"><i slot="icon" width="20"
+                                                                           style="margin-right:5px;"
+                                                                           class="fa fa-wrench"></i></cell>-->
       <cell title="修改密码" style="color:#666" @click.native="modPassword">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-wrench"></i>-->
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
       </cell>
       <cell title="退出登录" style="color:#666" @click.native="logout">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
@@ -37,14 +41,13 @@
   let me
   let vm
   import {Grid, GridItem, Group, Cell} from 'vux'
+  import {commonApi, userApi} from '../service/main.js'
 
   export default {
     name: 'my',
     data() {
       return {
-        sellerName: '水一波旗舰店',
-        sellerId: null,
-        count: 0
+        seller: {}
       }
     },
     components: {Grid, GridItem, Group, Cell},
@@ -52,28 +55,28 @@
       me = window.me
     },
     mounted() {
-      // me.attachClick()
       vm = this
+      vm.getSeller()
     },
-    /* watch: {
-       '$route'(to, from) {
-       }
-     },*/
-    computed: {},
+    // computed: {},
     methods: {
-      // 向父组件传值
-      setPageStatus(data) {
-        this.$emit('listenPage', data)
+      getSeller() {
+        vm.seller = vm.$store.state.global.userInfo || (me.sessions.get('ynSellerInfo') ? JSON.parse(me.sessions.get('ynSellerInfo')) : {})
       },
       logout() {
         vm.confirm('退出登录？', '', function () {
-          vm.$store.commit('logout')
-          vm.$router.push({name: 'login'})
+          vm.loadData(commonApi.logout, null, 'POST', function (res) {
+            if (res.success) {
+              vm.$store.commit('logout', true)
+              vm.$router.push({path: '/login'})
+            }
+          }, function () {
+          })
         })
       },
       modPassword() {
-        this.$router.push({name: 'password', query: {id: vm.sellerId}})
-      },
+        this.$router.push({name: 'password', query: {sellerId: vm.seller.id}})
+      }
     }
   }
 </script>
@@ -83,6 +86,7 @@
   @import '../../static/css/tools.less';
 
   .my {
+    .disable-sel;
     padding-bottom: 150/@rem;
     overflow-x: hidden;
     .user-modal {
@@ -93,13 +97,14 @@
       .user-inner {
         .rel;
         z-index: 2;
-        padding: 50/@rem 10/@rem;
+        padding: 50/@rem 20/@rem 30/@rem;
         > img {
           .block;
           .size(130, 130);
           .ma-w(100);
           .ma-h(100);
           .ma;
+          background: rgba(255, 255, 255, .5);
           .bor(3px, solid, #fff);
           .borR(50%);
           box-shadow: 0 0 0 5px rgba(255, 255, 255, .4), 0 0 0 11px rgba(255, 255, 255, .2)
@@ -112,6 +117,12 @@
           i {
             padding-left: 10/@rem;
           }
+        }
+        span {
+          opacity: .8;
+          .center;
+          .fz(22);
+          .ce;
         }
       }
       canvas {

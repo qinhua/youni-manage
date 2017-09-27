@@ -17,7 +17,6 @@ import Help from '@/pages/my/Help'
 import About from '@/pages/my/About'
 import GoodsDetail from '@/pages/goods/Detail'
 
-import Store from '@/pages/store/Store'
 import Sellers from '@/pages/store/Sellers'
 import Topic from '@/pages/mall/Topic'
 import Coupons from '@/pages/mall/Coupons'
@@ -26,6 +25,9 @@ import Mall from '@/pages/mall/Mall'
 import Banner from '@/pages/mall/Banner'
 import Goods from '@/pages/goods/Goods'
 import EditGoods from '@/pages/goods/Edit'
+import PickFromSeller from '@/pages/goods/PickFromSeller'
+import EditSubPrice from '@/components/EditSubPrice'
+import OrderDetail from '@/pages/orders/Detail'
 import Clients from '@/pages/clients/Clients'
 import Assets from '@/pages/assets/Assets'
 import Income from '@/pages/assets/income/Income'
@@ -137,15 +139,6 @@ export default new Router({
       }
     },
     {
-      path: '/store',
-      name: 'store',
-      component: Store,
-      meta: {
-        title: '店铺管理',
-        keepAlive: false
-      }
-    },
-    {
       path: '/sellers',
       name: 'sellers',
       component: Sellers,
@@ -200,11 +193,38 @@ export default new Router({
       }
     },
     {
+      path: '/pick_from_seller',
+      name: 'pick_from_seller',
+      component: PickFromSeller,
+      meta: {
+        title: '店铺列表',
+        keepAlive: false
+      }
+    },
+    {
       path: '/edit_goods',
       name: 'edit_goods',
       component: EditGoods,
       meta: {
         title: '编辑商品',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/order_detail',
+      name: 'order_detail',
+      component: OrderDetail,
+      meta: {
+        title: '订单详情',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/edit_sub_price',
+      name: 'edit_sub_price',
+      component: EditSubPrice,
+      meta: {
+        title: '价格标签',
         keepAlive: false
       }
     },

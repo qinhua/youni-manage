@@ -4,18 +4,19 @@
       <x-input title="手机号：" placeholder="您的手机号" required type="tel" text-align="right" v-model="params.phone">
         <!--<img slot="label" style="padding-right:10px;display:block;" src="http://dn-placeholder.qbox.me/110x110/FF2D55/000" width="24" height="24">-->
       </x-input>
-      <x-input title="验证码：" class="weui-vcode" v-model="params.passwd" v-if="params.logintype===2">
-        <x-button class="btn-vercode" slot="right" type="primary" mini :disabled="btnStatus" @click.native="getCode">{{btnText}}
+      <x-input title="验证码：" placeholder="验证码" class="weui-vcode" v-model="params.passwd" v-if="params.logintype===2">
+        <x-button class="btn-vercode" slot="right" type="primary" mini :disabled="btnStatus" @click.native="getCode">
+          {{btnText}}
         </x-button>
       </x-input>
       <x-input title="密码：" placeholder="密码" required type="password" text-align="right"
                v-model="params.passwd" v-else></x-input>
     </group>
     <div class="btn btn-login" @click="login">登录</div>
-    <div class="btn btn-regist" v-jump="['regist']">注册</div>
+    <!--<div class="btn btn-regist" v-jump="['regist']">注册</div>-->
     <div class="bottom-col">
-      <a class="loginType" href="javascript:;" @click="changeLogin" v-if="">{{loginText}}[切换]</a>
-      <a class="forgetPsw" href="#/password">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>
+      <a class="loginType" href="javascript:;" @click="changeLogin">{{loginText}}[切换]</a>
+      <!--<a class="forgetPsw" href="#/password">忘记密码&nbsp;<i class="fa fa-question-circle"></i></a>-->
     </div>
     <p class="b-txt">友你生活 | 开启崭新生活</p>
   </div>
@@ -64,6 +65,7 @@
     },
     methods: {
       changeLogin() {
+        vm.params.passwd = null
         vm.params.logintype = (vm.params.logintype === 1) ? 2 : 1
       },
       getCode() {
@@ -114,13 +116,9 @@
             vm.isPosting = false
             vm.toast('登录成功 ！')
             /* 保存用户信息 */
-            // me.locals.set('ynManageLogin', me.formatDate(new Date(), null, 1))
             vm.$store.commit('storeData', {key: 'isLogin', data: true})
-            // if (vm.lastPage === 'regist' || vm.lastPage === 'login') {
+            me.sessions.set('logYn', true)
             vm.jump('home')
-            /*} else {
-              vm.$router.back()
-            }*/
           } else {
             vm.toast(res.message || '手机号或密码错误 ！')
           }
@@ -179,7 +177,7 @@
       overflow: hidden;
     }
     .loginType {
-      .fl;
+      .fr;
       .c3;
       .fz(24);
       padding: 10/@rem;

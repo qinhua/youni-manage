@@ -1,30 +1,33 @@
 <template>
   <div class="s-topic" v-cloak>
-    <div class="topic-col">
-      <group>
-        <x-input title="公告标题：" placeholder="标题（15字左右）" required text-align="right" v-model="params.name"></x-input>
-        <x-input title="公告链接：" placeholder="跳转链接" text-align="right" v-model="params.url"></x-input>
-        <button type="button" class="btn btn-save" @click="add" :disabled="topics.length===4"><i class="fa fa-plus"></i>&nbsp;添加（最多4个）
-        </button>
-      </group>
-    </div>
+    <div class="scroll-view">
+      <div class="topic-col">
+        <group>
+          <x-input title="公告标题：" placeholder="标题（15字左右）" required text-align="right" v-model="params.name"></x-input>
+          <x-input title="公告链接：" placeholder="跳转链接" text-align="right" v-model="params.url"></x-input>
+        </group>
+      </div>
 
-    <ul class="topic-list" v-if="topics.length">
-      <swipeout>
-        <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in topics"
-                       :data-id="item.id" key="index">
-          <div slot="right-menu">
-            <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
-            <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
-          </div>
-          <div slot="content" class="demo-content vux-1px-t">
-            <li>
-              <p><a :href="item.url">{{index+1}}.{{item.name}}</a></p>
-            </li>
-          </div>
-        </swipeout-item>
-      </swipeout>
-    </ul>
+      <ul class="topic-list" v-if="topics.length">
+        <h3><i class="fa fa-tags"></i>&nbsp;公告列表<span>左滑可编辑</span></h3>
+        <swipeout>
+          <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in topics"
+                         :data-id="item.id" key="index">
+            <div slot="right-menu">
+              <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
+              <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
+            </div>
+            <div slot="content" class="demo-content vux-1px-t">
+              <li>
+                <p><a :href="item.url">{{index+1}}.{{item.name}}</a></p>
+              </li>
+            </div>
+          </swipeout-item>
+        </swipeout>
+      </ul>
+    </div>
+    <button type="button" class="btn btn-save" @click="add" :disabled="topics.length===4"><i class="fa fa-plus"></i>&nbsp;添加（最多4个）
+    </button>
   </div>
 </template>
 
@@ -196,17 +199,35 @@
   @import '../../../static/css/tools.less';
 
   .s-topic {
+    .rel;
     height: 100%;
-    padding-bottom: 50px;
+    z-index: 1;
+    overflow: hidden;
+    .scroll-view {
+      height: 100%;
+      overflow: auto;
+    }
     .topic-col {
       margin-bottom: 14/@rem;
     }
     .topic-list {
       .borBox;
       .bf;
+      padding-bottom: 100/@rem;
       .bor-t(2px, solid, #9cb3ff);
       .vux-swipeout-button-primary {
         background: orange;
+      }
+      h3 {
+        padding: 12/@rem;
+        .fz(24);
+        background: #f2f5fd;
+        span {
+          .fr;
+          font-weight: normal;
+          .fz(22);
+          .c8;
+        }
       }
       li {
         .rel;
@@ -216,7 +237,7 @@
           .borBox;
           padding: 0 20/@rem;
           .ellipsis-clamp-2;
-          a{
+          a {
             .block;
             .c3;
             .fz(26);
@@ -225,7 +246,7 @@
       }
     }
     .btn-save {
-      .fix;
+      .abs;
       bottom: 0;
       z-index: 20;
       width: 100%;

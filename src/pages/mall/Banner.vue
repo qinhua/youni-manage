@@ -1,35 +1,40 @@
 <template>
   <div class="s-banner" v-cloak>
-    <div class="banner-col">
-      <group>
-        <img-uploader title="banner图片：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
-        <!--<x-input title="banner标题：" placeholder="banner标题" required text-align="right"
-                 v-model="params.title"></x-input>-->
-        <x-input title="banner链接：" placeholder="跳转链接" text-align="right" v-model="params.linkUrl"></x-input>
-        <button type="button" class="btn btn-save" @click="add" :disabled="banners.length===4"><i
-          class="fa fa-plus"></i>&nbsp;添加（最多4个）
-        </button>
-      </group>
+    <div class="scroll-view">
+      <div class="banner-col">
+        <group>
+          <img-uploader title="banner图片：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
+          <!--<x-input title="banner标题：" placeholder="banner标题" required text-align="right"
+                   v-model="params.title"></x-input>-->
+          <x-input title="banner链接：" placeholder="跳转链接" text-align="right" v-model="params.linkUrl"></x-input>
+
+        </group>
+      </div>
+
+      <ul class="banner-list" v-if="banners.length">
+        <h3><i class="fa fa-tags"></i>&nbsp;Banner列表<span>左滑可编辑</span></h3>
+        <swipeout>
+          <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in banners"
+                         :data-id="item.id" key="index">
+            <div slot="right-menu">
+              <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
+              <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
+            </div>
+            <div slot="content" class="demo-content vux-1px-t">
+              <li>
+                <div class="img-con" :style="'background-image:url('+item.image+')'"></div>
+                <div class="right-con">
+                  <a :href="item.linkUrl">{{item.linkUrl}}</a></div>
+              </li>
+            </div>
+          </swipeout-item>
+        </swipeout>
+      </ul>
     </div>
 
-    <ul class="banner-list" v-if="banners.length">
-      <swipeout>
-        <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in banners"
-                       :data-id="item.id" key="index">
-          <div slot="right-menu">
-            <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
-            <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
-          </div>
-          <div slot="content" class="demo-content vux-1px-t">
-            <li>
-              <div class="img-con" :style="'background-image:url('+item.image+')'"></div>
-              <div class="right-con">
-                <p>{{item.linkUrl}}</p></div>
-            </li>
-          </div>
-        </swipeout-item>
-      </swipeout>
-    </ul>
+    <button type="button" class="btn btn-save" @click="add" :disabled="banners.length===4"><i
+      class="fa fa-plus"></i>&nbsp;添加（最多4个）
+    </button>
   </div>
 </template>
 
@@ -102,9 +107,9 @@
           return false
         }
         /*if (!vm.params.title) {
-          vm.toast('请填写标题！')
-          return false
-        }*/
+         vm.toast('请填写标题！')
+         return false
+         }*/
         if (!vm.params.linkUrl) {
           vm.toast('请填写链接！')
           return false
@@ -206,8 +211,14 @@
   @import '../../../static/css/tools.less';
 
   .s-banner {
+    .rel;
     height: 100%;
-    padding-bottom: 50px;
+    z-index: 1;
+    overflow: hidden;
+    .scroll-view {
+      height: 100%;
+      overflow: auto;
+    }
     .banner-col {
       margin-bottom: 14/@rem;
     }
@@ -220,36 +231,47 @@
     }
     .banner-list {
       .borBox;
-      .bf;
-      padding-left: 20/@rem;
-      .bor-t(2px, solid, #9cb3ff);
+      margin-top: 20/@rem;
+      padding-bottom: 100/@rem;
+      .bor-t(2px, solid, #dbe3f9);
       .vux-swipeout-button-primary {
         background: orange;
       }
+      h3 {
+        padding: 12/@rem;
+        .fz(24);
+        background: #f2f5fd;
+        span {
+          .fr;
+          font-weight: normal;
+          .fz(22);
+          .c8;
+        }
+      }
       li {
         .rel;
-        padding: 14/@rem 0;
-        height: 130/@rem;
         .bor-b;
+        margin-bottom: 10/@rem;
+        .bsd(0, 2px, 10px, 0, #ccc);
         .img-con {
-          .abs-center-vertical;
-          left: 0;
-          .size(130, 130);
+          width: 100%;
+          height: 150/@rem;
           background-position: center;
           -webkit-background-size: cover;
           background-size: cover;
         }
         .right-con {
           .borBox;
-          padding: 0 18/@rem 0 150/@rem;
-          p {
-            .ellipsis-clamp-3;
+          padding: 18/@rem 20/@rem 18/@rem;
+          .left;
+          a {
+            .ellipsis-clamp-2;
           }
         }
       }
     }
     .btn-save {
-      .fix;
+      .abs;
       bottom: 0;
       z-index: 20;
       width: 100%;

@@ -81,7 +81,7 @@
       // me.attachClick()
       vm = this
       window.youniMall.userAuth = vm.$store.state.global.wxInfo
-      !vm.$store.state.global.dict ? vm.getDict() : null
+//      !vm.$store.state.global.dict ? vm.getDict() : null
     },
     computed: {
       'showTabbar'() {

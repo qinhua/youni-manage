@@ -1,18 +1,17 @@
 <template>
   <div class="goods-con" v-cloak>
     <tab class="goods-tab" active-color="#4670fe">
-      <!--<tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus"><i class="fa fa-th-large"></i>&nbsp;全部
+      <tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus">
+        <!--<i class="fa fa-th-large"></i>&nbsp;-->
+        全部
       </tab-item>
-      <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)"><i
-        class="fa fa-podcast"></i>&nbsp;出售
+      <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)">
+        <!--<i class="fa fa-podcast"></i>&nbsp;-->
+        出售
       </tab-item>
-      <tab-item :selected="params.saleStatus===2?true:false" @on-item-click="filterStatus(2)"><i class="fa fa-plug"></i>&nbsp;停售
-      </tab-item>-->
-      <tab-item :selected="!params.saleStatus?true:false" @on-item-click="filterStatus">全部
-      </tab-item>
-      <tab-item :selected="params.saleStatus===1?true:false" @on-item-click="filterStatus(1)">上架中
-      </tab-item>
-      <tab-item :selected="params.saleStatus===2?true:false" @on-item-click="filterStatus(2)">已停售
+      <tab-item :selected="params.saleStatus===2?true:false" @on-item-click="filterStatus(2)">
+        <!--<i class="fa fa-plug"></i>&nbsp;-->
+        停售
       </tab-item>
     </tab>
     <div class="goods-list">
@@ -25,17 +24,16 @@
           <!--<h4 class="item-top"><i class="ico-store"></i>&nbsp;{{item.sellerName}}&nbsp;&nbsp;<i
             class="fa fa-angle-right cc"></i><span>{{item.statusName}}</span></h4>-->
           <section class="item-middle">
-            <div class="img-con"
-                 :style="item.imgurl?('background-image:url('+item.imgurl+')'):''"></div>
+            <div class="img-con">
+              <img :src="item.imgurl">
+            </div>
             <div class="info-con">
-              <h3><span
-                :class="item.type==='goods_type.2'?'milk':''">{{item.type === 'goods_type.2' ? '奶' : '水'}}</span>{{item.name}}
-              </h3>
+              <h3>{{item.name}}</h3>
               <section class="middle">
-                <span class="unit-price">售价：￥{{item.price|toFixed}}元</span>
-                <span class="order-info">已售：{{item.saleCount}}件</span>
+                <span class="unit-price">售价：￥{{item.price}}</span>
+                <span class="order-info">已售：{{item.saleCount}}</span>
               </section>
-              <label>库存：{{item.stock}}件</label>
+              <label>库存：{{item.stock}}</label>
             </div>
             <!--<div class="price-con">-->
             <!--<p class="price">￥{{item.price}}</p>-->
@@ -57,7 +55,7 @@
         </section>
       </scroller>
     </div>
-    <div class="add-goods" v-jump="['pick_from_seller']"><i class="fa fa-plus"></i>&nbsp添加商品</div>
+    <div class="add-goods" v-jump="['edit_goods',null,3]"><i class="fa fa-plus"></i>&nbsp添加商品</div>
   </div>
 </template>
 
@@ -79,7 +77,7 @@
           pageNo: 1,
           saleStatus: 0
         },
-        noMore:false,
+        noMore: false,
         isPosting: false
       }
     },
@@ -90,7 +88,7 @@
     mounted() {
       vm = this
       vm.getGoods()
-      vm.$nextTick(function() {
+      vm.$nextTick(() => {
         vm.$refs.goodsScroller.finishInfinite(true)
         vm.$refs.goodsScroller.resize()
       })
@@ -102,9 +100,7 @@
      }, */
     watch: {
       '$route'(to, from) {
-        if(to.name==='goods'){
-          vm.getGoods()
-        }
+        vm.getGoods()
       }
     },
     methods: {
@@ -112,21 +108,18 @@
       setPageStatus(data) {
         this.$emit('listenPage', data)
       },
-      toDetail(id) {
+      buy(id) {
         vm.$router.push({path: '/detail/' + id})
       },
       getGoods(isLoadMore, status) {
-        vm.params.type = this.$route.params.type || 0
         if (vm.isPosting) return false
         !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
         vm.isPosting = true
-        vm.processing()
         vm.loadData(goodsApi.list, vm.params, 'POST', function (res) {
           vm.isPosting = false
-          vm.processing(0,1)
+          vm.processing(0, 1)
           var resD = res.data.pager
           if (!isLoadMore) {
-            vm.goods = res.data.itemList
             if (resD.totalCount < vm.params.pageSize) {
               vm.noMore = true
             } else {
@@ -134,16 +127,10 @@
             }
             vm.goods = resD.itemList
           } else {
-            if (resD.itemList.length) {
-              for (var i = 0; i < resD.itemList.length; i++) {
-                var cur = resD.itemList[i];
-                vm.goods.push(cur)
-              }
-            } else {
-              vm.noMore = true
-            }
+            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
           }
           console.log(vm.goods, '商品数据')
+          vm.isPosting = false
         }, function () {
           vm.isPosting = false
         })
@@ -170,7 +157,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认删除？', '商品删除后不可恢复！', function () {
           vm.isPosting = true
-          vm.loadData(goodsApi.delOrder, {id:id}, 'POST', function (res) {
+          vm.loadData(goodsApi.delOrder + '?id=' + id, vm.params, 'POST', function (res) {
             vm.isPosting = false
           }, function () {
             vm.isPosting = false
@@ -182,9 +169,9 @@
         if (vm.isPosting) return false
         vm.isPosting = true
         vm.loadData(goodsApi.setSaleStatus, {id: id, saleStatus: status}, 'POST', function (res) {
-          vm.isPosting = false
           vm.toast(status === 1 ? '上架成功' : '已下架')
           vm.getGoods()
+          vm.isPosting = false
         }, function () {
           vm.isPosting = false
         })
@@ -217,12 +204,13 @@
 
   .goods-tab {
     z-index: 10;
-    /* .vux-tab-item {
+    .vux-tab-item {
       &.vux-tab-selected {
-          .cf!important;
-           background: #f34c18 !important;
+        /* .cdiy(#f34c18) !important;
+        .cf!important;
+          background: #f34c18 !important;*/
       }
-    }*/
+    }
   }
 
   .goods-list {
@@ -255,52 +243,34 @@
           }
         }
         .item-middle {
-          .rel;
-          padding: 14/@rem 20/@rem 14/@rem 14/@rem;
-          min-height: 140/@rem;
-          .bf;
+          padding: 14/@rem 20/@rem;
+          .flex;
           .img-con {
-            .abs;
-            top: 14/@rem;
-            .size(140, 140);
+            .rel;
+            .size(130, 130);
             overflow: hidden;
-            background: #f5f5f5 url(../../../static/img/bg_nopic.jpg) no-repeat center;
-            -webkit-background-size: cover;
-            background-size: cover;
+            img {
+              width: 100%;
+              .abs-center-vh;
+            }
           }
           .info-con {
-            .borBox;
-            width: 100%;
-            padding: 0 0 0 160/@rem;
+            .flex-r(2);
+            padding: 0 14/@rem;
             h3 {
               padding-bottom: 10/@rem;
               .txt-normal;
               .c3;
               .fz(26);
               .ellipsis-clamp-2;
-              span {
-                margin-right: 4px;
-                padding: 0 2px;
-                font-weight: normal;
-                .cf;
-                .fz(22);
-                background: #2acaad;
-                .borR(2px);
-                &.milk {
-                  background: #74c361;
-                }
-              }
             }
             .middle {
               .c9;
-              .fz(24);
+              .fz(20);
               .ellipsis-clamp-2;
               .unit-price {
                 padding-right: 40/@rem;
-                .cdiy(@c2);
-              }
-              .order-info{
-                .fr;
+                .c3;
               }
             }
             label {
