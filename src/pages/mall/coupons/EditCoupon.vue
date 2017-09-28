@@ -1,19 +1,29 @@
 <template>
   <div class="coupon-edit-con" v-cloak>
     <group>
-      <popup-picker title="优惠分类：" :data="types" :columns="1" v-model="tmpType" ref="picker3" @on-show=""
-                    @on-hide="" @on-change="changeType"></popup-picker>
-      <x-input title="指定商品：" placeholder="指定商品" text-align="right" v-model="params.goodsId" readonly disabled
-               v-if="(tmpType.join('')).indexOf('水票')===-1"></x-input>
-      <x-input title="优惠名称：" placeholder="优惠名称" required text-align="right" v-model="params.name"></x-input>
-      <x-input title="优惠条件：" placeholder="满多少元减免" required text-align="right" v-model="params.upAmount"></x-input>
-      <x-input title="优惠金额：" placeholder="抵扣的金额" required text-align="right" v-model="params.discountAmount"></x-input>
-      <x-input title="最大优惠：" placeholder="最高优惠金额" required text-align="right" v-model="params.maxDiscountAmount"></x-input>
-      <!--<datetime title="开始时间" required v-model="params.beginTime" @on-change="onChange"></datetime>-->
-      <x-switch title="是否过期" v-model="needExpire"></x-switch>
-      <datetime title="过期时间：" v-model="params.expireTime" @on-change="onChange" v-show="needExpire"></datetime>
+      <x-switch title="新用户优惠" v-model="newUser"></x-switch>
+      <div v-if="!newUser">
+        <popup-picker title="商品类型：" :data="types" :columns="1" v-model="tmpType" ref="picker3" @on-show=""
+                      @on-hide="" @on-change="changeType"></popup-picker>
+        <popup-picker title="店铺类型" :data="serTypes" :columns="1" v-model="tmpSerType" @on-show=""
+                      @on-hide="" @on-change="changeSeller"></popup-picker>
+        <!--<x-input title="优惠名称：" placeholder="优惠名称" required text-align="right" v-model="params.name"></x-input>-->
+        <x-input title="优惠折扣：" placeholder="如1折" required text-align="right" v-model="params.discountRate"></x-input>
+        <x-input title="最大优惠：" placeholder="最高优惠金额" required text-align="right"
+                 v-model="params.maxDiscountAmount"></x-input>
+        <x-input title="优惠券数量：" placeholder="优惠券数量" required text-align="right" type="number"
+                 v-model="params.couponNum"></x-input>
+        <!--<datetime title="开始时间" required v-model="params.beginTime" @on-change="onChange"></datetime>-->
+        <x-switch title="是否过期" v-model="needExpire"></x-switch>
+        <datetime title="过期时间：" v-model="params.expireTime" @on-change="onChange" v-show="needExpire"></datetime>
+      </div>
+      <div v-else>
+        <x-input title="优惠折扣：" placeholder="如1折" required text-align="right" v-model="params.discountRate"></x-input>
+        <x-input title="最大优惠：" placeholder="最高优惠金额" required text-align="right"
+                 v-model="params.maxDiscountAmount"></x-input>
+      </div>
     </group>
-    <group class="bottom">
+    <group class="bottom" v-if="!newUser">
       <x-textarea title="优惠说明：" :max="20" placeholder="如水票买20送1" @on-blur="" v-model="params.discountNote"
                   show-clear></x-textarea>
     </group>
@@ -33,7 +43,7 @@
     XTextarea,
     XSwitch
   } from 'vux'
-  import {userApi, commonApi} from '../../service/main.js'
+  import {couponApi, commonApi} from '../../../service/main.js'
 
   export default {
     name: 'coupon-edit',
@@ -43,8 +53,9 @@
           return val.replace(/-/g, '$')
         },
         isPosting: false,
-        coupons: null,
+        couponId: null,
         needExpire: true,
+        newUser: false,
         types: [
           {
             key: 'goods_type.1',
@@ -56,22 +67,25 @@
             value: '奶',
             name: '奶'
           },
-          {
+          /*{
             key: 'goods_type.3',
             value: '水票',
             name: '水票'
-          }
+          }*/
         ],
+        serTypes: [{key: 1, value: '直营店', name: '直营店'}, {key: 2, value: '非直营店', name: '非直营店'}],
         tmpType: ['水'],
+        tmpSerType: ['直营店'],
         params: {
-          goodsId: null,
-          expireTime: '',
-          couponNote: '',
-          upAmount: '',
-          discountAmount: '',
+          newUser: false,
+          goodsType: '',
+          sellerType: '',
+          discountRate: '',
+          couponNum: 0,
           maxDiscountAmount: '',
-          goodsType: ''
-        },
+          expireTime: '',
+          couponNote: ''
+        }
       }
     },
     components: {
@@ -93,6 +107,31 @@
     watch: {
       needExpire() {
         !vm.needExpire ? vm.params.expireTime = '' : null
+      },
+      'newUser'() {
+        if (vm.newUser) {
+          vm.params = {
+            newUser: true,
+            goodsType: '',
+            sellerType: '',
+            discountRate: '',
+            couponNum: 0,
+            maxDiscountAmount: '',
+            expireTime: '',
+            couponNote: ''
+          }
+        } else {
+          vm.params = {
+            newUser: false,
+            goodsType: '',
+            sellerType: '',
+            discountRate: '',
+            couponNum: 0,
+            maxDiscountAmount: '',
+            expireTime: '',
+            couponNote: ''
+          }
+        }
       }
     },
     methods: {
@@ -104,7 +143,7 @@
         if (day < 10) day = '0' + day
         vm.params.beginTime = now.getFullYear() + '-' + cmonth + '-' + day
       },
-      switchData(data, value, target,) {
+      switchData(data, value, target) {
         let tmp
         if (typeof value === 'number') {
           tmp = []
@@ -133,6 +172,7 @@
             let resD = res.data.itemList
             /*此处转换一些字段类型*/
             vm.switchData(vm.types, vm.params.goodsType, 'tmpType')
+            vm.switchData(vm.serTypes, vm.params.sellerType, 'tmpSerType')
             vm.coupons = resD
             console.log(vm.coupons)
           }
@@ -141,29 +181,44 @@
         })
       },
       validate() {
-        if (!vm.tmpType.length) {
-          vm.toast('请选择优惠分类！')
-          return false
-        }
-        if (!vm.params.upAmount) {
-          vm.toast('请填写优惠条件！')
-          return false
-        }
-        if (!vm.params.discountAmount) {
-          vm.toast('请填写优惠金额！')
-          return false
-        }
-        /*if (!vm.params.maxDiscountAmount) {
-          vm.toast('请填写最大优惠金额！')
-          return false
-        }*/
-        /*if (!vm.params.beginTime) {
-          vm.toast('请选择开始时间！')
-          return false
-        }*/
-        if (vm.needExpire && !vm.params.expireTime) {
-          vm.toast('请选择过期时间！')
-          return false
+        if (vm.newUser) {
+          if (!vm.params.discountRate) {
+            vm.toast('请填写优惠折扣！', 'toast')
+            return false
+          }
+          if (!vm.params.maxDiscountAmount) {
+            vm.toast('请填写最大优惠金额！', 'toast')
+            return false
+          }
+        } else {
+          if (!vm.tmpType.length) {
+            vm.toast('请选择商品类型！', 'toast')
+            return false
+          }
+          if (!vm.tmpSerType.length) {
+            vm.toast('请选择店铺类型！', 'toast')
+            return false
+          }
+          if (!vm.params.discountRate) {
+            vm.toast('请填写优惠折扣！', 'toast')
+            return false
+          }
+          if (!vm.params.maxDiscountAmount) {
+            vm.toast('请填写最大优惠金额！', 'toast')
+            return false
+          }
+          if (!vm.params.couponNum) {
+            vm.toast('请填写优惠券数量！', 'toast')
+            return false
+          }
+          /*if (!vm.params.beginTime) {
+           vm.toast('请选择开始时间！')
+           return false
+           }*/
+          if (vm.needExpire && !vm.params.expireTime) {
+            vm.toast('请选择过期时间！', 'toast')
+            return false
+          }
         }
         return true
       },
@@ -172,18 +227,22 @@
         /*此处转换一些字段类型*/
         let curApi
         if (vm.couponId) {
-          curApi = userApi.updateCoupon
+          curApi = couponApi.add
           vm.params.id = vm.couponId
         } else {
 //          delete vm.params.id
-          curApi = userApi.addCoupon
+          curApi = couponApi.add
         }
-        console.log('最后选择的数据：', vm.params)
         vm.isPosting = true
         vm.processing()
         vm.loadData(curApi, vm.params, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
+          if (res.success) {
+            vm.toast('添加成功', 'toast')
+          } else {
+            vm.toast('添加失败！', 'toast')
+          }
 //          vm.$router.back()
         }, function () {
           vm.isPosting = false
@@ -196,6 +255,10 @@
       changeType(val) {
         vm.switchData(vm.types, vm.tmpType, 'goodsType')
         console.log(val, vm.params.goodsType)
+      },
+      changeSeller(val) {
+        vm.switchData(vm.serTypes, vm.tmpSerType, 'sellerType')
+        console.log(val, vm.params.sellerType)
       }
     }
   }
@@ -203,7 +266,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='less'>
-  @import '../../../static/css/tools.less';
+  @import '../../../../static/css/tools.less';
 
   .coupon-edit-con {
     padding-bottom: 50px;

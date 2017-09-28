@@ -42,14 +42,14 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import imgUploader from '../../components/ImgUploader.vue'
+  import imgUploader from '../../../components/ImgUploader.vue'
   import {
     Group,
     Cell,
     XInput,
     Swipeout, SwipeoutItem, SwipeoutButton
   } from 'vux'
-  import {commonApi, bannerApi} from '../../service/main.js'
+  import {commonApi, bannerApi} from '../../../service/main.js'
 
   export default {
     name: 's-banner',
@@ -207,7 +207,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='less'>
-  @import '../../../static/css/tools.less';
+  @import '../../../../static/css/tools.less';
 
   .s-banner {
     .rel;
