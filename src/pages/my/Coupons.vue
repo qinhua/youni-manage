@@ -66,7 +66,7 @@
     mounted () {
       vm = this
       vm.getCoupons()
-      vm.$nextTick(() => {
+      vm.$nextTick(function() {
         vm.$refs.couponScroller.finishInfinite(true)
         vm.$refs.couponScroller.resize()
       })
@@ -83,14 +83,14 @@
         this.$emit('listenPage', data)
       },
       refresh (done) {
-        console.log('下拉加载')
+        // console.log('下拉加载')
         setTimeout(function () {
           vm.getCoupons()
           vm.$refs.couponScroller.finishPullToRefresh()
         }, 1200)
       },
       infinite (done) {
-        console.log('无限滚动')
+        // console.log('无限滚动')
         setTimeout(function () {
           vm.getCoupons(true)
           vm.$refs.couponScroller.finishInfinite(true)
@@ -115,28 +115,6 @@
         vm.onFetching = true
         vm.loadData(userApi.coupons, vm.params, 'POST', function (res) {
           var resD = res.data.itemList
-          /* for (var i = 0; i < resD.length; i++) {
-            switch (resD[i].status) {
-              case -1:
-                resD[i].statusName = '已取消'
-                break
-              case 0:
-                resD[i].statusName = '待支付'
-                break
-              case 1:
-                resD[i].statusName = '待派送'
-                break
-              case 2:
-                resD[i].statusName = '派送中'
-                break
-              case 3:
-                resD[i].statusName = '待评价'
-                break
-              case 4:
-                resD[i].statusName = '已完成'
-                break
-            }
-          } */
           if (!isLoadMore) {
             vm.coupons = resD
           } else {

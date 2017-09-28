@@ -1,6 +1,6 @@
 <template>
   <div class="order-detail">
-    <div class="status-col">
+    <div :class="'status-col s' + details.status">
       <div class="left-con">
         <span v-if="details.status===1">待支付…<br><i>请尽快支付</i></span>
         <span v-if="details.status===2">待派送…<br><i>等待商家派达中</i></span>
@@ -70,7 +70,7 @@
           <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
           <!--</div>-->
           <!--<div class="btns" v-if="details.status===2">
-            <button type="button" class="btn btn-dispatch" @click="dispatch(details.orderId)">派送</button>
+            <button type="button" class="btn btn-dispatch" @click="dispatchOrder(details.orderId)">派送</button>
           </div>-->
           <div class="btns" v-if="details.status===3">
             <div v-if="details.todayDispatch">
@@ -242,7 +242,7 @@
           vm.isPosting = false
         })
       },
-      dispatch(id) {
+      dispatchOrder(id) {
         if (vm.isPosting) return false
         vm.confirm('确认派送？', null, function () {
           vm.isPosting = true
@@ -255,7 +255,64 @@
           })
         }, function () {
         })
-      }
+      },
+      dispatch(id) {
+        if (vm.isPosting) return false
+        vm.isPosting = true
+        /*var dispatchers = '<option value="">-请选择派送员-</option>'
+         vm.loadData(orderApi.dispatcher, {orderId: id}, 'POST', function (res) {
+         if (res.success) {
+         if (res.data.itemList.length) {
+         var resD = res.data.itemList
+         for (var i = 0; i < resD.length; i++) {
+         var cur = resD[i]
+         dispatchers += '<option value="' + cur.id + ',' + cur.dispatcher + '">' + cur.dispatcher + '</option>'
+         }
+         } else {
+         vm.toast('暂无派送员！')
+         return
+         }
+         }
+         vm.isPosting = false
+         }, function () {
+         vm.isPosting = false
+         })
+         vm.confirm('请选择派送员？', '<div class="despatchModal"><select name="dispatcher" id="dispatcher">' + dispatchers + '</select><!--<input id="dispatcher" type="text" placeholder="输入派送员姓名" required>--></div>', function () {
+         var curVal = window.document.getElementById('dispatcher').value
+         if (!curVal) {
+         vm.toast('请选择派送员', 'warn')
+         return false
+         }
+         vm.loadData(orderApi.dispatch, {orderId: id, dispatcher: curVal}, 'POST', function (res) {
+         vm.isPosting = false
+         if (res.success) {
+         vm.toast('派送成功')
+         } else {
+         vm.toast(res.message || '支付失败！')
+         }
+         }, function () {
+         vm.isPosting = false
+         })
+         }, function () {
+         vm.isPosting = false
+         }, '派送', null, true)*/
+
+        vm.confirm('确认派送？', '', function () {
+          vm.loadData(orderApi.dispatch, {orderId: id, dispatcher: ''}, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.toast('派送成功')
+              vm.getDetail()
+            } else {
+              vm.toast(res.message || '派送失败！')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
+          vm.isPosting = false
+        }, '派送')
+      },
     }
   }
 </script>
@@ -269,8 +326,38 @@
     .status-col {
       height: 200/@rem;
       .cf;
-      background: linear-gradient(left, #8ac4ff, #2352f1);
-      background: -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+      /* background: linear-gradient(left, #8ac4ff, #2352f1);
+       background: -webkit-linear-gradient(left, #8ac4ff, #2352f1);*/
+      &.s1 {
+        background: url(../../../static/img/s1.png) no-repeat 88% center, linear-gradient(left, #8ac4ff, #2352f1);
+        background: url(../../../static/img/s1.png) no-repeat 88% center, -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+        -webkit-background-size: auto 60%, auto 100%;
+        background-size: auto 60%, auto 100%;
+      }
+      &.s2 {
+        background: url(../../../static/img/s2.png) no-repeat 88% center, linear-gradient(left, #8ac4ff, #2352f1);
+        background: url(../../../static/img/s2.png) no-repeat 88% center, -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+        -webkit-background-size: auto 60%, auto 100%;
+        background-size: auto 60%, auto 100%;
+      }
+      &.s3 {
+        background: url(../../../static/img/s3.png) no-repeat 88% center, linear-gradient(left, #8ac4ff, #2352f1);
+        background: url(../../../static/img/s3.png) no-repeat 88% center, -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+        -webkit-background-size: auto 60%, auto 100%;
+        background-size: auto 60%, auto 100%;
+      }
+      &.s4 {
+        background: url(../../../static/img/s4.png) no-repeat right bottom, linear-gradient(left, #8ac4ff, #2352f1);
+        background: url(../../../static/img/s4.png) no-repeat right bottom, -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+        -webkit-background-size: auto 60%, auto 100%;
+        background-size: auto 60%, auto 100%;
+      }
+      &.s5 {
+        background: url(../../../static/img/s6.png) no-repeat 88% center, linear-gradient(left, #8ac4ff, #2352f1);
+        background: url(../../../static/img/s6.png) no-repeat 88% center, -webkit-linear-gradient(left, #8ac4ff, #2352f1);
+        -webkit-background-size: auto 60%, auto 100%;
+        background-size: auto 60%, auto 100%;
+      }
       &.waitPay {
         background: #40ceca;
       }
@@ -295,7 +382,7 @@
         padding: 24/@rem 0 24/@rem 24/@rem;
         span {
           .abs-center-vertical;
-          left: 24/@rem;
+          left: 40/@rem;
           .fz(34);
           i {
             opacity: .8;
@@ -552,7 +639,7 @@
               .c9;
             }
           }
-          span{
+          span {
             .fr;
           }
         }
@@ -615,7 +702,7 @@
       }
       .weui-cell {
         line-height: inherit;
-        padding: 18/@rem 24/@rem!important;
+        padding: 18/@rem 24/@rem !important;
         .fz(26) !important;
       }
       .btns {

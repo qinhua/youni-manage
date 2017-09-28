@@ -3,13 +3,13 @@
     <!--<router-view></router-view>-->
     <div class="user-modal">
       <div class="user-inner">
-        <img :src="seller.headimgurl">
-        <p class="user-name">{{seller.name}}</p>
-        <!--<span><i class="fa fa-building-o"></i>&nbsp;{{seller.companyName}}</span>-->
+        <img :src="admin.headimgurl">
+        <p class="user-name">{{admin.name}}</p>
+        <!--<span><i class="fa fa-building-o"></i>&nbsp;{{admin.companyName}}</span>-->
       </div>
     </div>
     <group class="list-modal">
-      <cell title="店铺资料" link="/edit_user">
+      <cell title="平台资料" link="/edit_user">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
       </cell>
       <!--<cell title="押金列表" link="/myguarantee">
@@ -47,7 +47,7 @@
     name: 'my',
     data() {
       return {
-        seller: {}
+        admin: {}
       }
     },
     components: {Grid, GridItem, Group, Cell},
@@ -61,7 +61,7 @@
     // computed: {},
     methods: {
       getSeller() {
-        vm.seller = vm.$store.state.global.userInfo || (me.sessions.get('ynSellerInfo') ? JSON.parse(me.sessions.get('ynSellerInfo')) : {})
+        vm.admin = vm.$store.state.global.wxInfo || (me.locals.get('ynWxinfo') ? JSON.parse(me.locals.get('ynWxinfo')).data : {})
       },
       logout() {
         vm.confirm('退出登录？', '', function () {
@@ -75,7 +75,7 @@
         })
       },
       modPassword() {
-        this.$router.push({name: 'password', query: {sellerId: vm.seller.id}})
+        this.$router.push({name: 'password', query: {sellerId: vm.admin.id}})
       }
     }
   }

@@ -24,8 +24,9 @@ const bannerApi = {
   del: host + '/admin/delBanner'
 }
 const topicApi = {
-  list: host + '/home/topNotice',
-  add: host + '/admin/addNotice',
+  //list: host + '/home/topNotice',
+  list: host + '/common/appConfigList',
+  add: host + '/common/setConfig',
   del: host + '/admin/delNotice'
 }
 const goodsApi = {
@@ -42,13 +43,18 @@ const orderApi = {
   view: host + '/order/view',
   del: host + '/order/del',
   cancel: host + '/order/cancel',
-  count: host + '/order/count',
+  count: host + '/admin/orderCount',
   dispatcher: host + '/orderDispatchProgess/list',
   dispatch: host + '/orderDispatchProgess/add',
   updateOrderStatus: host + '/order/updateOrderStatus'
 }
 const clientApi = {
   list: host + '/admin/userList',
+  updateOrder: host + '/home/updateOrder'
+}
+const couponApi = {
+  list: host + '/platformCoupon/list',
+  add: host + '/platformCoupon/add',
   updateOrder: host + '/home/updateOrder'
 }
 const storeApi = {
@@ -85,7 +91,8 @@ const statisticApi = {
 const commonApi = {
   wxAuth: host + '/weixin/auth',
   login: host + '/admin/login',
-  logout: host + '/seller/logout',
+  logout: host + '/admin/logout',
+  check: host + '/admin/checkLogin',
   regist: host + '/seller/applySeller',
   reset: host + '/seller/setPasswd',
   dict: host + '/common/dictList',
@@ -93,7 +100,7 @@ const commonApi = {
   sendSms: host + '/common/sendSms',
   checkCode: host + '/common/checkSmsCode'
 }
-console.log('当前域名：%c' + host, 'color:red;font-size:14px;font-weight:bold')
+// console.log('当前域名：%c' + host, 'color:red;font-size:14px;font-weight:bold')
 // console.log('当前API：%c' + JSON.stringify(homeApi, null, 2), 'color:orange;font-size:14px')
 export {
   commonApi,
@@ -103,6 +110,7 @@ export {
   ticketApi,
   orderApi,
   clientApi,
+  couponApi,
   storeApi,
   userApi,
   goodsApi,

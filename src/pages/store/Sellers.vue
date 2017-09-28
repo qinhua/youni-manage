@@ -8,11 +8,13 @@
       </tab-item>
       <tab-item :selected="type===2?true:false" @on-item-click="filterSeller(2)"><i class="fa fa-flask"></i>&nbsp;奶
       </tab-item> -->
-      <tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)">全部
-    </tab-item>
+      <tab-item :selected="!type?true:false" @on-item-click="filterSeller">全部
+      </tab-item>
       <tab-item :selected="type===1?true:false" @on-item-click="filterSeller(1)">水
       </tab-item>
       <tab-item :selected="type===2?true:false" @on-item-click="filterSeller(2)">奶
+      </tab-item>
+      <tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)">水&奶
       </tab-item>
     </tab>
     <div class="sellers-list">
@@ -21,38 +23,57 @@
                 noDataText="就这么多了"
                 snapping>
         <!-- content goes here -->
-        <section class="v-items" v-for="(item, index) in sellers" :data-id="item.id" @click="toDetail(item.id)"
-            v-cloak>
-          <section class="wrap">
-            <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
-            <section class="infos">
-              <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
-                <span class="distance">{{(item.distance ? item.distance : 0) | toFixed(1, true)}}km</span>
-              </h3>
-              <section class="middle">
-                <div class="score-con">
-                  <ol class="star" v-if="item.sellerScore" v-cloak>
-                    <li v-for="star in item.sellerScore">★</li>
-                  </ol>
-                  <ol class="star gray" v-else>
-                    <li v-for="star in 5">★</li>
-                  </ol>
-                  <span>{{item.sellerScore | toFixed(1)}}分</span>
-                </div>
-                <span class="hasSell">已售{{item.sellerCount}}单</span>
-              </section>
-              <div class="tags">
-                <label :class="item.authLevelCls">{{item.authLevelName}}</label>
-                <span class="dispatchTime">平均{{item.dispatchTime || 22}}分钟送达</span>
-              </div>
-            </section>
-            <div class="bottom" v-if="item.ticket">
-              <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
-              <!--<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>-->
-              <span class="dispatchTime">{{item.label}}</span>
+        <swipeout>
+          <!--<swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in sellers"
+                         :data-id="item.id" key="index" @click="toDetail(item.id)" v-cloak>-->
+          <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in sellers"
+                         :data-id="item.id" key="index" v-cloak>
+            <div slot="right-menu">
+              <swipeout-button @click.native="auth(item.id)" type="success" class="btn-audit" v-if="item.status===1">审核
+              </swipeout-button>
+              <swipeout-button @click.native="block(item.id)" type="warn" class="btn-block" v-if="item.status===2">封禁
+              </swipeout-button>
+              <swipeout-button @click.native="recovery(item.id)" type="primary" class="btn-recovery"
+                               v-if="item.status===3">解禁
+              </swipeout-button>
+              <!--<swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>-->
             </div>
-          </section>
-        </section>
+            <div slot="content" class="demo-content vux-1px-t">
+              <section class="v-items" :data-id="item.id">
+                <section class="wrap">
+                  <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
+                  <section class="infos">
+                    <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
+                      <span class="businessTime">{{item.businessTime==='24小时'?'24小时营业':item.businessTime}}</span>
+                    </h3>
+                    <section class="middle">
+                      <div class="score-con">
+                        <ol class="star" v-if="item.sellerScore" v-cloak>
+                          <li v-for="star in item.sellerScore">★</li>
+                        </ol>
+                        <ol class="star gray" v-else>
+                          <li v-for="star in 5">★</li>
+                        </ol>
+                        <span>{{item.sellerScore | toFixed(1)}}分</span>
+                      </div>
+                      <span class="hasSell">已售{{item.sellerCount}}单</span>
+                    </section>
+                    <div class="tags">
+                      <label :class="item.authLevelCls">{{item.authLevelName}}</label>
+                      <!--<span class="dispatchTime" v-if="item.label">平均{{item.label}}分钟送达</span>-->
+                      <span class="dispatchTime"><a :href="'tel:'+item.phone">{{item.phone}}</a></span>
+                    </div>
+                  </section>
+                  <div class="bottom" v-if="item.ticket">
+                    <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
+                    <!--<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>-->
+                    <span class="dispatchTime">{{item.label}}</span>
+                  </div>
+                </section>
+              </section>
+            </div>
+          </swipeout-item>
+        </swipeout>
       </scroller>
     </div>
   </div>
@@ -62,35 +83,16 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import {Tab, TabItem} from 'vux'
+  import {Tab, TabItem, Swipeout, SwipeoutItem, SwipeoutButton} from 'vux'
   import {storeApi} from '../../service/main.js'
 
   export default {
     name: 'sellers',
     data() {
       return {
-        type:3,
-//        sellers: [],
-        sellers: [
-          {
-            "name": "张三",
-            "phone": "电话",
-            "companyName": "XX公司",
-            "address": "商家地址",
-            "type": "店铺分类(0全部，1水，2奶)",
-            "authLevel": "认证级别(1普通店，2官方认证，3金牌店)"
-          },
-          {
-            "name": "李四",
-            "phone": "电话",
-            "companyName": "XX公司",
-            "address": "商家地址",
-            "type": "店铺分类(0全部，1水，2奶)",
-            "authLevel": "认证级别(1普通店，2官方认证，3金牌店)"
-          }
-        ],
+        type: 3,
+        sellers: [],
         params: {
-          type: '',
           pagerSize: 10,
           pageNo: 1
         },
@@ -98,27 +100,32 @@
         isPosting: false
       }
     },
-    components: {Tab, TabItem},
+    components: {Tab, TabItem, Swipeout, SwipeoutItem, SwipeoutButton},
     beforeMount() {
       me = window.me
     },
     mounted() {
       vm = this
-//      vm.getSellers()
-      vm.$nextTick(function(){
+      vm.getSellers()
+      vm.$nextTick(function () {
         vm.$refs.sellersScroller.finishInfinite(true)
         vm.$refs.sellersScroller.resize()
       })
     },
     watch: {
       '$route'(to, from) {
-//        vm.getSellers()
+        if (to.name === 'sellers') {
+          vm.getSellers()
+        }
       }
     },
     methods: {
-      // 向父组件传值
-      setPageStatus(data) {
-        this.$emit('listenPage', data)
+      onButtonClick(type, id) {
+        if (type === 'delete') {
+          vm.del(id)
+        } else {
+          vm.block(id)
+        }
       },
       getSellers(isLoadMore, status) {
         if (vm.isPosting) return false
@@ -129,6 +136,41 @@
           vm.isPosting = false
           vm.processing(0, 1)
           var resD = res.data.pager
+          if (resD.itemList.length) {
+            for (var i = 0; i < resD.itemList.length; i++) {
+              var cur = resD.itemList[i]
+              switch (cur.authLevel) {
+                case 'seller_level.1':
+                  cur.authLevelName = '普通店铺'
+                  cur.authLevelCls = 'c1'
+                  break
+                case 'seller_level.2':
+                  cur.authLevelName = '官方认证'
+                  cur.authLevelCls = 'c2'
+                  break
+                case 'seller_level.3':
+                  cur.authLevelName = '金牌店铺'
+                  cur.authLevelCls = 'c3'
+                  break
+              }
+              switch (cur.serviceType) {
+                case 'seller_service_type.1':
+                  cur.serviceTypeName = '水'
+                  cur.serviceTypeCls = 'water'
+                  break
+                case 'seller_service_type.2':
+                  cur.serviceTypeName = '奶'
+                  cur.serviceTypeCls = 'milk'
+                  break
+                case 'seller_service_type.3':
+                  cur.serviceTypeName = '水&奶'
+                  cur.serviceTypeCls = 'water-milk'
+                  break
+              }
+              cur.sellerScore = Math.ceil(cur.sellerScore)
+              // cur.isSleep = me.compareDate(cur.businessTime, '2017-10-12')
+            }
+          }
           if (!isLoadMore) {
             if (resD.totalCount < vm.params.pageSize) {
               vm.noMore = true
@@ -139,76 +181,107 @@
           } else {
             resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
           }
-          console.log(vm.sellers, '店铺数据')
+          // console.log(vm.sellers, '店铺数据')
         }, function () {
           vm.isPosting = false
         })
       },
       refresh(done) {
-        console.log('下拉加载')
+        // console.log('下拉加载')
         setTimeout(function () {
           vm.getSellers()
           vm.$refs.sellersScroller.finishPullToRefresh()
-        }, 1200)
+        }, 1000)
       },
       infinite(done) {
-        console.log('无限滚动')
+        // console.log('无限滚动')
         setTimeout(function () {
           vm.getSellers(true)
           vm.$refs.sellersScroller.finishInfinite(true)
         }, 1000)
       },
       filterSeller(type) {
+        vm.type = type
         switch (type) {
           case 1:
-            vm.params.type = 'seller_type.1'
+            vm.params.serviceType = 'seller_service_type.1'
             break
           case 2:
-            vm.params.type = 'seller_type.2'
+            vm.params.serviceType = 'seller_service_type.2'
             break
           case 3 :
-            vm.params.type = 'seller_type.3'
+            vm.params.serviceType = 'seller_service_type.3'
             break
+          default :
+            delete vm.params.serviceType
         }
         vm.getSellers()
-      },
-      del(id) {
-        if (vm.isPosting) return false
-        vm.confirm('确认删除？', '商品删除后不可恢复！', function () {
-          vm.isPosting = true
-          vm.loadData(storeApi.del,{id:id}, 'POST', function (res) {
-            vm.isPosting = false
-          }, function () {
-            vm.isPosting = false
-          })
-        }, function () {
-        })
-      },
-      setState(id, status) {
-        if (vm.isPosting) return false
-        vm.isPosting = true
-        vm.loadData(storeApi.updateStatus, {sellerId: id, status: status}, 'POST', function (res) {
-          vm.isPosting = false
-          vm.toast(status === 3 ? '已冻结' : '已恢复')
-          vm.getSellers()
-        }, function () {
-          vm.isPosting = false
-        })
-      }, function () {
       },
       auth(id) {
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
           vm.isPosting = true
-          vm.loadData(storeApi.audit,{sellerId:id}, 'POST', function (res) {
+          vm.loadData(storeApi.audit, {sellerId: id, status: 2}, 'POST', function (res) {
             vm.isPosting = false
-            vm.toast('已审核')
-            vm.getSellers()
+            if (res.success) {
+              vm.toast('审核成功')
+              vm.getSellers()
+            } else {
+              vm.toast('操作失败！')
+            }
           }, function () {
             vm.isPosting = false
           })
         }, function () {
           // console.log('no')
+        })
+      },
+      block(id) {
+        if (vm.isPosting) return false
+        vm.confirm('确认封禁此店铺？', null, function () {
+          vm.isPosting = true
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 3}, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.toast('已封禁')
+              vm.getSellers()
+            } else {
+              vm.toast('封禁失败！')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
+        })
+      },
+      recovery(id) {
+        if (vm.isPosting) return false
+        vm.confirm('确认解禁此店铺？', null, function () {
+          vm.isPosting = true
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 2}, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.toast('解禁成功')
+              vm.getSellers()
+            } else {
+              vm.toast('解禁失败！')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
+        })
+      },
+      del(id) {
+        if (vm.isPosting) return false
+        vm.confirm('确认删除？', null, function () {
+          vm.isPosting = true
+          vm.loadData(storeApi.del, {id: id}, 'POST', function (res) {
+            vm.isPosting = false
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
         })
       },
     }
@@ -229,7 +302,24 @@
         }
       }
     }
-
+    .vux-swipeout-item {
+      .bor-b;
+    }
+    .vux-swipeout-button {
+      font-size: 14px;
+    }
+    .btn-block {
+      background: #5d5454;
+    }
+    .btn-recovery {
+      background: orange;
+    }
+    .btn-audit {
+      background: #84ce36;
+    }
+    .vux-1px-t:before {
+      .none;
+    }
     .sellers-list {
       .inner-scroller {
         .borBox;
@@ -291,7 +381,7 @@
             .flex-d-v;
             .borBox;
             width: 100%;
-            .h(150);
+            .h(140);
             padding-left: 170/@rem;
             h3 {
               .flex-r(1);
@@ -367,10 +457,13 @@
                 padding-top: 10/@rem;
                 .c9;
                 .block;
-                .fz(20);
+                .fz(24);
+                a {
+                  .cdiy(#597bde);
+                }
               }
             }
-            .distance {
+            .businessTime {
               .abs;
               right: 0;
               top: 0;

@@ -47,7 +47,6 @@
     Group,
     Cell,
     XInput,
-    XTextarea,
     Swipeout, SwipeoutItem, SwipeoutButton
   } from 'vux'
   import {commonApi, bannerApi} from '../../service/main.js'
@@ -70,7 +69,6 @@
       Group,
       Cell,
       XInput,
-      XTextarea,
       imgUploader,
       Swipeout, SwipeoutItem, SwipeoutButton
     },
@@ -131,7 +129,7 @@
         vm.processing()
         vm.loadData(bannerApi.list, null, 'POST', function (res) {
           vm.isPosting = false
-//          vm.processing(0, 1)
+          vm.processing(0, 1)
           vm.banners = res.data.itemList
           vm.params = {}
         }, function () {
@@ -147,6 +145,7 @@
           vm.loadData(bannerApi.add, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
+            vm.toast('添加成功！')
             vm.getBanners()
           }, function () {
             vm.isPosting = false

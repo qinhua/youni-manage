@@ -35,7 +35,7 @@ let vm
 // 检测是否登录
 var checkLogin = function (openid) {
   $.ajax({
-    url: commonApi.login,
+    url: commonApi.check,
     type: 'POST',
     data: {'requestapp': '{}'},
     dataType: "JSON",
@@ -45,6 +45,10 @@ var checkLogin = function (openid) {
     headers: {'token': openid},
     success: function (res) {
       if (res.success && res.data.success) {
+        /*if(res.data){
+         vm.$router.push({path: '/audit'})
+         return
+         }   */
         me.sessions.set('logYn', true)
       } else {
         me.sessions.remove('logYn')

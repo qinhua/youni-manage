@@ -3,13 +3,13 @@
     <div class="scroll-view">
       <div class="topic-col">
         <group>
-          <x-input title="公告标题：" placeholder="标题（15字左右）" required text-align="right" v-model="params.name"></x-input>
-          <x-input title="公告链接：" placeholder="跳转链接" text-align="right" v-model="params.url"></x-input>
+          <x-input title="标题：" placeholder="标题（15字左右）" required text-align="right" v-model="name"></x-input>
+          <x-input title="链接：" placeholder="跳转链接" text-align="right" v-model="url"></x-input>
         </group>
       </div>
 
       <ul class="topic-list" v-if="topics.length">
-        <h3><i class="fa fa-tags"></i>&nbsp;公告列表<span>左滑可编辑</span></h3>
+        <h3><i class="fa fa-tags"></i>&nbsp;头条列表<span>左滑可编辑</span></h3>
         <swipeout>
           <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in topics"
                          :data-id="item.id" key="index">
@@ -35,7 +35,7 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import imgUploader from '../../components/ImgUploader.vue'
+  import imgUploader from '../../../components/ImgUploader.vue'
   import {
     Group,
     Cell,
@@ -43,7 +43,7 @@
     XTextarea,
     Swipeout, SwipeoutItem, SwipeoutButton
   } from 'vux'
-  import {commonApi, topicApi} from '../../service/main.js'
+  import {commonApi, topicApi} from '../../../service/main.js'
 
   export default {
     name: 's-topic',
@@ -52,9 +52,11 @@
         isPosting: false,
         fileApi: commonApi.uploadImg,
         topics: [],
+        name: '',
+        url: '',
         params: {
-          name: '',
-          url: ''
+          configKey: 'home_notice',
+          configValue: {}
         }
       }
     },
@@ -72,12 +74,12 @@
     mounted() {
       vm = this
       // me.attachClick()
-      vm.getBanners()
+      vm.getTopic()
     },
     watch: {
       '$route'(to, from) {
         if (to.name === 'banner') {
-          vm.getBanners()
+          vm.getTopic()
         }
       }
     },
@@ -91,21 +93,21 @@
       },
       validate() {
         if (vm.topics.length === 4) {
-          vm.toast('最多添加4个！')
+          vm.toast('最多添加4个！', 'warn')
           return false
         }
-        if (!vm.params.name) {
-          vm.toast('请填写标题！')
+        if (!vm.name) {
+          vm.toast('请填写标题！', 'warn')
           return false
         }
-        if (!vm.params.url) {
-          vm.toast('请填写链接！')
+        if (!vm.url) {
+          vm.toast('请填写链接！', 'warn')
           return false
         }
         if (vm.topics.length) {
           for (let i = 0; i < vm.topics.length; i++) {
             let cur = vm.topics[i];
-            if (cur.name === vm.params.name && cur.url === vm.params.url) {
+            if (cur.name === vm.name && cur.url === vm.url) {
               vm.toast('请修改后再提交！')
               return false
             }
@@ -113,13 +115,13 @@
         }
         return true
       },
-      getBanners() {
+      getTopic() {
         if (vm.isPosting) return false
         vm.isPosting = true
-        vm.processing()
+//        vm.processing()
         vm.loadData(topicApi.list, null, 'POST', function (res) {
           vm.isPosting = false
-//          vm.processing(0, 1)
+          vm.processing(0, 1)
           vm.topics = res.data.itemList
           vm.params = {}
         }, function () {
@@ -131,11 +133,21 @@
         if (vm.validate()) {
           if (vm.isPosting) return false
           vm.isPosting = true
-          // vm.processing()
+          vm.processing()
+          vm.params = {
+            configKey: 'home_notice',
+            configValue: {
+              itemList: [{
+                name: vm.name,
+                url: vm.url
+              }]
+            }
+          }
           vm.loadData(topicApi.add, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
-            vm.getBanners()
+            vm.toast('添加成功')
+            vm.getTopic()
           }, function () {
             vm.isPosting = false
             vm.processing(0, 1)
@@ -150,7 +162,7 @@
           vm.loadData(topicApi.del, {bannerId: id}, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
-            vm.getBanners()
+            vm.getTopic()
           }, function () {
             vm.isPosting = false
             vm.processing(0, 1)
@@ -165,7 +177,7 @@
           vm.loadData(topicApi.update, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
-            vm.getBanners()
+            vm.getTopic()
           }, function () {
             vm.isPosting = false
             vm.processing(0, 1)
@@ -179,10 +191,8 @@
             let cur = vm.topics[i];
             if (cur.id === id) {
               for (var val in cur) {
-                console.log(val, cur[val], 5)
                 vm.params[val] = cur[val]
               }
-              console.log(vm.params, 5)
             }
           }
           // this.$router.push({name: 'edit_banner', query: {id: id}})
@@ -196,7 +206,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='less'>
-  @import '../../../static/css/tools.less';
+  @import '../../../../static/css/tools.less';
 
   .s-topic {
     .rel;

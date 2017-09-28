@@ -4,10 +4,10 @@
     <div class="scroll-view" ref="scrollView">
 
       <div class="overview">
-        <!--<a href="#/user" class="top-seller-avatar">
-          <img :src="seller.headimgurl" alt="店铺头像" v-if="seller.headimgurl" v-cloak>
+        <a href="#/user" class="top-seller-avatar">
+          <img :src="admin.headimgurl" alt="店铺头像" v-if="admin.headimgurl" v-cloak>
           <i class="fa fa-user-circle-o user-center" v-else></i>
-        </a>-->
+        </a>
         <div class="top">
           <p class="today">今日收入(元)</p>
           <h2>
@@ -36,7 +36,7 @@
 
       <!--中间入口-->
       <div class="middle-entry">
-        <grid :rows="5">
+        <grid :rows="4">
           <grid-item label="商城管理" link="/mall">
             <img slot="icon" src="../../static/img/item_mall.png">
           </grid-item>
@@ -46,9 +46,9 @@
           <grid-item label="客户管理" link="/clients">
             <img slot="icon" src="../../static/img/item_client.png">
           </grid-item>
-          <grid-item label="资金管理" link="/assets">
+          <!--<grid-item label="资金管理" link="/assets">
             <img slot="icon" src="../../static/img/item_assets.png">
-          </grid-item>
+          </grid-item>-->
           <grid-item label="统计数据" link="/statistic">
             <img slot="icon" src="../../static/img/item_statistic.png">
           </grid-item>
@@ -119,18 +119,19 @@
                 <!--<a class="btn btn-cancel" @click="pushPay(item.orderId)">提醒支付</a>-->
                 <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
                 <!--</div>-->
-                <div class="btns" v-if="item.status===2">
-                  <button type="button" class="btn btn-dispatch" @click="dispatch(item.orderId)">派送</button>
-                </div>
+                <!--<div class="btns" v-if="item.status===2">
+                  <button type="button" class="btn btn-dispatch" @click="dispatchOrder(item.orderId)">派送</button>
+                </div>-->
                 <div class="btns" v-if="item.status===3">
                   <div v-if="item.todayDispatch">
                     <span class="status-txt">当天已派送</span>
-                    <button type="button" disabled class="btn btn-dispatch" @click="dispatch(item.orderId)">派送
-                    </button>
+                    <span class="timestamp">{{item.createTime}}</span>
+                    <!--<button type="button" disabled class="btn btn-dispatch" @click="dispatch(item.orderId)">派送</button>-->
                   </div>
                   <div v-else>
                     <span class="status-txt disabled">当天未派送</span>
-                    <button type="button" class="btn btn-dispatch" @click="dispatch(item.orderId)">派送</button>
+                    <span class="timestamp">{{item.createTime}}</span>
+                    <!--<button type="button" class="btn btn-dispatch" @click="dispatch(item.orderId)">派送</button>-->
                   </div>
                 </div>
                 <div class="score-info" v-if="item.status===5">
@@ -144,7 +145,7 @@
                   </div>
                   <span v-else>买家未评价</span>
                 </div>
-                <span class="timestamp">{{item.createTime}}</span>
+                <!--<span class="timestamp">{{item.createTime}}</span>-->
               </section>
             </section>
           </li>
@@ -186,7 +187,7 @@
       return {
         geo: null,
         location: '',
-        seller: {},
+        admin: {},
         overview: {
           today: {
             orderCount: 0,
@@ -231,7 +232,7 @@
     mounted() {
       vm = this
       vm.params.status = vm.$route.params.status || 1
-      vm.getSeller()
+      vm.getAdmin()
       vm.getOrders()
     },
     /*computed: {},*/
@@ -240,7 +241,7 @@
         if (to.name === 'home') {
           vm.resetScroll()
           vm.params.status = vm.$route.params.status || 1
-          vm.getSeller()
+          vm.getAdmin()
           vm.getOrders()
         }
       }
@@ -301,23 +302,11 @@
           }, 1000)
         }
       },
-      getSeller() {
-        var localSeller = me.sessions.get('ynAdminInfo')
+      getAdmin() {
+        var localSeller = me.locals.get('ynWxUser')
         if (localSeller) {
-          vm.$store.commit('storeData', {key: 'userInfo', data: JSON.parse(localSeller)})
-          vm.seller = JSON.parse(localSeller)
+          vm.admin = JSON.parse(localSeller).data
           vm.getOverview(JSON.parse(localSeller).id)
-          return false
-        } else {
-          vm.loadData(userApi.get, null, 'POST', function (res) {
-            vm.isPosting = false
-            if (res.success && res.data) {
-              vm.seller = res.data
-              vm.getOverview(res.data.id)
-              vm.$store.commit('storeData', {key: 'userInfo', data: res.data})
-              me.sessions.set('ynAdminInfo', JSON.stringify(res.data))
-            }
-          })
         }
       },
       getOverview(id) {
@@ -417,7 +406,7 @@
           vm.isPosting = false
         })
       },
-      dispatch(id) {
+      dispatchOrder(id) {
         if (vm.isPosting) return false
         vm.confirm('确认派送？', null, function () {
           vm.isPosting = true
@@ -431,7 +420,7 @@
         }, function () {
         })
       },
-      dispatchOrder(id) {
+      dispatch(id) {
         if (vm.isPosting) return false
         vm.isPosting = true
         /*var dispatchers = '<option value="">-请选择派送员-</option>'
@@ -477,6 +466,7 @@
             vm.isPosting = false
             if (res.success) {
               vm.toast('派送成功')
+              vm.getOrders()
             } else {
               vm.toast(res.message || '派送失败！')
             }
@@ -516,7 +506,7 @@
         img {
           .size(50, 50);
           .borR(50%);
-          .bor(1px, solid, #c14b34);
+          .bor(1px, solid, #3757c3);
         }
       }
       .user-center {
@@ -528,7 +518,7 @@
         .cf;
       }
       .top {
-        padding: 40/@rem 0;
+        padding: 20/@rem 0 40/@rem 0;
         .center;
         .bor-b(1px, solid, rgba(255, 255, 255, .2));
         h2 {
@@ -673,15 +663,14 @@
         }
         .item-middle {
           .rel;
-          padding: 14/@rem 20/@rem;
-          min-height: 160/@rem;
+          padding: 14/@rem 20/@rem 14/@rem 14/@rem;
+          min-height: 140/@rem;
           .bf8;
           .bor-b;
           .img-con {
             .abs;
             top: 14/@rem;
-            padding: 10/@rem 0;
-            .size(140, 120);
+            .size(140, 140);
             overflow: hidden;
             background: #f5f5f5 url(../../static/img/bg_nopic.jpg) no-repeat center;
             -webkit-background-size: cover;
@@ -817,6 +806,7 @@
             }
           }
           .status-txt {
+            .fl;
             .cdiy(@c3);
             &.disabled {
               .c9;
