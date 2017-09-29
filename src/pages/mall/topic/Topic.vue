@@ -19,7 +19,7 @@
             </div>
             <div slot="content" class="demo-content vux-1px-t">
               <li>
-                <p><a :href="item.url">{{index+1}}.{{item.name}}</a></p>
+                <p><a :href="item.url">{{index + 1}}.{{item.name}}</a></p>
               </li>
             </div>
           </swipeout-item>
@@ -56,7 +56,7 @@
         url: '',
         params: {
           configKey: 'home_notice',
-          configValue: {}
+          itemList: []
         }
       }
     },
@@ -119,11 +119,14 @@
         if (vm.isPosting) return false
         vm.isPosting = true
 //        vm.processing()
+//        vm.loadData(topicApi.list, {configKey: 'home_notice'}, 'POST', function (res) {
         vm.loadData(topicApi.list, null, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
-          vm.topics = res.data.itemList
-          vm.params = {}
+          vm.configs = res.data
+          vm.topics = res.data.itemList[1].itemList
+          console.log(JSON.stringify(vm.configs))
+          console.log(JSON.stringify(vm.topics))
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -134,15 +137,20 @@
           if (vm.isPosting) return false
           vm.isPosting = true
           vm.processing()
-          vm.params = {
+          /* vm.params.configValue[0].itemList.push({
+             name: vm.name,
+             url: vm.url
+           })*/
+          vm.configs.itemList[1].itemList.push({
+            name: vm.name,
+            url: vm.url
+          })
+          /*vm.params = {
             configKey: 'home_notice',
             configValue: {
-              itemList: [{
-                name: vm.name,
-                url: vm.url
-              }]
+              itemList: []
             }
-          }
+          }*/
           vm.loadData(topicApi.add, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)

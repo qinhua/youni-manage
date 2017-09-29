@@ -335,7 +335,7 @@ Vue.directive('jump', {
           param[paramArr[i]] = el.getAttribute('data-' + paramArr[i])
         }
       }
-      // console.log(pathName, param, type)
+      console.log(pathName, param, type)
       // console.info(param, 'v-jump中的param')
       el.addEventListener('click', function () {
         if (pathName) {

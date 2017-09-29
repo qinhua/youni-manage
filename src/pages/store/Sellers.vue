@@ -31,7 +31,7 @@
             <div slot="right-menu">
               <swipeout-button @click.native="auth(item.id)" type="success" class="btn-audit" v-if="item.status===1">审核
               </swipeout-button>
-              <swipeout-button @click.native="block(item.id)" type="warn" class="btn-block" v-if="item.status===2">封禁
+              <swipeout-button @click.native="block(item.id)" type="warn" v-if="item.status===2">封禁
               </swipeout-button>
               <swipeout-button @click.native="recovery(item.id)" type="primary" class="btn-recovery"
                                v-if="item.status===3">解禁
@@ -39,12 +39,14 @@
               <!--<swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>-->
             </div>
             <div slot="content" class="demo-content vux-1px-t">
-              <section class="v-items" :data-id="item.id">
-                <section class="wrap">
+              <section class="v-items" :data-id="item.id" @click="toDetail(item.id)">
+                <section :class="['wrap',(item.status===3)?'disabled':'']">
+                  <span class="r-status s01" v-if="item.status===3">已封禁</span>
+                  <span class="r-status s02" v-if="item.status===1">待审核</span>
                   <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
                   <section class="infos">
                     <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
-                      <span class="businessTime">{{item.businessTime==='24小时'?'24小时营业':item.businessTime}}</span>
+                      <span class="businessTime">{{item.businessTime === '24小时' ? '24小时营业' : item.businessTime}}</span>
                     </h3>
                     <section class="middle">
                       <div class="score-con">
@@ -90,7 +92,7 @@
     name: 'sellers',
     data() {
       return {
-        type: 3,
+        type: 0,
         sellers: [],
         params: {
           pagerSize: 10,
@@ -126,6 +128,9 @@
         } else {
           vm.block(id)
         }
+      },
+      toDetail(id) {
+        vm.$router.push({name: 'seller_detail', query: {id: id}})
       },
       getSellers(isLoadMore, status) {
         if (vm.isPosting) return false
@@ -367,6 +372,28 @@
           }
           .wrap {
             .rel;
+            &.disabled {
+              .infos {
+                .f-grey(.8);
+              }
+            }
+          }
+          .r-status {
+            .abs;
+            left: 0;
+            top: 0;
+            z-index: 2;
+            padding: 1px 2px;
+            .fz(20);
+            .cf;
+            &.s01 {
+              background: #53ca18;
+              -webkit-animation: flash 5s linear infinite alternate;
+              animation: flash 5s linear infinite alternate;
+            }
+            &.s02 {
+              background: #111;
+            }
           }
           .img-con {
             .abs-center-vertical;

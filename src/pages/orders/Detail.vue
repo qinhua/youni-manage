@@ -106,9 +106,10 @@
         <!--<cell title="查看明细" link="/income_list">
           &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>&ndash;&gt;
         </cell>-->
-        <cell title="商家信息:" link="/">
+        <cell title="商家信息:" @click.native="toSeller(details.sellerId)">
           <h4 class="item-top"><i class="ico-seller"
-                                  :style="details.sellerImage?'background-image:url('+details.sellerImage+')':''"></i>&nbsp;{{details.sellerName}}
+                                  :style="details.sellerImage?'background-image:url('+details.sellerImage+')':''"></i>&nbsp;{{details.sellerName}} <i
+            class="fa fa-chevron-right"></i>
           </h4>
         </cell>
       </group>
@@ -160,6 +161,9 @@
       }
     },
     methods: {
+      toSeller(id) {
+        vm.$router.push({name: 'seller_detail', query: {id: id}})
+      },
       getDetail(cb) {
         vm.id = vm.$route.query.id
         if (vm.isPosting) return false
@@ -691,7 +695,7 @@
       margin-bottom: 14/@rem;
       .bf;
       .item-top {
-        padding: 10/@rem 20/@rem 10/@rem 0;
+        padding: 10/@rem 0 10/@rem 0;
         .txt-normal;
         .c3;
         line-height: 54/@rem;

@@ -49,9 +49,9 @@
     },
     mounted() {
       vm = this
-      me.attachClick()
       vm.params.phone = vm.$route.query.phone || null
       vm.params.passwd = vm.$route.query.psw || null
+      vm.checkServer()
       window.addEventListener('keydown', function (e) {
         if (e.keyCode === 13) {
           vm.login()
@@ -61,6 +61,13 @@
     computed: {
       loginText() {
         return this.params.logintype === 1 ? '密码登录' : '验证码登录'
+      }
+    },
+    watch: {
+      '$route'(to, from) {
+        if (to.name === 'login') {
+          vm.checkServer()
+        }
       }
     },
     methods: {
@@ -89,6 +96,27 @@
           vm.isPosting = false
         })
       },
+      // 01.检查是否登录
+      checkServer() {
+        if (!me.locals.get('ynWxUser')) {
+          me.locals.set('beforeLoginUrl', '/login')
+          vm.jump('author')
+        }
+        vm.loadData(commonApi.check, null, 'POST', function (res) {
+          vm.processing()
+          if (res.data.success) {
+            vm.processing(0, 1)
+            /* 保存用户信息 */
+            vm.$store.commit('storeData', {key: 'isLogin', data: true})
+            me.sessions.set('logYn', true)
+            vm.jump('home')
+          } else {
+            vm.jump('login')
+          }
+        }, function () {
+        })
+      },
+      // 02.登录
       login() {
         if (vm.isPosting) return false
         if (!vm.params.phone) {
