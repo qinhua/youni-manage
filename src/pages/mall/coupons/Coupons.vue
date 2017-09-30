@@ -13,8 +13,8 @@
           <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in coupons"
                          :data-id="item.id" key="index">
             <div slot="right-menu">
-              <swipeout-button @click.native="onButtonClick('edit',item.id)" background-color="orange">编辑
-              </swipeout-button>
+              <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" background-color="orange">编辑
+              </swipeout-button>-->
               <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
             </div>
             <div slot="content" class="demo-content vux-1px-t">
@@ -110,7 +110,7 @@
         }, 1000)
       },
       onItemClick(type) {
-        type ? vm.params.goodsType = (type === 1 ? 'goods_type.1' : 'goods_type.21') : delete vm.params.type
+        type ? (vm.params.goodsType = (type === 1 ? 'goods_type.1' : 'goods_type.21')) : delete vm.params.goodsType
         vm.getCoupons()
       },
       getCoupons(isLoadMore) {

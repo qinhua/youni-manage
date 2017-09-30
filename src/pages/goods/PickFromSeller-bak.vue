@@ -1,6 +1,6 @@
 <template>
   <div class="pick-seller-con" v-cloak>
-    <div class="scroll-view">
+    <div class="scroll-view" v-if="!showGoodsList">
       <div class="search-con">
         <search
           @result-click="resultClick"
@@ -12,20 +12,21 @@
           @on-focus="onFocus"
           @on-cancel="onCancel"
           @on-submit="onSubmit"
-          ref="search" v-if="showSearch">
+          ref="search">
         </search>
         <!--过滤条-->
         <div class="bar-chamer">
-          <div class="goods-filter" ref="filtersMenu">
+          <div class="sellers-filter" ref="filtersMenu">
             <div class="v-filter-tabs">
               <ul class="v-f-tabs">
-                <li class="f-img" @click="showSearch=true"><i class="ico-search"></i>店铺搜索</li>
-                <li :class="curFilterType==='types'?'mfilterActive':''" @click="showFilter('types',$event)">商品类目<i
+                <li :class="curFilterType==='types'?'mfilterActive':''" @click="showFilter('types',$event)">店铺分类<i
                   class="ico-arr-down"></i>
                 </li>
-                <!--<li :class="curFilterType==='brands'?'mfilterActive':''" @click="showFilter('brands',$event)">品牌<i
+                <li :class="curFilterType==='services'?'mfilterActive':''" @click="showFilter('services',$event)">业务分类<i
                   class="ico-arr-down"></i>
-                </li>-->
+                </li>
+                <li :class="curFilterType==='sorts'?'mfilterActive':''" @click="showFilter('sorts',$event)">排序<i
+                  class="ico-arr-down"></i></li>
               </ul>
               <div class="filter-data" v-if="showFilterCon" :class="showFilterCon?'show':''" v-cloak>
                 <ul class="filter-tags" v-show="curFilterDict">
@@ -40,40 +41,51 @@
             </div>
           </div>
         </div>
+
       </div>
 
-      <div class="seller-list">
-        <scroller :class="['inner-scroller',showSearch?'padding-more':'']" ref="sellerScroller" :on-refresh="refresh"
-                  :on-infinite="infinite"
-                  refreshText="下拉刷新" :noDataText="goods&&goods.length?'没有更多数据':' '" snapping>
+      <div class="seller-list" @click="chooseGoods">
+        <scroller class="inner-scroller" ref="sellerScroller" :on-refresh="refresh" :on-infinite="infinite"
+                  refreshText="下拉刷新" noDataText="没有更多数据" snapping>
           <!-- content goes here -->
-          <section class="v-items" v-for="(item, index) in goods" :data-id="item.goodsid">
-            <!--<h4 class="item-top"><i class="ico-store"></i>&nbsp;{{item.sellerName}}&nbsp;&nbsp;<i
-              class="fa fa-angle-right cc"></i><span>{{item.statusName}}</span></h4>-->
-            <section class="item-middle">
-              <div class="img-con"
-                   :style="item.goodsImage?('background-image:url('+item.goodsImage+')'):''"></div>
-              <div class="info-con">
-                <h3><span
-                  :class="item.goodsType==='goods_type.2'?'milk':''">{{item.goodsType === 'goods_type.2' ? '奶' : '水'}}</span>{{item.goodsName}}
+          <section class="v-items" v-for="(item, index) in results" :data-id="item.id" @click="chooseGoods(item.id)"
+                   v-cloak>
+            <section class="wrap">
+              <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
+              <section class="infos">
+                <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
+                  <span class="distance">{{(item.distance ? item.distance : 0) | toFixed(1, true)}}km</span>
                 </h3>
                 <section class="middle">
-                  <span class="unit-price">售价：￥{{item.goodsPrice|toFixed}}元</span>
-                  <span class="order-info">已售：{{item.goodsSaleCount}}件</span>
+                  <div class="score-con">
+                    <ol class="star" v-if="item.sellerScore" v-cloak>
+                      <li v-for="star in item.sellerScore">★</li>
+                    </ol>
+                    <ol class="star gray" v-else>
+                      <li v-for="star in 5">★</li>
+                    </ol>
+                    <span>{{item.sellerScore | toFixed(1)}}分</span>
+                  </div>
+                  <span class="hasSell">已售{{item.sellerCount}}单</span>
                 </section>
-                <label>来源：{{item.sellerName}}件</label>
+                <div class="tags">
+                  <label :class="item.authLevelCls">{{item.authLevelName}}</label>
+                  <span class="dispatchTime" v-if="item.label" v-cloak>平均{{item.label}}分钟送达</span>
+                </div>
+              </section>
+              <div class="bottom" v-if="item.ticket">
+                <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
+                <!--<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>-->
+                <span class="dispatchTime">{{item.label}}</span>
               </div>
             </section>
-            <section class="item-bottom">
-              <!--<div class="extra-info">-->
-              <!--<p v-for="(ext, idx) in item.extras">{{ext.name}}<span>￥{{ext.type ? '-' : ''}}{{ext.value}}.00</span></p>-->
-              <!--</div>-->
-              <!--<div class="total-price">共{{item.buyCount}}件商品&nbsp;合计：<span>￥{{item.total}}</span>.00（含上楼费）</div>-->
-              <div class="btns">
-                <!--<a class="btn btn-del" @click="editGoods(item)">编辑</a>-->
-                <a class="btn btn-del" @click="add(item.goodsId)"><i class="fa fa-plus-circle">&nbsp;</i>上架</a>
-                <!--<a class="btn btn-del" @click="setState(item.id,1)" v-else>上架</a>-->
-                <!--<a class="btn btn-del" @click="delGoods(item.id||2)">删除</a>-->
+            <section class="sleep-tips" v-if="item.isSleep" v-cloak>
+              <div class="wrap">
+                <h3>商家已打烊（{{item.runStartTime}}~{{item.runEndTime}}）<br><span>非营业时间仍可预定</span>
+                  <button type="button" class="btn btn-reserve" @click="preBook(item.id)"><i class="fa fa-clock-o"
+                                                                                             aria-hidden="true"></i>&nbsp;预定
+                  </button>
+                </h3>
               </div>
             </section>
           </section>
@@ -81,8 +93,8 @@
       </div>
 
     </div>
-    <div class="iconNoData abs-center-vh" v-if="!goods.length"><i></i>
-      <p>暂无商品</p></div>
+
+    <!--<goods-search :sellerId="curSellerId" @on-select="getGoodsData" v-else></goods-search>-->
   </div>
 </template>
 <!--/* eslint-disable no-unused-vars */-->
@@ -91,7 +103,7 @@
   let me
   let vm
   import {Tab, TabItem,Search} from 'vux'
-  import {goodsApi} from '../../service/main.js'
+  import {storeApi} from '../../service/main.js'
   import goodsSearch from '../../components/GoodsSearch.vue'
 
   export default {
@@ -99,15 +111,18 @@
     data() {
       return {
         value: '',
-        showSearch: false,
-        goods: [],
-        result: [],
+        curSellerId: null,
+        results: [],
+        clients: [],
         isPosting: false,
         onFetching: false,
         noMore: false,
         params: {
           pageSize: 10,
-          pageNo: 1
+          pageNo: 1,
+          sellerLevel: '',
+          sellerType: '',
+          sortType: ''
         },
         /* filter start */
         showFilterCon: false,
@@ -119,54 +134,48 @@
               value: '全部'
             },
             {
-              key: 'goods_type.1',
-              value: '桶装水'
+              key: 'seller_level.1',
+              value: '普通店'
             },
             {
-              key: 'goods_type.2',
-              value: '奶'
+              key: 'seller_level.2',
+              value: '官方认证'
+            },
+            {
+              key: 'seller_level.3',
+              value: '金牌店'
             }
           ],
-          brands: [
+          services: [
             {
               key: '',
               value: '全部'
             },
             {
+              key: 'seller_service_type.1',
+              value: '水'
+            },
+            {
+              key: 'seller_service_type.2',
+              value: '奶'
+            },
+            {
+              key: 'seller_service_type.3',
+              value: '水&奶'
+            }
+          ],
+          sorts: [
+            {
+              key: '',
+              value: '默认排序'
+            },
+            {
               key: 1,
-              value: '怡宝'
+              value: '离我最近'
             },
             {
               key: 2,
-              value: '康师傅'
-            },
-            {
-              key: 3,
-              value: '百岁山'
-            },
-            {
-              key: 4,
-              value: '花果山'
-            },
-            {
-              key: 5,
-              value: '水老官'
-            },
-            {
-              key: 6,
-              value: '一方人'
-            },
-            {
-              key: 7,
-              value: '农夫山泉'
-            },
-            {
-              key: 8,
-              value: '八宝山'
-            },
-            {
-              key: 9,
-              value: '昆仑山'
+              value: '销量最高'
             }
           ]
         },
@@ -178,13 +187,20 @@
             key: '',
             value: ''
           },
-          brands: {
+          services: {
+            index: '',
+            key: '',
+            value: ''
+          },
+          sorts: {
             index: '',
             key: '',
             value: ''
           }
         }, // 当前选择的过滤条件
         /* filter end */
+        /*choose goods*/
+        showGoodsList: false
       }
     },
     components: {Tab, TabItem, Search, goodsSearch},
@@ -193,7 +209,7 @@
     },
     mounted() {
       vm = this
-      vm.getGoods()
+      vm.getSellers()
       vm.$nextTick(function () {
         vm.$refs.sellerScroller.finishInfinite(true)
         vm.$refs.sellerScroller.resize()
@@ -208,12 +224,14 @@
         }, false)
       })
     },
+    /*computed: {},*/
     watch: {
       '$route'(to, from) {
         if (to.name === 'pick_from_seller') {
-          vm.getGoods()
+          vm.getSellers()
         } else {
           vm.value = ''
+          vm.showGoodsList = false
         }
       }
     },
@@ -251,50 +269,90 @@
           target.classList.remove('fixed')
         }, 100)
       },
+      getGoodsData(data) {
+        vm.showGoodsList = false
+        vm.selGoodsName = data.name || ''
+        vm.params.goodsId = data.id || null
+      },
+      onButtonClick(type, id) {
+        if (type === 'delete') {
+          vm.del(id)
+        } else {
+          vm.block(id)
+        }
+      },
       refresh(done) {
-        // console.log('下拉加载')
+        console.log('下拉加载')
         setTimeout(function () {
-          vm.getGoods()
+          vm.getSellers()
           vm.$refs.sellerScroller.finishPullToRefresh()
         }, 1000)
       },
       infinite(done) {
-        // console.log('无限滚动')
+        console.log('无限滚动')
         setTimeout(function () {
-          vm.getGoods(true)
+          vm.getSellers(true)
           vm.$refs.sellerScroller.finishInfinite(true)
         }, 1000)
       },
 
       /* 页面数据 */
-      getGoods(isLoadMore) {
+      getSellers(isLoadMore) {
         if (vm.isPosting) return false
         !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
         vm.isPosting = true
         vm.processing()
-        vm.loadData(goodsApi.listAlone, vm.params, 'POST', function (res) {
+        vm.loadData(storeApi.list, vm.params, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
           var resD = res.data.pager
+          if (resD.itemList.length) {
+            for (var i = 0; i < resD.itemList.length; i++) {
+              var cur = resD.itemList[i]
+              switch (cur.authLevel) {
+                case 'seller_level.1':
+                  cur.authLevelName = '普通店铺'
+                  cur.authLevelCls = 'c1'
+                  break
+                case 'seller_level.2':
+                  cur.authLevelName = '官方认证'
+                  cur.authLevelCls = 'c2'
+                  break
+                case 'seller_level.3':
+                  cur.authLevelName = '金牌店铺'
+                  cur.authLevelCls = 'c3'
+                  break
+              }
+              switch (cur.serviceType) {
+                case 'seller_service_type.1':
+                  cur.serviceTypeName = '水'
+                  cur.serviceTypeCls = 'water'
+                  break
+                case 'seller_service_type.2':
+                  cur.serviceTypeName = '奶'
+                  cur.serviceTypeCls = 'milk'
+                  break
+                case 'seller_service_type.3':
+                  cur.serviceTypeName = '水&奶'
+                  cur.serviceTypeCls = 'water-milk'
+                  break
+              }
+              cur.sellerScore = Math.ceil(cur.sellerScore)
+              // cur.isSleep = me.compareDate(cur.businessTime, '2017-10-12')
+            }
+          }
           if (!isLoadMore) {
             if (resD.totalCount < vm.params.pageSize) {
               vm.noMore = true
             } else {
               vm.noMore = false
             }
-//            vm.goods = resD.itemList
+            vm.sellers = resD.itemList
           } else {
-            /*if (resD.itemList.length) {
-             for (var i = 0; i < resD.itemList.length; i++) {
-             var cur = resD.itemList[i];
-             vm.goods.push(cur)
-             }
-             } else {
-             vm.noMore = true
-             }*/
-            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
+            resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
           }
-          // console.log(vm.goods, '商品数据')
+          vm.results = vm.sellers
+          console.log(vm.sellers, '附近卖家')
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -305,7 +363,7 @@
           return false
         } else {
           setTimeout(function () {
-            vm.getGoods()
+            vm.getSellers()
           }, 1000)
         }
       },
@@ -314,30 +372,48 @@
           return false
         } else {
           setTimeout(function () {
-            vm.getGoods(true)
+            vm.getSellers(true)
           }, 1000)
         }
       },
-      add(id) {
+      block(id) {
         if (vm.isPosting) return false
-        vm.isPosting = true
-        vm.loadData(goodsApi.add, {goodsId: id}, 'POST', function (res) {
-          vm.isPosting = false
-          vm.toast('已上架')
-          vm.getGoods()
+        vm.confirm('确认屏蔽此客户？', null, function () {
+          vm.isPosting = true
+          vm.loadData(clientApi.block, {id: id}, 'POST', function (res) {
+            vm.isPosting = false
+          }, function () {
+            vm.isPosting = false
+          })
         }, function () {
-          vm.isPosting = false
+        })
+      },
+      del(id) {
+        if (vm.isPosting) return false
+        vm.confirm('确认删除？', null, function () {
+          vm.isPosting = true
+          vm.loadData(clientApi.del, {id: id}, 'POST', function (res) {
+            vm.isPosting = false
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
         })
       },
       resultClick(item) {
       },
       getResult(val) {
         if (val) {
-          vm.params.sellerName = val
+          vm.results = []
+          // vm.getClients()
+          for (let i = 0; i < vm.clients.length; i++) {
+            if (vm.clients[i].nickname.indexOf(val) > -1 || vm.clients[i].phone.indexOf(val) > -1) {
+              vm.results.push(vm.clients[i])
+            }
+          }
         } else {
-          delete vm.params.sellerName
+          vm.results = vm.clients
         }
-        vm.getGoods()
       },
       onSubmit() {
         this.$refs.search.setBlur()
@@ -346,17 +422,49 @@
           position: 'top',
           text: 'on submit'
         })
-        vm.getGoods()
+        vm.getClients()
       },
       onFocus() {
+        // console.log('on focus')
         vm.hideFilter()
       },
       onCancel() {
-        vm.value = ''
-        vm.showSearch = false
+        // console.log('on cancel')
       },
 
-      /* 商品筛选 */
+      /* 店铺筛选 */
+      /*外部param指定筛选*/
+      hasFilter() {
+        var paramFilter = vm.$route.params.type
+        if (paramFilter) {
+          switch (paramFilter) {
+            case '1':
+              vm.params.sellerType = 'seller_service_type.1'
+              vm.curSelFilter.services = {
+                index: '1',
+                key: 'seller_service_type.1',
+                value: '水'
+              }
+              break
+            case '2':
+              vm.params.sellerType = 'seller_service_type.2'
+              vm.curSelFilter.services = {
+                index: '2',
+                key: 'seller_service_type.2',
+                value: '奶'
+              }
+              break
+            case '3':
+              vm.params.sellerType = 'seller_service_type.3'
+              vm.curSelFilter.services = {
+                index: '3',
+                key: 'seller_service_type.3',
+                value: '水&奶'
+              }
+              break
+          }
+        }
+      },
       showFilter(type, e) {
         if (vm.showFilterCon) {
           if (vm.curFilterType === type) {
@@ -385,11 +493,17 @@
         vm.curSelFilter[vm.curFilterType].key = key
         vm.curSelFilter[vm.curFilterType].value = value
         // console.error(JSON.stringify(vm.curSelFilter, null, 2))
-        vm.curSelFilter.types.key ? vm.params.goodsType = vm.curSelFilter.types.key : delete vm.params.goodsType
-        // vm.curSelFilter.brands.key ? vm.params.brandId = vm.curSelFilter.brands.key : delete vm.params.brandId
+        vm.curSelFilter.types.key ? vm.params.sellerLevel = vm.curSelFilter.types.key : delete vm.params.sellerLevel
+        vm.curSelFilter.services.key ? vm.params.sellerType = vm.curSelFilter.services.key : delete vm.params.sellerType
+        vm.curSelFilter.sorts.key ? vm.params.sortType = vm.curSelFilter.sorts.key : delete vm.params.sortType
         vm.hideFilter()
-        vm.getGoods()
-      }
+        vm.getSellers()
+      },
+
+      /*选择商品*/
+      chooseGoods() {
+//        vm.showGoodsList = true;
+      },
     }
   }
 </script>
@@ -420,7 +534,7 @@
       min-height: 80/@rem;
     }
 
-    .goods-filter {
+    .sellers-filter {
       .rel;
       z-index: 10;
       &.fixed {
@@ -442,7 +556,7 @@
             .rel;
             .borBox;
             .fl;
-            width: 50%;
+            width: 33.3333%;
             height: 60/@rem;
             line-height: 60/@rem;
             .c3;
@@ -480,24 +594,7 @@
             }
             &:nth-child(2) {
               border-left: 1px solid #eee;
-              /*border-right: 1px solid #eee;*/
-            }
-            &.f-img {
-              .ico-search {
-                .abs-center-vertical;
-                width: 30px;
-                height: 30px;
-                &:before {
-                  content: "";
-                  position: absolute;
-                  width: 16px;
-                  height: 16px;
-                  background: url(../../../static/img/ico_search.png) center;
-                  .ele-base;
-                  top: 7px;
-                  left: -22px;
-                }
-              }
+              border-right: 1px solid #eee;
             }
           }
         }
@@ -541,154 +638,58 @@
     }
 
     .seller-list {
+      /*.vux-swipeout-button-primary {
+        background: #5d5454;
+      }
+      .vux-1px-t:before {
+        .none;
+      }*/
       .inner-scroller {
         .borBox;
-        padding: 84/@rem 0 50px;
-        &.padding-more {
-          padding: 170/@rem 0 50px;
-        }
+        padding: 44px 0 50px;
         .v-items {
           .borBox;
+          /*height: 150/@rem;*/
           margin-bottom: 10/@rem;
           .bf;
-          .item-top {
+          .wrap {
             padding: 14/@rem 20/@rem;
-            .txt-normal;
-            .c3;
-            .fz(24);
-            .bor-b;
-            .ico-store {
-              .fl;
-              display: inline-block;
-              margin-top: 2/@rem;
-              font-size: inherit;
-              .size(30, 30);
-              background: url(../../../static/img/ico_store.png);
-              .ele-base;
-            }
-            span {
-              .fr;
-              .fz(22);
-              .cdiy(@c2);
-            }
-          }
-          .item-middle {
-            .rel;
-            padding: 14/@rem 20/@rem 14/@rem 14/@rem;
-            min-height: 140/@rem;
-            .bf;
-            .img-con {
-              .abs;
-              top: 14/@rem;
-              .size(140, 140);
-              overflow: hidden;
-              background: #f5f5f5 url(../../../static/img/bg_nopic.jpg) no-repeat center;
-              -webkit-background-size: cover;
-              background-size: cover;
+            img {
+              .size(80, 80);
+              .abs-center-vertical;
+              left: 20/@rem;
+              .borR(50%);
             }
             .info-con {
               .borBox;
-              width: 100%;
-              padding: 0 0 0 160/@rem;
+              padding-left: 100/@rem;
               h3 {
                 padding-bottom: 10/@rem;
                 .txt-normal;
                 .c3;
                 .fz(26);
                 .ellipsis-clamp-2;
-                span {
-                  margin-right: 4px;
-                  padding: 0 2px;
-                  font-weight: normal;
-                  .cf;
-                  .fz(22);
-                  background: #2acaad;
-                  .borR(2px);
-                  &.milk {
-                    background: #74c361;
-                  }
-                }
-              }
-              .middle {
-                .c9;
-                .fz(24);
-                .ellipsis-clamp-2;
-                .unit-price {
-                  padding-right: 40/@rem;
-                  .cdiy(@c2);
-                }
-                .order-info {
+                a {
+                  .iblock;
+                  padding: 0 0 10/@rem 20/@rem;
                   .fr;
+                  .fz(24);
+                  .cdiy(#67b35a);
                 }
               }
-              label {
-                .fz(20);
-              }
-            }
-            .operate-con {
-              .flex-r(1);
-              .right;
-              .price {
-                padding-bottom: 10/@rem;
-                .c3;
-                .fz(24);
-              }
-              .buy-count {
-                .c9;
+              .nums {
                 .fz(22);
-              }
-            }
-          }
-          .item-bottom {
-            .extra-info {
-              margin-top: 2px;
-              padding: 10/@rem 20/@rem;
-              .bf8;
-              p {
-                .fz(22);
-                .c3;
                 span {
-                  .fr;
+                  padding-right: 20/@rem;
                 }
-                &:not(:last-child) {
-                  padding-bottom: 10/@rem;
+              }
+              .progress {
+                padding: 20/@rem 0;
+                > div {
+                  height: auto;
                 }
               }
             }
-            .total-price {
-              padding: 10/@rem 20/@rem;
-              .right;
-              .c3;
-              .fz(22);
-              .bor;
-              span {
-                .fz(30);
-              }
-            }
-            .btns {
-              padding: 14/@rem 20/@rem;
-              overflow: hidden;
-              .bor-t;
-              a {
-                .fr;
-                padding: 4px 40/@rem;
-                margin-left: 20/@rem;
-                .cf;
-                .fz(22);
-                .borR(5px);
-                &.btn-cancel, &.btn-del {
-                  .c6;
-                  .bor(1px, solid, #ccc);
-                }
-                &.btn-push, &.btn-appraise, &.btn-pay {
-                  .cdiy(@c2);
-                  .bor(1px, solid, @c2);
-                }
-              }
-            }
-          }
-          &.grey {
-            .c9!important;
           }
         }
       }

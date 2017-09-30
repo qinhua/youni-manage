@@ -1,7 +1,7 @@
 <template>
   <div class="s-topic" v-cloak>
     <div class="scroll-view">
-      <div class="topic-col">
+      <div class="topic-col" v-show="isAdd||isEdit">
         <group>
           <x-input title="标题：" placeholder="标题（15字左右）" required text-align="right" v-model="name"></x-input>
           <x-input title="链接：" placeholder="跳转链接" text-align="right" v-model="url"></x-input>
@@ -14,8 +14,8 @@
           <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in topics"
                          :data-id="item.id" key="index">
             <div slot="right-menu">
-              <!--<swipeout-button @click.native="onButtonClick('edit',item.id)" type="primary">编辑</swipeout-button>-->
-              <swipeout-button @click.native="onButtonClick('delete',item.id)" type="warn">删除</swipeout-button>
+              <swipeout-button @click.native="onButtonClick('edit',item.name)" type="primary">编辑</swipeout-button>
+              <swipeout-button @click.native="onButtonClick('delete',item.name)" type="warn">删除</swipeout-button>
             </div>
             <div slot="content" class="demo-content vux-1px-t">
               <li>
@@ -25,8 +25,15 @@
           </swipeout-item>
         </swipeout>
       </ul>
+      <div class="iconNoData abs-center-vh" v-else><i></i>
+        <p>暂无记录</p></div>
     </div>
-    <button type="button" class="btn btn-save" @click="add" :disabled="topics.length===4"><i class="fa fa-plus"></i>&nbsp;添加（最多4个）
+    <button type="button" class="btn btn-save" @click="isAdd=true" :disabled="topics.length===4" v-show="!isEdit"><i
+      class="fa fa-plus"></i>&nbsp;添加（最多4个）
+    </button>
+    <button type="button" class="btn btn-save" @click="add" v-show="isAdd"><i class="fa fa-save"></i>&nbsp;保存
+    </button>
+    <button type="button" class="btn btn-save" @click="update(curEditIdx)" v-show="isEdit"><i class="fa fa-save"></i>&nbsp;保存
     </button>
   </div>
 </template>
@@ -40,32 +47,27 @@
     Group,
     Cell,
     XInput,
-    XTextarea,
     Swipeout, SwipeoutItem, SwipeoutButton
   } from 'vux'
-  import {commonApi, topicApi} from '../../../service/main.js'
+  import {topicApi} from '../../../service/main.js'
 
   export default {
     name: 's-topic',
     data() {
       return {
         isPosting: false,
-        fileApi: commonApi.uploadImg,
+        isAdd: false,
+        isEdit: false,
         topics: [],
+        lastData: [],
         name: '',
-        url: '',
-        params: {
-          configKey: 'home_notice',
-          itemList: []
-        }
+        url: ''
       }
     },
     components: {
       Group,
       Cell,
       XInput,
-      XTextarea,
-      imgUploader,
       Swipeout, SwipeoutItem, SwipeoutButton
     },
     beforeMount() {
@@ -73,23 +75,23 @@
     },
     mounted() {
       vm = this
-      // me.attachClick()
       vm.getTopic()
     },
     watch: {
       '$route'(to, from) {
         if (to.name === 'banner') {
+          vm.reset()
           vm.getTopic()
         }
       }
     },
     methods: {
-      getImgUrl(data) {
-        if (me.isArray(data)) {
-          vm.params.image = data.join(',')
-        } else {
-          vm.params.image = ''
-        }
+      reset(){
+        vm.isAdd = false,
+          vm.isEdit = false,
+          vm.lastData = [],
+          vm.name = '',
+          vm.url = ''
       },
       validate() {
         if (vm.topics.length === 4) {
@@ -118,15 +120,13 @@
       getTopic() {
         if (vm.isPosting) return false
         vm.isPosting = true
-//        vm.processing()
-//        vm.loadData(topicApi.list, {configKey: 'home_notice'}, 'POST', function (res) {
-        vm.loadData(topicApi.list, null, 'POST', function (res) {
+        vm.processing()
+        vm.loadData(topicApi.list, {configKey: 'home_notice'}, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
-          vm.configs = res.data
-          vm.topics = res.data.itemList[1].itemList
-          console.log(JSON.stringify(vm.configs))
-          console.log(JSON.stringify(vm.topics))
+          if (res.data) {
+            vm.topics = res.data.itemList[0].itemList
+          }
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -136,76 +136,94 @@
         if (vm.validate()) {
           if (vm.isPosting) return false
           vm.isPosting = true
-          vm.processing()
-          /* vm.params.configValue[0].itemList.push({
-             name: vm.name,
-             url: vm.url
-           })*/
-          vm.configs.itemList[1].itemList.push({
+          vm.topics.push({
             name: vm.name,
             url: vm.url
           })
-          /*vm.params = {
+          var params = {
             configKey: 'home_notice',
-            configValue: {
-              itemList: []
-            }
-          }*/
-          vm.loadData(topicApi.add, vm.params, 'POST', function (res) {
+            configValue:  JSON.stringify({
+              itemList: vm.topics
+            })
+          }
+          vm.loadData(topicApi.set, params, 'POST', function (res) {
             vm.isPosting = false
-            vm.processing(0, 1)
+            vm.isAdd = false
+            vm.isEdit = false
+            vm.name = ''
+            vm.url = ''
             vm.toast('添加成功')
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-            vm.processing(0, 1)
           })
         }
       },
-      del(id) {
+      del(name) {
         if (vm.isPosting) return false
         vm.confirm('确认删除？', '', function () {
           vm.isPosting = true
-          // vm.processing()
-          vm.loadData(topicApi.del, {bannerId: id}, 'POST', function (res) {
+          for (var i = 0; i < vm.topics.length; i++) {
+            if (vm.topics[i].name === name) {
+              vm.topics.splice(i, 1)
+            }
+          }
+          var params = {
+            configKey: 'home_notice',
+            configValue: {
+              itemList: JSON.stringify(vm.topics)
+            }
+          }
+          vm.loadData(topicApi.set, params, 'POST', function (res) {
             vm.isPosting = false
-            vm.processing(0, 1)
+            vm.isAdd = false
+            vm.isEdit = false
+            vm.name = ''
+            vm.url = ''
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-            vm.processing(0, 1)
           })
         })
       },
-      update() {
+      update(idx){
         if (vm.validate()) {
           if (vm.isPosting) return false
           vm.isPosting = true
-          vm.processing()
-          vm.loadData(topicApi.update, vm.params, 'POST', function (res) {
+          vm.topics[idx].name = vm.name
+          vm.topics[idx].url = vm.url
+          var params = {
+            configKey: 'home_notice',
+            configValue: JSON.stringify({
+              itemList: vm.topics
+            })
+          }
+          vm.loadData(topicApi.set, params, 'POST', function (res) {
             vm.isPosting = false
-            vm.processing(0, 1)
+            vm.isAdd = false
+            vm.isEdit = false
+            vm.name = ''
+            vm.url = ''
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-            vm.processing(0, 1)
           })
         }
       },
-      onButtonClick(type, id) {
+      onButtonClick(type, name)
+      {
         if (type === 'edit') {
-          vm.params = {}
-          for (let i = 0; i < vm.topics.length; i++) {
-            let cur = vm.topics[i];
-            if (cur.id === id) {
-              for (var val in cur) {
-                vm.params[val] = cur[val]
-              }
+          for (var i = 0; i < vm.topics.length; i++) {
+            var cur = vm.topics[i]
+            if (cur.name === name) {
+              vm.curEditIdx = i
+              vm.name = cur.name
+              vm.url = cur.url
             }
           }
-          // this.$router.push({name: 'edit_banner', query: {id: id}})
+          vm.isEdit = true
         } else {
-          vm.del(id)
+          vm.del(name)
         }
       }
     }

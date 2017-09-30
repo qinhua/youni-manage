@@ -41,8 +41,8 @@
             <div slot="content" class="demo-content vux-1px-t">
               <section class="v-items" :data-id="item.id" @click="toDetail(item.id)">
                 <section :class="['wrap',(item.status===3)?'disabled':'']">
-                  <span class="r-status s01" v-if="item.status===3">已封禁</span>
-                  <span class="r-status s02" v-if="item.status===1">待审核</span>
+                  <span class="r-status s02" v-if="item.status===3">已封禁</span>
+                  <span class="r-status s01" v-if="item.status===1">待审核</span>
                   <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
                   <section class="infos">
                     <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>

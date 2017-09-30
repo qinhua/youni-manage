@@ -24,15 +24,14 @@ const bannerApi = {
   del: host + '/admin/delBanner'
 }
 const topicApi = {
-  //list: host + '/home/topNotice',
   list: host + '/common/appConfigList',
-  add: host + '/common/setConfig',
-  del: host + '/admin/delNotice'
+  set: host + '/common/setConfig'
 }
 const goodsApi = {
-  list: host + '/goods/list',
-  add: host + '/goods/add',
-  update: host + '/goods/update',
+  list: host + '/admin/homeGoodsList',
+  listAlone: host + '/admin/notHomeGoodsList',
+  add: host + '/admin/addHomeGoods',
+  remove: host + '/admin/delHomeGoods',
   setSaleStatus: host + '/goods/setSaleStatus'
 }
 const ticketApi = {
@@ -75,7 +74,7 @@ const userApi = {
   updateCoupon: host + '/sellerCoupon/update',
   delCoupon: host + '/sellerCoupon/del',
   getFloor: host + '/floorCost/get',
-  addFloor: host + '/floorCost/add',
+  addFloor: host + '/floorCost/add'
 }
 const assetsApi = {
   asset: host + '/seller/amount',

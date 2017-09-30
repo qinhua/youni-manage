@@ -1,7 +1,7 @@
 <template>
   <div class="s-banner" v-cloak>
     <div class="scroll-view">
-      <div class="banner-col">
+      <div class="banner-col" v-if="isEdit">
         <group>
           <img-uploader title="banner图片：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
           <!--<x-input title="banner标题：" placeholder="banner标题" required text-align="right"
@@ -30,10 +30,15 @@
           </swipeout-item>
         </swipeout>
       </ul>
+      <div class="iconNoData abs-center-vh" v-else><i></i>
+        <p>暂无记录</p></div>
     </div>
 
-    <button type="button" class="btn btn-save" @click="add" :disabled="banners.length===4"><i
+    <button type="button" class="btn btn-save" @click="isEdit=true" :disabled="banners.length===4" v-if="!isEdit"><i
       class="fa fa-plus"></i>&nbsp;添加（最多4个）
+    </button>
+    <button type="button" class="btn btn-save" @click="add" v-else><i
+      class="fa fa-save"></i>&nbsp;保存
     </button>
   </div>
 </template>
@@ -57,11 +62,11 @@
       return {
         isPosting: false,
         fileApi: commonApi.uploadImg,
+        isEdit: false,
         banners: [],
         params: {
-          // title: '',
           image: '',
-          linUrl: ''
+          linkUrl: ''
         }
       }
     },
@@ -77,12 +82,12 @@
     },
     mounted() {
       vm = this
-      // me.attachClick()
       vm.getBanners()
     },
     watch: {
       '$route'(to, from) {
         if (to.name === 'banner') {
+          vm.reset()
           vm.getBanners()
         }
       }
@@ -94,6 +99,13 @@
         } else {
           vm.params.image = ''
         }
+      },
+      reset(){
+        vm.isEdit = false,
+          vm.params = {
+            image: '',
+            linkUrl: ''
+          }
       },
       validate() {
         if (vm.banners.length === 4) {
@@ -127,11 +139,12 @@
         if (vm.isPosting) return false
         vm.isPosting = true
         vm.processing()
+        vm.params.image = ''
+        vm.params.linkUrl = ''
         vm.loadData(bannerApi.list, null, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
           vm.banners = res.data.itemList
-          vm.params = {}
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
@@ -141,10 +154,11 @@
         if (vm.validate()) {
           if (vm.isPosting) return false
           vm.isPosting = true
-          // vm.processing()
+          vm.processing()
           vm.loadData(bannerApi.add, vm.params, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
+            vm.isEdit = false
             vm.toast('添加成功！')
             vm.getBanners()
           }, function () {
@@ -157,7 +171,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认删除？', '', function () {
           vm.isPosting = true
-          // vm.processing()
+          vm.processing()
           vm.loadData(bannerApi.del, {bannerId: id}, 'POST', function (res) {
             vm.isPosting = false
             vm.processing(0, 1)
@@ -230,9 +244,8 @@
     }
     .banner-list {
       .borBox;
-      margin-top: 20/@rem;
       padding-bottom: 100/@rem;
-      .bor-t(2px, solid, #dbe3f9);
+      .bor-t(2px, solid, #9cb3ff);
       .vux-swipeout-button-primary {
         background: orange;
       }
