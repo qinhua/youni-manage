@@ -60,10 +60,10 @@
       <scroller :class="['inner-scroller',showSearch?'padding-more':'']" ref="goodsScroller" height="100%"
                 :on-refresh="refresh" :on-infinite="infinite"
                 refreshText="下拉刷新"
-                :noDataText="goods&&goods.length?'没有更多数据':' '"
+                :noDataText="goods.length?'没有更多数据':' '"
                 snapping>
         <!-- content goes here -->
-        <section class="v-items" v-for="(item, index) in goods" :data-id="item.goodsid">
+        <section class="v-items" v-for="(item, index) in goods" :data-id="item.goodsId" v-cloak>
           <!--<h4 class="item-top"><i class="ico-store"></i>&nbsp;{{item.sellerName}}&nbsp;&nbsp;<i
             class="fa fa-angle-right cc"></i><span>{{item.statusName}}</span></h4>-->
           <section class="item-middle">
@@ -98,7 +98,7 @@
         </section>
       </scroller>
     </div>
-    <div class="add-goods" v-jump="['pick_from_seller']"><i class="fa fa-plus"></i>&nbsp添加商品</div>
+    <div class="add-goods" v-jump="['pick_from_seller']"><i class="fa fa-plus"></i>&nbsp;添加商品</div>
 
     <div class="iconNoData abs-center-vh" v-if="!goods.length"><i></i>
       <p>暂无商品</p></div>
@@ -261,17 +261,16 @@
             }
             vm.goods = resD.itemList
           } else {
-            /*if (resD.itemList.length) {
+            if (resD.itemList.length) {
              for (var i = 0; i < resD.itemList.length; i++) {
              var cur = resD.itemList[i];
              vm.goods.push(cur)
              }
              } else {
              vm.noMore = true
-             }*/
-            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
+             }
           }
-          console.log(vm.goods, '商品数据')
+          // console.log(vm.goods, '商品数据')
         }, function () {
           vm.isPosting = false
         })
@@ -464,10 +463,10 @@
               }
             }
             &.mfilterActive {
-              .cdiy(#f1582a);
+              .cdiy(#4670fe);
               .ico-arr-down {
                 &:before {
-                  border-color: #f1582a;
+                  border-color: #4670fe;
                   -webkit-transform-origin: 0 center;
                   transform-origin: 0 center;
                   -webkit-transform: rotate(45deg);
@@ -529,7 +528,7 @@
               .borR(10px);
               &.sfilterActive {
                 .cf;
-                .bdiy(#f1582a);
+                .bdiy(#4670fe);
               }
             }
           }

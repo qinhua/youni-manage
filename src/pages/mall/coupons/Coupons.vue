@@ -67,7 +67,7 @@
         coupons: [],
         params: {
           type: 0,
-          pagerSize: 10,
+          pageSize: 10,
           pageNo: 1
         },
         noMore: false,
@@ -142,7 +142,7 @@
       },
       del(id) {
         vm.confirm('确认删除？', '删除后不可恢复！', function () {
-          vm.loadData(userApi.delCoupon, {id: id}, 'POST', function (res) {
+          vm.loadData(couponApi.del, {id: id}, 'POST', function (res) {
             vm.isPosting = false
           }, function () {
             vm.isPosting = false

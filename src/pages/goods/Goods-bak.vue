@@ -73,7 +73,7 @@
         goods: [],
         params: {
           type: 0,
-          pagerSize: 10,
+          pageSize: 10,
           pageNo: 1,
           saleStatus: 0
         },

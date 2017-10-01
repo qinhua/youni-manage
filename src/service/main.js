@@ -54,7 +54,7 @@ const clientApi = {
 const couponApi = {
   list: host + '/platformCoupon/list',
   add: host + '/platformCoupon/add',
-  updateOrder: host + '/home/updateOrder'
+  del: host + '/platformCoupon/del'
 }
 const storeApi = {
   list: host + '/admin/sellerList',

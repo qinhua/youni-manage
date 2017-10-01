@@ -45,7 +45,7 @@
       <div class="seller-list">
         <scroller :class="['inner-scroller',showSearch?'padding-more':'']" ref="sellerScroller" :on-refresh="refresh"
                   :on-infinite="infinite"
-                  refreshText="下拉刷新" :noDataText="goods&&goods.length?'没有更多数据':' '" snapping>
+                  refreshText="下拉刷新" :noDataText="goods.length?'没有更多数据':' '" snapping>
           <!-- content goes here -->
           <section class="v-items" v-for="(item, index) in goods" :data-id="item.goodsid">
             <!--<h4 class="item-top"><i class="ico-store"></i>&nbsp;{{item.sellerName}}&nbsp;&nbsp;<i
@@ -58,7 +58,7 @@
                   :class="item.goodsType==='goods_type.2'?'milk':''">{{item.goodsType === 'goods_type.2' ? '奶' : '水'}}</span>{{item.goodsName}}
                 </h3>
                 <section class="middle">
-                  <span class="unit-price">售价：￥{{item.goodsPrice|toFixed}}元</span>
+                  <span class="unit-price">售价：￥{{item.goodsPrice | toFixed}}元</span>
                   <span class="order-info">已售：{{item.goodsSaleCount}}件</span>
                 </section>
                 <label>来源：{{item.sellerName}}件</label>
@@ -90,7 +90,7 @@
   /* eslint-disable */
   let me
   let vm
-  import {Tab, TabItem,Search} from 'vux'
+  import {Tab, TabItem, Search} from 'vux'
   import {goodsApi} from '../../service/main.js'
   import goodsSearch from '../../components/GoodsSearch.vue'
 
@@ -282,17 +282,16 @@
             } else {
               vm.noMore = false
             }
-//            vm.goods = resD.itemList
+            vm.goods = resD.itemList
           } else {
-            /*if (resD.itemList.length) {
-             for (var i = 0; i < resD.itemList.length; i++) {
-             var cur = resD.itemList[i];
-             vm.goods.push(cur)
-             }
-             } else {
-             vm.noMore = true
-             }*/
-            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
+            if (resD.itemList.length) {
+              for (var i = 0; i < resD.itemList.length; i++) {
+                var cur = resD.itemList[i];
+                vm.goods.push(cur)
+              }
+            } else {
+              vm.noMore = true
+            }
           }
           // console.log(vm.goods, '商品数据')
         }, function () {
@@ -467,10 +466,10 @@
               }
             }
             &.mfilterActive {
-              .cdiy(#f1582a);
+              .cdiy(#4670fe);
               .ico-arr-down {
                 &:before {
-                  border-color: #f1582a;
+                  border-color: #4670fe;
                   -webkit-transform-origin: 0 center;
                   transform-origin: 0 center;
                   -webkit-transform: rotate(45deg);
@@ -532,7 +531,7 @@
               .borR(10px);
               &.sfilterActive {
                 .cf;
-                .bdiy(#f1582a);
+                .bdiy(#4670fe);
               }
             }
           }

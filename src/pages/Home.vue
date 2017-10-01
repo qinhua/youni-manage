@@ -152,7 +152,7 @@
         </ul>
         <load-more :show-loading="!noMore" :tip="!noMore?'上拉加载':'就这么多了'" background-color="#f5f5f5"
                    v-if="orders.length"></load-more>
-        <div class="iconNoData" v-if="!orders.length" v-cloak><i></i>
+        <div class="iconNoData" style="margin-top:16px;" v-if="!orders.length" v-cloak><i></i>
           <p>暂无订单</p></div>
       </div>
     </div>
@@ -210,7 +210,7 @@
           status: 1,
           userType: 2,
           goodsType: 'goods_type.1',
-          pagerSize: 10,
+          pageSize: 10,
           pageNo: 1
         }
       }
@@ -362,7 +362,7 @@
             } else {
               resD.itemList.length ? vm.orders.concat(resD.itemList) : vm.noMore = true
             }
-            console.log(vm.orders, '订单数据')
+            // console.log(vm.orders, '订单数据')
           }, function () {
             vm.onFecthing = false
             // vm.processing(0, 1)

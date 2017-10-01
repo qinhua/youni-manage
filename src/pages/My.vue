@@ -9,9 +9,9 @@
       </div>
     </div>
     <group class="list-modal">
-      <cell title="平台资料" link="/edit_user">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>-->
-      </cell>
+      <!--<cell title="平台资料" link="/edit_user">
+        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-credit-card"></i>&ndash;&gt;
+      </cell>-->
       <!--<cell title="押金列表" link="/myguarantee">
         &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>&ndash;&gt;
       </cell>-->
@@ -26,9 +26,9 @@
       <!--<cell title="修改密码" style="color:#666" @click.native="modPassword"><i slot="icon" width="20"
                                                                            style="margin-right:5px;"
                                                                            class="fa fa-wrench"></i></cell>-->
-      <cell title="修改密码" style="color:#666" @click.native="modPassword">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
-      </cell>
+      <!--<cell title="修改密码" style="color:#666" @click.native="modPassword">
+        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>&ndash;&gt;
+      </cell>-->
       <cell title="退出登录" style="color:#666" @click.native="logout">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
       </cell>

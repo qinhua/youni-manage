@@ -63,14 +63,14 @@
                     <div class="tags">
                       <label :class="item.authLevelCls">{{item.authLevelName}}</label>
                       <!--<span class="dispatchTime" v-if="item.label">平均{{item.label}}分钟送达</span>-->
-                      <span class="dispatchTime"><a :href="'tel:'+item.phone">{{item.phone}}</a></span>
+                      <span class="dispatchTime">{{item.companyName}}</span>
                     </div>
                   </section>
-                  <div class="bottom" v-if="item.ticket">
+                  <!--<div class="bottom" v-if="item.ticket">
                     <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
-                    <!--<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>-->
+                    &lt;!&ndash;<span class="dispatchTime">平均{{item.dispatchTime}}分钟送达</span>&ndash;&gt;
                     <span class="dispatchTime">{{item.label}}</span>
-                  </div>
+                  </div>-->
                 </section>
               </section>
             </div>
@@ -95,7 +95,7 @@
         type: 0,
         sellers: [],
         params: {
-          pagerSize: 10,
+          pageSize: 10,
           pageNo: 1
         },
         noMore: false,
@@ -176,6 +176,7 @@
               // cur.isSleep = me.compareDate(cur.businessTime, '2017-10-12')
             }
           }
+
           if (!isLoadMore) {
             if (resD.totalCount < vm.params.pageSize) {
               vm.noMore = true
@@ -184,7 +185,15 @@
             }
             vm.sellers = resD.itemList
           } else {
-            resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
+            if (resD.itemList.length) {
+              for (var j = 0; j < resD.itemList.length; j++) {
+                var cur = resD.itemList[j];
+                vm.sellers.push(cur)
+              }
+            } else {
+              vm.noMore = true
+            }
+//            resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
           }
           // console.log(vm.sellers, '店铺数据')
         }, function () {
@@ -484,7 +493,7 @@
                 padding-top: 10/@rem;
                 .c9;
                 .block;
-                .fz(24);
+                .fz(23);
                 a {
                   .cdiy(#597bde);
                 }

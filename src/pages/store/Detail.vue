@@ -150,6 +150,7 @@
           vm.getSeller()
         } else {
           try {
+            vm.list=[]
             this.$refs.previewer.close()
           } catch (e) {
             // console.log(e)
