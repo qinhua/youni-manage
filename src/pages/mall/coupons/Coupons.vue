@@ -1,10 +1,10 @@
 <template>
   <div class="my-coupons" v-cloak>
-    <tab class="order-tab" active-color="#4670fe">
+    <!--<tab class="order-tab" active-color="#4670fe">
       <tab-item :selected="!params.goodsType?true:false" @on-item-click="onItemClick">全部</tab-item>
       <tab-item :selected="params.goodsType=='goods_type.1'?true:false" @on-item-click="onItemClick(1)">水</tab-item>
       <tab-item :selected="params.goodsType=='goods_type.2'?true:false" @on-item-click="onItemClick(2)">奶</tab-item>
-    </tab>
+    </tab>-->
     <div class="coupon-list">
       <scroller class="inner-scroller" ref="couponScroller" :on-refresh="refresh" :on-infinite="infinite"
                 refreshText="下拉刷新" noDataText="没有更多数据" snapping>
@@ -144,6 +144,7 @@
         vm.confirm('确认删除？', '删除后不可恢复！', function () {
           vm.loadData(couponApi.del, {id: id}, 'POST', function (res) {
             vm.isPosting = false
+            vm.getCoupons()
           }, function () {
             vm.isPosting = false
           })
@@ -189,7 +190,8 @@
     .coupon-list {
       .inner-scroller {
         .borBox;
-        padding: 50px 0 20px 0;
+        /*padding: 50px 0 20px 0;*/
+        padding: 10px 0 20px 0;
         .v-items {
           .borBox;
           width: 100%;

@@ -324,7 +324,9 @@
       getOrders(isLoadMore) {
         if (vm.onFecthing) return false
         !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
-        vm.processing()
+        if (!isLoadMore) {
+          vm.processing()
+        }
         vm.onFecthing = true
         vm.loadData(orderApi.list, vm.params, 'POST', function (res) {
             vm.onFecthing = false
@@ -365,7 +367,7 @@
             // console.log(vm.orders, '订单数据')
           }, function () {
             vm.onFecthing = false
-            // vm.processing(0, 1)
+             vm.processing(0, 1)
           }
         )
       },
