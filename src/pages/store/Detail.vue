@@ -38,7 +38,7 @@
 
       <div class="operate-con">
         <h3><i class="fa fa-lightbulb-o"></i>&nbsp;当前状态：{{seller.statusName}}
-          <button type="button" class="btn btn-audit" @click="audit(seller.id)" v-if="seller.status===1">审核</button>
+          <button type="button" class="btn btn-audit" @click="auth(seller.id)" v-if="seller.status===1">审核</button>
           <button type="button" class="btn btn-block" @click="block(seller.id)" v-if="seller.status===2">封禁</button>
           <button type="button" class="btn btn-recovery" @click="recovery(seller.id)" v-if="seller.status===3">解禁
           </button>
@@ -67,7 +67,7 @@
           </div>
         </div>
       </div>
-      <div class="bottom" v-if="seller.idCardFace&&seller.idCardBack" v-cloak>
+      <div class="bottom" v-if="seller.idCardFace && seller.idCardBack" v-cloak>
         <div class="detail-txt">
           <div class="title"><h3>身份证(正/背)</h3></div>
           <div class="content ids">
@@ -150,7 +150,9 @@
           vm.getSeller()
         } else {
           try {
-            vm.list=[]
+            vm.list = []
+            vm.sellerId = ''
+            vm.seller = {}
             this.$refs.previewer.close()
           } catch (e) {
             // console.log(e)
@@ -215,7 +217,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
           vm.isPosting = true
-          vm.loadData(storeApi.audit, {sellerId: id, status: 2}, 'POST', function (res) {
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 2}, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
               vm.toast('审核成功')

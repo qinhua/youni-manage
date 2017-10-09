@@ -240,10 +240,10 @@
           vm.processing(0, 1)
           if (res.success) {
             vm.toast('添加成功', 'toast')
+            vm.$router.back()
           } else {
             vm.toast('添加失败！', 'toast')
           }
-//          vm.$router.back()
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)

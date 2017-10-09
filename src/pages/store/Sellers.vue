@@ -235,7 +235,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
           vm.isPosting = true
-          vm.loadData(storeApi.audit, {sellerId: id, status: 2}, 'POST', function (res) {
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 2}, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
               vm.toast('审核成功')
