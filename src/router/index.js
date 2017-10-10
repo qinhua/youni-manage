@@ -168,7 +168,7 @@ export default new Router({
     },
     {
       path: '/coupons',
-      name: 'Coupons',
+      name: 'coupons',
       component: Coupons,
       meta: {
         title: '优惠管理',

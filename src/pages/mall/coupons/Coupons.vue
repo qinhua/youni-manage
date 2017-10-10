@@ -122,7 +122,7 @@
           vm.processing(0, 1)
           var resD = res.data.itemList
           for (var i = 0; i < resD.length; i++) {
-            resD.expired = !me.compareCurrentDate(resD.expireTime)
+            resD[i].expired = me.compareCurrentDate(resD[i].expireTime)
             switch (resD[i].goodsType) {
               case 'goods_type.1':
                 resD[i].goodsTypeName = '水'
@@ -302,7 +302,7 @@
               .rel;
               z-index: 5;
               padding: 30/@rem;
-              .fz(32);
+              .fz(26);
               .center;
               color: rgb(255, 255, 255);
               .exp {

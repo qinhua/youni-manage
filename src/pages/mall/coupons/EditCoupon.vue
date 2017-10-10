@@ -58,6 +58,11 @@
         newUser: false,
         types: [
           {
+            key: '全部',
+            value: '全部',
+            name: '全部'
+          },
+          {
             key: 'goods_type.1',
             value: '水',
             name: '水'
@@ -68,13 +73,13 @@
             name: '奶'
           },
           /*{
-            key: 'goods_type.3',
-            value: '水票',
-            name: '水票'
-          }*/
+           key: 'goods_type.3',
+           value: '水票',
+           name: '水票'
+           }*/
         ],
         serTypes: [{key: 1, value: '直营店', name: '直营店'}, {key: 2, value: '非直营店', name: '非直营店'}],
-        tmpType: ['水'],
+        tmpType: ['全部'],
         tmpSerType: ['直营店'],
         params: {
           newUser: false,
@@ -174,7 +179,6 @@
             vm.switchData(vm.types, vm.params.goodsType, 'tmpType')
             vm.switchData(vm.serTypes, vm.params.sellerType, 'tmpSerType')
             vm.coupons = resD
-            console.log(vm.coupons)
           }
         }, function () {
           vm.isPosting = false
@@ -191,10 +195,10 @@
             return false
           }
         } else {
-          if (!vm.tmpType.length) {
-            vm.toast('请选择商品类型！', 'toast')
-            return false
-          }
+          /* if (!vm.tmpType.length) {
+           vm.toast('请选择商品类型！', 'toast')
+           return false
+           }*/
           if (!vm.tmpSerType.length) {
             vm.toast('请选择店铺类型！', 'toast')
             return false
@@ -223,8 +227,12 @@
         return true
       },
       update() {
+        console.log(vm.params.goodsType)
         if (vm.isPosting || !vm.validate()) return false
         /*此处转换一些字段类型*/
+        if (vm.tmpType === '全部') {
+          vm.params.goodsType = ''
+        }
         let curApi
         if (vm.couponId) {
           curApi = couponApi.add
@@ -240,7 +248,7 @@
           vm.processing(0, 1)
           if (res.success) {
             vm.toast('添加成功', 'toast')
-            vm.$router.back()
+            vm.jump('coupons')
           } else {
             vm.toast('添加失败！', 'toast')
           }
@@ -250,15 +258,19 @@
         })
       },
       onChange(val) {
-        console.log('change', val)
+        // console.log('change', val)
       },
       changeType(val) {
-        vm.switchData(vm.types, vm.tmpType, 'goodsType')
-        console.log(val, vm.params.goodsType)
+        if (val.indexOf('全部') > -1) {
+          vm.params.goodsType = ''
+        } else {
+          vm.switchData(vm.types, vm.tmpType, 'goodsType')
+        }
+        // console.log(val, vm.params.goodsType)
       },
       changeSeller(val) {
         vm.switchData(vm.serTypes, vm.tmpSerType, 'sellerType')
-        console.log(val, vm.params.sellerType)
+        // console.log(val, vm.params.sellerType)
       }
     }
   }
