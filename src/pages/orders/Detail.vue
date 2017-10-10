@@ -96,7 +96,7 @@
             </div>
             <span v-else>买家未评价</span>
           </div>
-          <!--<span class="timestamp">{{details.createTime}}</span>-->
+          <span class="timestamp">{{details.createTime}}</span>
         </section>
       </li>
     </ul>
