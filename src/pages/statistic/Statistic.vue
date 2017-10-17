@@ -7,41 +7,9 @@
     </button-tab>
     <div class="bottom-col">
       <ul class="blist orders-list" v-show="curType==='orders'">
-        <li v-for="itm in orders">
-          <div class="left-con">
-            <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
-            <span>成交金额：<i>{{itm.orderNum}}</i></span>
-          </div>
-          <span class="time">{{itm.analysisDate}}</span>
-        </li>
-        <li v-for="itm in orders">
-          <div class="left-con">
-            <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
-            <span>成交金额：<i>{{itm.orderNum}}</i></span>
-          </div>
-          <span class="time">{{itm.analysisDate}}</span>
-        </li>
-        <li v-for="itm in orders">
-          <div class="left-con">
-            <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
-            <span>成交金额：<i>{{itm.orderNum}}</i></span>
-          </div>
-          <span class="time">{{itm.analysisDate}}</span>
-        </li>
-        <li v-for="itm in orders">
-          <div class="left-con">
-            <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
-            <span>成交金额：<i>{{itm.orderNum}}</i></span>
-          </div>
-          <span class="time">{{itm.analysisDate}}</span>
-        </li>
-        <li v-for="itm in orders">
-          <div class="left-con">
-            <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
-            <span>成交金额：<i>{{itm.orderNum}}</i></span>
-          </div>
-          <span class="time">{{itm.analysisDate}}</span>
-        </li>
+        <div class="item-top">
+          <span>近七天</span>
+        </div>
         <li v-for="itm in orders">
           <div class="left-con">
             <span>总订单金额：<i>{{itm.orderTotal}}</i></span>
@@ -250,7 +218,7 @@
         vm.loadData(statisticApi.orderAnalysis, {days: 7}, 'POST', function (res) {
           var resD = res.data.itemList
           vm.orders = resD
-          console.log(vm.orders, '订单统计数据')
+          // console.log(vm.orders, '订单统计数据')
           vm.onFetching = false
           vm.processing(0, 1)
         }, function () {
@@ -283,7 +251,7 @@
           var resD = res.data.itemList
           vm.sales = resD
           vm.getCurSale()
-          console.log(vm.sales, '销售统计数据')
+          // console.log(vm.sales, '销售统计数据')
           vm.onFetching = false
           vm.processing(0, 1)
         }, function () {
@@ -298,7 +266,7 @@
         vm.loadData(statisticApi.puvAnalysis, {days: 7}, 'POST', function (res) {
           var resD = res.data.itemList
           vm.puv = resD
-          console.log(vm.puv, '流量统计数据')
+          // console.log(vm.puv, '流量统计数据')
           vm.onFetching = false
           vm.processing(0, 1)
         }, function () {

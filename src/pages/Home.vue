@@ -110,9 +110,10 @@
                   <p v-for="(ext, idx) in item.extras">{{ext.name}}<span>￥{{ext.type ? '-' : ''}}{{ext.value}}.00</span>
                   </p>
                 </div>-->
-                <div class="total-price">
-                  共{{item.totalGoodsNum}}件商品&nbsp;合计：<span>￥{{item.payAmount | toFixed}}</span>（含上楼费）
+                <div class="total-price" v-if="item.payAmount!==item.totalAmount">共{{item.totalGoodsNum}}件商品&nbsp;&nbsp;合计：<i
+                  class="txt-normal txt-del c9">￥{{item.totalAmount | toFixed}}</i>&nbsp;&nbsp;实付：<span>￥{{item.payAmount | toFixed}}元</span>
                 </div>
+                <div class="total-price" v-else>共{{item.totalGoodsNum}}件商品&nbsp;&nbsp;合计：<span>￥{{item.payAmount | toFixed}}元</span></div>
                 <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
                 <!--<a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>-->
                 <!--<div class="btns" v-if="item.status===1">-->
@@ -208,7 +209,7 @@
         noMore: false,
         params: {
           status: 1,
-          userType: 2,
+          userType: 3,
           goodsType: 'goods_type.1',
           pageSize: 10,
           pageNo: 1
@@ -412,7 +413,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认派送？', null, function () {
           vm.isPosting = true
-          vm.loadData(orderApi.updateOrderStatus, {userType: 2, id: id, status: 3}, 'POST', function (res) {
+          vm.loadData(orderApi.updateOrderStatus, {userType: 3, id: id, status: 3}, 'POST', function (res) {
             vm.isPosting = false
             vm.toast('派送成功')
             vm.getOrders()

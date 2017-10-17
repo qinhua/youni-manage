@@ -66,7 +66,7 @@
         noMore: false,
         params: {
           status: 5,
-          userType: 2,
+          userType: 3,
           pageSize: 10,
           pageNo: 1
         },

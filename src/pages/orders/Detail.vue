@@ -250,7 +250,7 @@
         if (vm.isPosting) return false
         vm.confirm('确认派送？', null, function () {
           vm.isPosting = true
-          vm.loadData(orderApi.updateOrderStatus, {userType: 2, id: id, status: 3}, 'POST', function (res) {
+          vm.loadData(orderApi.updateOrderStatus, {userType: 3, id: id, status: 3}, 'POST', function (res) {
             vm.isPosting = false
             vm.toast('派送成功')
             vm.getDetail()
