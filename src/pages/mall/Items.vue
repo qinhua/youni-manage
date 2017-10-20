@@ -13,7 +13,7 @@
       <cell title="优惠管理" link="/coupons">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
-      <cell title="押金列表" link="/myguarantee">
+      <cell title="到账时间" link="/account_time">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
     </group>

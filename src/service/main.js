@@ -59,6 +59,7 @@ const couponApi = {
 const storeApi = {
   list: host + '/admin/sellerList',
   view: host + '/seller/view',
+  update: host + '/admin/updateSeller',
   updateStatus: host + '/admin/updateSellerStatus',
   audit: host + '/admin/seller/auth',
   del: host + '/admin/seller/del'

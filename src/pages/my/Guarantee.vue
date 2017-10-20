@@ -2,8 +2,9 @@
   <div class="my-guarantee" v-cloak>
     <div class="gua-tab-con">
       <tab class="gua-tab" active-color="#4670fe">
-        <tab-item :selected="!params.status?true:false" @on-item-click="onItemClick">全部</tab-item>
+        <!--<tab-item :selected="!params.status?true:false" @on-item-click="onItemClick">全部</tab-item>-->
         <tab-item :selected="params.status==1?true:false" @on-item-click="onItemClick(1)">正常</tab-item>
+        <tab-item :selected="params.status==5?true:false" @on-item-click="onItemClick(5)">申请退款</tab-item>
         <tab-item :selected="params.status==2?true:false" @on-item-click="onItemClick(2)">退款中</tab-item>
         <tab-item :selected="params.status==3?true:false" @on-item-click="onItemClick(3)">已退款</tab-item>
         <tab-item :selected="params.status==4?true:false" @on-item-click="onItemClick(4)">已拒绝</tab-item>
@@ -18,18 +19,18 @@
         <!-- content goes here -->
         <section class="v-items" v-for="item in list" :data-id="item.id">
           <section class="wrap">
-            <!--<img :src="item.headimgurl">-->
+            <img :src="item.headimgurl">
             <div class="info-con">
-              <h3>商家：{{item.sellerName}}<span>买家：<i>{{item.nickname}}</i></span><span :class="['tg',item.statusCls]">{{item.statusTxt}}</span></h3>
+              <h3>买家：{{item.nickname}}<span>商家：{{item.sellerName}}</span><span :class="['tg',item.statusCls]">{{item.statusTxt}}</span></h3>
               <div class="bottom">
                 <p>桶数：<i>{{item.bucketNum}}桶</i></p>
                 <p>单价：<i>￥{{item.totalAmount | toFixed}}元</i><span>总金额：<i>￥{{item.bucketAmount | toFixed}}元</i></span></p>
-                <div class="btn-group" v-if="item.status===1">
-                  <button type="button" class="btn" @click="agree(item.id)">同意退还
+                <!--<div class="btn-group" v-if="item.status===5">
+                  <button type="button" class="btn pass" @click="pass(item.userId)">同意退还
                   </button>
-                  <button type="button" class="btn" @click="decline(item.id)">拒绝退还
+                  <button type="button" class="btn deny" @click="deny(item.userId)">拒绝退还
                   </button>
-                </div>
+                </div>-->
               </div>
             </div>
           </section>
@@ -45,7 +46,7 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import {Tab, TabItem, Group, Cell, XTable} from 'vux'
+  import {Tab, TabItem} from 'vux'
   import {depositApi} from '../../service/main.js'
 
   export default {
@@ -62,7 +63,7 @@
         }
       }
     },
-    components: {Tab, TabItem, Group, Cell, XTable},
+    components: {Tab, TabItem},
     beforeMount() {
       me = window.me
     },
@@ -97,28 +98,35 @@
       getDeposits(isLoadMore) {
         // vm.processing()
         vm.isPosting = true
+        !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
         vm.loadData(depositApi.list, vm.params, 'POST', function (res) {
           vm.isPosting = false
           // vm.processing(0, 1)
-          var resD = res.data.pager
-          if (!isLoadMore) {
-            if (resD.totalCount < vm.params.pageSize) {
-              vm.noMore = true
-            } else {
-              vm.noMore = false
+          var resD = res.data.itemList
+          if (resD.length) {
+            for (var i = 0; i < resD.length; i++) {
+              var cur = resD[i];
+              switch (cur.status) {
+                case 1:
+                  cur.statusTxt = '正常'
+                  cur.statusCls = 'normal'
+                  break
+                case 2:
+                  cur.statusTxt = '退款中'
+                  cur.statusCls = 'during'
+                  break
+                case 3:
+                  cur.statusTxt = '退款失败'
+                  cur.statusCls = 'fail'
+                  break
+                case 5:
+                  cur.statusTxt = '退款申请中'
+                  cur.statusCls = 'during'
+                  break
+              }
             }
-            vm.list = resD.itemList
-          } else {
-            /*if (resD.itemList.length) {
-             for (var i = 0; i < resD.itemList.length; i++) {
-             var cur = resD.itemList[i];
-             vm.goods.push(cur)
-             }
-             } else {
-             vm.noMore = true
-             }*/
-            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
           }
+          vm.list = resD
           // console.log(vm.list, '保证金数据')
         }, function () {
           vm.isPosting = false
@@ -130,10 +138,10 @@
         status ? vm.params.status = status : delete vm.params.status
         vm.getDeposits()
       },
-      agree(id) {
-        vm.confirm('确认退还押金？', '', function () {
+      pass(id) {
+        vm.confirm('确认退还押金？', '押金将原路退回买家账户', function () {
           vm.isPosting = true
-          vm.loadData(depositApi.changeStatus, {id: id, status: 5}, 'POST', function (res) {
+          vm.loadData(depositApi.audit, {id: id, result: 'pass'}, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
               vm.toast('已退还')
@@ -147,10 +155,10 @@
         }, function () {
         })
       },
-      decline(id) {
-        vm.confirm('确认拒绝？', '', function () {
+      deny(id) {
+        vm.confirm('确认拒绝？', '买家将收不到退款', function () {
           vm.isPosting = true
-          vm.loadData(depositApi.changeStatus, {id: id, status: 6}, 'POST', function (res) {
+          vm.loadData(depositApi.audit, {id: id, result: 'deny'}, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
               vm.toast('已拒绝')
@@ -257,6 +265,7 @@
           .bf;
           .bor-t;
           .wrap {
+            .rel;
             padding: 14/@rem 20/@rem;
             img {
               .size(80, 80);
@@ -267,12 +276,15 @@
             .info-con {
               .rel;
               .borBox;
-              /*padding-left: 100/@rem;*/
+              padding-left: 100/@rem;
               h3 {
                 .txt-normal;
                 .c3;
                 .fz(26);
                 .ellipsis-clamp-2;
+                span:first-of-type{
+                  margin-left:30/@rem;
+                }
                 .tg {
                   float: right;
                   padding: 0 2px;
@@ -325,10 +337,10 @@
                   &:not(:last-child) {
                     margin-bottom: 10/@rem;
                   }
-                  &.agree {
+                  &.pass {
                     .bdiy(#66c745);
                   }
-                  &.decline {
+                  &.deny {
                     .bdiy(#f35858);
                   }
                 }

@@ -22,6 +22,7 @@ import SellerDetail from '@/pages/store/Detail'
 import Topic from '@/pages/mall/topic/Topic'
 import Coupons from '@/pages/mall/coupons/Coupons'
 import EditCoupon from '@/pages/mall/coupons/EditCoupon'
+import AccountTime from '@/pages/mall/account/AccountTime'
 import Mall from '@/pages/mall/Items'
 import Banner from '@/pages/mall/banner/Banner'
 import Goods from '@/pages/goods/Goods'
@@ -181,6 +182,15 @@ export default new Router({
       component: EditCoupon,
       meta: {
         title: '优惠编辑',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/account_time',
+      name: 'account_time',
+      component: AccountTime,
+      meta: {
+        title: '到账时间',
         keepAlive: false
       }
     },

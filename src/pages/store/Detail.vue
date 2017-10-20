@@ -56,6 +56,12 @@
           </button>
         </h3>
       </div>
+      <!--<div class="operate-con">
+        <h3><i class="fa fa-clock-o"></i>&nbsp;到账时间：{{seller.serviceTypeName}}
+          <button type="button" class="btn btn-recovery" @click="changeInTime(seller.id)" v-if="seller.status===2">修改
+          </button>
+        </h3>
+      </div>-->
       <div class="bottom">
         <div class="detail-txt">
           <div class="title"><h3>基本信息</h3></div>
@@ -300,20 +306,21 @@
           if (vm.isPosting) return false
           vm.isPosting = true
           var curVal = window.document.getElementById('serviceType').value
-          vm.loadData(depositApi.add, {
+          vm.loadData(storeApi.update, {
             sellerId: id,
-            account: curVal
+            serviceType: curVal
           }, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
               vm.$vux.confirm.hide()
               vm.toast('修改成功')
+              vm.getSeller()
             } else {
               vm.toast(res.message || '操作失败！', 'warn')
             }
           }, function () {
             vm.isPosting = false
-          })
+          },true)
         }, function () {
           vm.isPosting = false
         }, null, null, true)
@@ -334,7 +341,7 @@
             vm.toast('请填写收款人', 'warn')
             return false
           }
-          vm.loadData(depositApi.add, {
+          vm.loadData(storeApi.setAccount, {
             sellerId: id,
             account: curVal
           }, 'POST', function (res) {
@@ -342,15 +349,43 @@
             if (res.success) {
               vm.$vux.confirm.hide()
               vm.toast('已变更')
+              vm.getSeller()
             } else {
               vm.toast(res.message || '操作失败！', 'warn')
             }
           }, function () {
             vm.isPosting = false
-          })
+          },true)
         }, function () {
           vm.isPosting = false
         }, null, null, true)
+      },
+      changeInTime(id){
+        vm.confirm('请选择营业范围', '<div class="customModal"><select id="inTime"><option value="seller_service_type.3">全部</option><option value="seller_service_type.1">水</option><option value="seller_service_type.2">奶</option></select></div>', function () {
+          if (vm.isPosting) return false
+          vm.isPosting = true
+          var curVal = window.document.getElementById('inTime').value
+          vm.loadData(storeApi.updateTime, {
+            sellerId: id,
+            serviceType: curVal
+          }, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.$vux.confirm.hide()
+              vm.toast('修改成功')
+              vm.getSeller()
+            } else {
+              vm.toast(res.message || '操作失败！', 'warn')
+            }
+          }, function () {
+            vm.isPosting = false
+          },true)
+        }, function () {
+          vm.isPosting = false
+        }, null, null, true)
+        setTimeout(function () {
+          window.document.getElementById('inTime').value = vm.seller.serviceType
+        }, 100)
       }
     }
   }
@@ -540,7 +575,8 @@
       padding: 20/@rem 26/@rem;
       .bf;
       &:not(:last-child) {
-        margin-bottom: 10/@rem;
+        /*margin-bottom: 10/@rem;*/
+        .bor-b;
       }
       h3 {
         .rel;
@@ -553,7 +589,7 @@
         .fz(24);
         .cf;
         .block;
-        padding: 8/@rem 20/@rem;
+        padding: 4/@rem 20/@rem;
         .borR(4px);
         &.btn-audit {
           background: #5bc331;

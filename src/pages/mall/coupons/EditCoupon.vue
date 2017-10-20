@@ -1,12 +1,12 @@
 <template>
   <div class="coupon-edit-con" v-cloak>
     <group>
-      <x-switch title="新用户优惠" v-model="newUser"></x-switch>
+      <!--<x-switch title="新用户优惠" v-model="newUser"></x-switch>-->
+      <popup-picker title="店铺类型" :data="serTypes" :columns="1" v-model="tmpSerType" @on-show=""
+                    @on-hide="" @on-change="changeSeller"></popup-picker>
       <div v-if="!newUser">
         <popup-picker title="商品类型：" :data="types" :columns="1" v-model="tmpType" ref="picker3" @on-show=""
                       @on-hide="" @on-change="changeType"></popup-picker>
-        <popup-picker title="店铺类型" :data="serTypes" :columns="1" v-model="tmpSerType" @on-show=""
-                      @on-hide="" @on-change="changeSeller"></popup-picker>
         <!--<x-input title="优惠名称：" placeholder="优惠名称" required text-align="right" v-model="params.name"></x-input>-->
         <x-input title="优惠折扣：" placeholder="如1折" required text-align="right" v-model="params.discountRate"></x-input>
         <x-input title="最大优惠：" placeholder="最高优惠金额" required text-align="right"
@@ -19,7 +19,7 @@
       </div>
       <div v-else>
         <x-input title="优惠折扣：" placeholder="如1折" required text-align="right" v-model="params.discountRate"></x-input>
-        <x-input title="最大优惠：" placeholder="最高优惠金额" required text-align="right"
+        <x-input title="最大优惠：" type="number" placeholder="最高优惠金额" required text-align="right"
                  v-model="params.maxDiscountAmount"></x-input>
       </div>
     </group>
@@ -54,8 +54,8 @@
         },
         isPosting: false,
         couponId: null,
-        needExpire: true,
-        newUser: false,
+        needExpire: false,
+        newUser: true,
         types: [
           {
             key: '全部',
@@ -82,14 +82,10 @@
         tmpType: ['全部'],
         tmpSerType: ['直营店'],
         params: {
-          newUser: false,
-          goodsType: '',
+          // newUser: true,
           sellerType: '',
           discountRate: '',
-          couponNum: 0,
-          maxDiscountAmount: '',
-          expireTime: '',
-          couponNote: ''
+          maxDiscountAmount: ''
         }
       }
     },
@@ -106,8 +102,8 @@
     },
     mounted() {
       vm = this
-      // me.attachClick()
 //      vm.params.id ? vm.getData() : null
+      vm.switchData(vm.serTypes, vm.tmpSerType, 'sellerType')
     },
     watch: {
       needExpire() {
@@ -116,14 +112,9 @@
       'newUser'() {
         if (vm.newUser) {
           vm.params = {
-            newUser: true,
-            goodsType: '',
             sellerType: '',
             discountRate: '',
-            couponNum: 0,
-            maxDiscountAmount: '',
-            expireTime: '',
-            couponNote: ''
+            maxDiscountAmount: ''
           }
         } else {
           vm.params = {
@@ -150,7 +141,7 @@
       },
       switchData(data, value, target) {
         let tmp
-        if (typeof value === 'number') {
+        if (!me.isArray(value)) {
           tmp = []
           for (let i = 0; i < data.length; i++) {
             if (value === data[i].key) {
@@ -227,7 +218,6 @@
         return true
       },
       update() {
-        console.log(vm.params.goodsType)
         if (vm.isPosting || !vm.validate()) return false
         /*此处转换一些字段类型*/
         if (vm.tmpType === '全部') {
