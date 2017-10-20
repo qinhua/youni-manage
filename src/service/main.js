@@ -76,8 +76,13 @@ const userApi = {
   getFloor: host + '/floorCost/get',
   addFloor: host + '/floorCost/add'
 }
+const depositApi = {
+  list: host + '/userDeposit/list',
+  add: host + '/userDeposit/add',
+  refund: host + '/userDeposit/refund'
+}
 const assetsApi = {
-  asset: host + '/seller/amount',
+  asset: host + '/seller/adminAmount',
   withDrawList: host + '/seller/statistic',
   withDraw: host + '/common/top10'
 }
@@ -113,6 +118,7 @@ export {
   couponApi,
   storeApi,
   userApi,
+  depositApi,
   goodsApi,
   assetsApi,
   statisticApi

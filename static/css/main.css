@@ -3248,6 +3248,21 @@ body {
   background-repeat: no-repeat;
   border-radius: 50%;
 }
+.customModal input,
+.customModal select {
+  width: 60%;
+  margin: 0.3125rem 0;
+  padding: 0.4375rem 0.625rem;
+  font-size: 0.8125rem;
+  background-color: #f5f5f5;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+.customModal select {
+  background: url(../../static/img/arr.png) no-repeat 99% center;
+  -webkit-background-size: auto 60%;
+  background-size: auto 60%;
+}
 /*过渡类*/
 .vux-pop-out-enter-active,
 .vux-pop-out-leave-active,

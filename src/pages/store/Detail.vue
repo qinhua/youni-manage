@@ -44,6 +44,18 @@
           </button>
         </h3>
       </div>
+      <div class="operate-con">
+        <h3><i class="fa fa-bullseye"></i>&nbsp;经营范围：{{seller.serviceTypeName}}
+          <button type="button" class="btn btn-recovery" @click="changeSerType(seller.id)" v-if="seller.status===2">修改
+          </button>
+        </h3>
+      </div>
+      <div class="operate-con">
+        <h3><i class="fa fa-user-o"></i>&nbsp;收款账号：{{seller.serviceTypeName}}
+          <button type="button" class="btn btn-recovery" @click="changeAccount(seller.id)" v-if="seller.status===2">变更
+          </button>
+        </h3>
+      </div>
       <div class="bottom">
         <div class="detail-txt">
           <div class="title"><h3>基本信息</h3></div>
@@ -282,6 +294,63 @@
           })
         }, function () {
         })
+      },
+      changeSerType(id){
+        vm.confirm('请选择营业范围', '<div class="customModal"><select id="serviceType"><option value="seller_service_type.3">全部</option><option value="seller_service_type.1">水</option><option value="seller_service_type.2">奶</option></select></div>', function () {
+          if (vm.isPosting) return false
+          vm.isPosting = true
+          var curVal = window.document.getElementById('serviceType').value
+          vm.loadData(depositApi.add, {
+            sellerId: id,
+            account: curVal
+          }, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.$vux.confirm.hide()
+              vm.toast('修改成功')
+            } else {
+              vm.toast(res.message || '操作失败！', 'warn')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
+          vm.isPosting = false
+        }, null, null, true)
+        setTimeout(function () {
+          window.document.getElementById('serviceType').value = vm.seller.serviceType
+        }, 100)
+      },
+      changeAccount(id){
+        vm.confirm('请填写收款人', '<div class="customModal"><input id="wxAccount" type="text" placeholder="输入收款人微信号" required></div>', function () {
+          /*if (!me.isWeixin) {
+           vm.toast('请在微信中操作！')
+           return
+           }*/
+          if (vm.isPosting) return false
+          vm.isPosting = true
+          var curVal = window.document.getElementById('wxAccount').value
+          if (!curVal) {
+            vm.toast('请填写收款人', 'warn')
+            return false
+          }
+          vm.loadData(depositApi.add, {
+            sellerId: id,
+            account: curVal
+          }, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.$vux.confirm.hide()
+              vm.toast('已变更')
+            } else {
+              vm.toast(res.message || '操作失败！', 'warn')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, function () {
+          vm.isPosting = false
+        }, null, null, true)
       }
     }
   }
@@ -468,8 +537,11 @@
 
     .operate-con {
       .borBox;
-      padding: 30/@rem 26/@rem;
+      padding: 20/@rem 26/@rem;
       .bf;
+      &:not(:last-child) {
+        margin-bottom: 10/@rem;
+      }
       h3 {
         .rel;
         font-weight: normal;
@@ -481,7 +553,7 @@
         .fz(24);
         .cf;
         .block;
-        padding: 10/@rem 20/@rem;
+        padding: 8/@rem 20/@rem;
         .borR(4px);
         &.btn-audit {
           background: #5bc331;

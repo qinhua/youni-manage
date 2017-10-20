@@ -1,8 +1,9 @@
 <template>
   <div class="store-con" v-cloak>
-    <group class="list-modal"><cell title="Banner管理" link="/banner">
-      <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-photo"></i>-->
-    </cell>
+    <group class="list-modal">
+      <cell title="Banner管理" link="/banner">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-photo"></i>-->
+      </cell>
       <cell title="头条管理" link="/mall_topic">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-newspaper-o"></i>-->
       </cell>
@@ -10,6 +11,9 @@
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-archive"></i>-->
       </cell>
       <cell title="优惠管理" link="/coupons">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
+      </cell>
+      <cell title="押金列表" link="/myguarantee">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
       </cell>
     </group>
@@ -25,10 +29,7 @@
   export default {
     name: 'mall',
     data () {
-      return {
-        sellerName: '水一波旗舰店',
-        count: 0
-      }
+      return {}
     },
     components: {Grid, GridItem, Group, Cell},
     beforeMount () {
@@ -38,9 +39,9 @@
       // me.attachClick()
     },
     /*watch: {
-      '$route' (to, from) {
-      }
-    },*/
+     '$route' (to, from) {
+     }
+     },*/
     computed: {},
     methods: {
       // 向父组件传值

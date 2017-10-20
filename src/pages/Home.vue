@@ -36,7 +36,7 @@
 
       <!--中间入口-->
       <div class="middle-entry">
-        <grid :rows="4">
+        <grid :rows="5">
           <grid-item label="商城管理" link="/mall">
             <img slot="icon" src="../../static/img/item_mall.png">
           </grid-item>
@@ -46,9 +46,9 @@
           <grid-item label="客户管理" link="/clients">
             <img slot="icon" src="../../static/img/item_client.png">
           </grid-item>
-          <!--<grid-item label="资金管理" link="/assets">
+          <grid-item label="资金管理" link="/assets">
             <img slot="icon" src="../../static/img/item_assets.png">
-          </grid-item>-->
+          </grid-item>
           <grid-item label="统计数据" link="/statistic">
             <img slot="icon" src="../../static/img/item_statistic.png">
           </grid-item>
