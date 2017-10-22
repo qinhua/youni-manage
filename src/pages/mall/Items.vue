@@ -7,6 +7,9 @@
       <cell title="头条管理" link="/mall_topic">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-newspaper-o"></i>-->
       </cell>
+      <cell title="品牌管理" link="/brands">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-money"></i>-->
+      </cell>
       <cell title="首页商品" link="/goods">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-archive"></i>-->
       </cell>

@@ -4,9 +4,9 @@
       <div class="withdraw-modal">
         <div class="left">
           <h3>可提现金额</h3>
-          <p>￥{{assets.waitTakeAmount > 0 ? assets.waitTakeAmount: 0.00}}<i>元</i></p>
+          <p>￥{{assets.waitTakeAmount > 0 ? assets.waitTakeAmount : 0.00}}<i>元</i></p>
         </div>
-        <div class="right" :data-amount="assets.waitTakeAmount" v-jump="['with_draw']">提现</div>
+        <!--<div class="right" :data-amount="assets.waitTakeAmount" v-jump="['with_draw']">提现</div>-->
       </div>
       <cell title="总收入" link="">
         ￥{{assets.totalAmount > 0 ? assets.totalAmount : 0.00}}
@@ -25,9 +25,9 @@
       <cell title="收支明细" link="/income_list">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>-->
       </cell>
-      <cell title="提现记录" link="/with_draw_list">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>-->
-      </cell>
+      <!--<cell title="提现记录" link="/with_draw_list">
+        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>&ndash;&gt;
+      </cell>-->
     </group>
   </div>
 </template>
@@ -36,13 +36,14 @@
   /* eslint-disable no-unused-vars */
   let me
   let vm
-  import {Grid, GridItem, Group, Cell} from 'vux'
+  import {Group, Cell} from 'vux'
   import {assetsApi} from '../../service/main.js'
 
   export default {
     name: 'assets-con',
     data() {
       return {
+        sellerId: null,
         isPosting: false,
         onFetching: false,
         noMore: false,
@@ -53,7 +54,7 @@
         }
       }
     },
-    components: {Grid, GridItem, Group, Cell},
+    components: {Group, Cell},
     beforeMount() {
       me = window.me
     },
@@ -71,10 +72,11 @@
     /*computed: {},*/
     methods: {
       getAssets() {
+        vm.sellerId = vm.$route.query.id
         if (vm.onFetching) return false
         vm.processing()
         vm.onFetching = true
-        vm.loadData(assetsApi.asset, null, 'POST', function (res) {
+        vm.loadData(assetsApi.asset, {sellerId: vm.sellerId}, 'POST', function (res) {
           vm.onFetching = false
           vm.processing(0, 1)
           vm.assets = res.data

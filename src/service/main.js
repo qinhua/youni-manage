@@ -25,6 +25,7 @@ const bannerApi = {
 }
 const topicApi = {
   list: host + '/common/appConfigList',
+  get: host + '/common/getConfig',
   set: host + '/common/setConfig'
 }
 const goodsApi = {
@@ -75,7 +76,13 @@ const userApi = {
   updateCoupon: host + '/sellerCoupon/update',
   delCoupon: host + '/sellerCoupon/del',
   getFloor: host + '/floorCost/get',
-  addFloor: host + '/floorCost/add'
+  addFloor: host + '/floorCost/add',
+}
+let brandsApi = {
+  list: host + '/home/brandList',
+  add: host + '/admin/addBrand',
+  update: host + '/admin/updateBrand',
+  del: host + '/admin/delBrand'
 }
 const depositApi = {
   list: host + '/userDeposit/list',
@@ -119,6 +126,7 @@ export {
   couponApi,
   storeApi,
   userApi,
+  brandsApi,
   depositApi,
   goodsApi,
   assetsApi,

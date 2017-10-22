@@ -130,7 +130,7 @@
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
-        })
+        },true)
       },
       add() {
         if (vm.validate()) {
@@ -156,7 +156,7 @@
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-          })
+          },true)
         }
       },
       del(name) {
@@ -183,7 +183,7 @@
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-          })
+          },true)
         })
       },
       update(idx){
@@ -207,7 +207,7 @@
             vm.getTopic()
           }, function () {
             vm.isPosting = false
-          })
+          },true)
         }
       },
       onButtonClick(type, name)

@@ -50,12 +50,12 @@
           </button>
         </h3>
       </div>
-      <div class="operate-con">
+      <!--<div class="operate-con">
         <h3><i class="fa fa-user-o"></i>&nbsp;收款账号：{{seller.serviceTypeName}}
           <button type="button" class="btn btn-recovery" @click="changeAccount(seller.id)" v-if="seller.status===2">变更
           </button>
         </h3>
-      </div>
+      </div>-->
       <!--<div class="operate-con">
         <h3><i class="fa fa-clock-o"></i>&nbsp;到账时间：{{seller.serviceTypeName}}
           <button type="button" class="btn btn-recovery" @click="changeInTime(seller.id)" v-if="seller.status===2">修改
@@ -64,7 +64,7 @@
       </div>-->
       <div class="bottom">
         <div class="detail-txt">
-          <div class="title"><h3>基本信息</h3></div>
+          <div class="title"><h3>基本信息<span>营业时间：{{seller.businessTime||'24小时'}}</span></h3></div>
           <div class="content basics">
             <p><i>公司名称：</i><span>{{seller.companyName}}</span></p>
             <p><i>公司地址：</i><span>{{seller.address}}</span></p>
@@ -487,7 +487,7 @@
               padding: 1px 8px;
               line-height: 1.8;
               .cf;
-              .fz(16);
+              .fz(20);
               .borR(4px);
               &.c1 {
                 .bdiy(#fd5900);
@@ -627,6 +627,12 @@
           .fz(24);
           background: #fff;
           .bor-l(3px, solid, #4670fe);
+          span {
+            .fr;
+            padding-right: 20/@rem;
+            font-weight: normal;
+            .c9;
+          }
         }
       }
       .content {

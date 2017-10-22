@@ -18,7 +18,8 @@
         <datetime title="过期时间：" v-model="params.expireTime" @on-change="onChange" v-show="needExpire"></datetime>
       </div>
       <div v-else>
-        <x-input title="优惠折扣：" placeholder="如1折" required text-align="right" v-model="params.discountRate"></x-input>
+        <x-input title="优惠折扣：" type="number" placeholder="如1折(填写数字)" required text-align="right"
+                 v-model="params.discountRate"></x-input>
         <x-input title="最大优惠：" type="number" placeholder="最高优惠金额" required text-align="right"
                  v-model="params.maxDiscountAmount"></x-input>
       </div>
@@ -106,6 +107,17 @@
       vm.switchData(vm.serTypes, vm.tmpSerType, 'sellerType')
     },
     watch: {
+      '$route'(to, from) {
+        if (to.name === 'edit_coupon') {
+//            vm.getData()
+        } else {
+          vm.params = {
+            sellerType: '',
+            discountRate: '',
+            maxDiscountAmount: ''
+          }
+        }
+      },
       needExpire() {
         !vm.needExpire ? vm.params.expireTime = '' : null
       },
@@ -162,7 +174,7 @@
       getData() {
         if (vm.isPosting) return false
         vm.isPosting = true
-        vm.loadData(userApi.get, {couponId: id}, 'POST', function (res) {
+        vm.loadData(couponApi.list, {couponId: id}, 'POST', function (res) {
           vm.isPosting = false
           if (res) {
             let resD = res.data.itemList
@@ -178,32 +190,32 @@
       validate() {
         if (vm.newUser) {
           if (!vm.params.discountRate) {
-            vm.toast('请填写优惠折扣！', 'toast')
+            vm.toast('请填写优惠折扣！', 'warn')
             return false
           }
           if (!vm.params.maxDiscountAmount) {
-            vm.toast('请填写最大优惠金额！', 'toast')
+            vm.toast('请填写最大优惠金额！', 'warn')
             return false
           }
         } else {
           /* if (!vm.tmpType.length) {
-           vm.toast('请选择商品类型！', 'toast')
+           vm.toast('请选择商品类型！', 'warn')
            return false
            }*/
           if (!vm.tmpSerType.length) {
-            vm.toast('请选择店铺类型！', 'toast')
+            vm.toast('请选择店铺类型！', 'warn')
             return false
           }
           if (!vm.params.discountRate) {
-            vm.toast('请填写优惠折扣！', 'toast')
+            vm.toast('请填写优惠折扣！', 'warn')
             return false
           }
           if (!vm.params.maxDiscountAmount) {
-            vm.toast('请填写最大优惠金额！', 'toast')
+            vm.toast('请填写最大优惠金额！', 'warn')
             return false
           }
           if (!vm.params.couponNum) {
-            vm.toast('请填写优惠券数量！', 'toast')
+            vm.toast('请填写优惠券数量！', 'warn')
             return false
           }
           /*if (!vm.params.beginTime) {
@@ -211,7 +223,7 @@
            return false
            }*/
           if (vm.needExpire && !vm.params.expireTime) {
-            vm.toast('请选择过期时间！', 'toast')
+            vm.toast('请选择过期时间！', 'warn')
             return false
           }
         }
@@ -237,10 +249,10 @@
           vm.isPosting = false
           vm.processing(0, 1)
           if (res.success) {
-            vm.toast('添加成功', 'toast')
+            vm.toast('添加成功')
             vm.jump('coupons')
           } else {
-            vm.toast('添加失败！', 'toast')
+            vm.toast('添加失败！', 'warn')
           }
         }, function () {
           vm.isPosting = false

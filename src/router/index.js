@@ -25,12 +25,15 @@ import EditCoupon from '@/pages/mall/coupons/EditCoupon'
 import AccountTime from '@/pages/mall/account/AccountTime'
 import Mall from '@/pages/mall/Items'
 import Banner from '@/pages/mall/banner/Banner'
+import Brands from '@/pages/mall/brands/Brands'
+import EditBrands from '@/pages/mall/brands/Edit'
 import Goods from '@/pages/goods/Goods'
 import EditGoods from '@/pages/goods/Edit'
 import PickFromSeller from '@/pages/goods/PickFromSeller'
 import EditSubPrice from '@/components/EditSubPrice'
 import OrderDetail from '@/pages/orders/Detail'
 import Clients from '@/pages/clients/Clients'
+import AssetsList from '@/pages/assets/Sellers'
 import Assets from '@/pages/assets/Assets'
 import Income from '@/pages/assets/income/Income'
 import WithDrawList from '@/pages/assets/withDraw/WithDrawList'
@@ -204,6 +207,24 @@ export default new Router({
       }
     },
     {
+      path: '/brands',
+      name: 'brands',
+      component: Brands,
+      meta: {
+        title: '品牌管理',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/edit_brands',
+      name: 'edit_brands',
+      component: EditBrands,
+      meta: {
+        title: '编辑品牌',
+        keepAlive: false
+      }
+    },
+    {
       path: '/goods',
       name: 'goods',
       component: Goods,
@@ -254,6 +275,15 @@ export default new Router({
       component: Clients,
       meta: {
         title: '客户管理',
+        keepAlive: false
+      }
+    },
+    {
+      path: '/assets_list',
+      name: 'assets_list',
+      component: AssetsList,
+      meta: {
+        title: '店铺资金管理',
         keepAlive: false
       }
     },

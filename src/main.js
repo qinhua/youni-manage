@@ -32,6 +32,10 @@ Vue.config.productionTip = false
 let me = window.me
 let vm
 
+// 若是隐私模式提示关闭
+if(me.isPrivacyMode()){
+  alert('为了正常使用，请关闭隐私模式！')
+}
 // 检测是否登录
 var checkLogin = function (openid) {
   $.ajax({

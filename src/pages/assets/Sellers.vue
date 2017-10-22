@@ -1,13 +1,6 @@
 <template>
   <div class="sellers-con" v-cloak>
     <tab class="sellers-tab" active-color="#4670fe">
-      <!--<tab-item :selected="type===3?true:false" @on-item-click="filterSeller(3)"><i class="fa fa-th-large"></i>&nbsp;全部
-      </tab-item>
-      <tab-item :selected="type===1?true:false" @on-item-click="filterSeller(1)"><i
-        class="fa fa-beer"></i>&nbsp;水
-      </tab-item>
-      <tab-item :selected="type===2?true:false" @on-item-click="filterSeller(2)"><i class="fa fa-flask"></i>&nbsp;奶
-      </tab-item> -->
       <tab-item :selected="!type?true:false" @on-item-click="filterSeller">全部
       </tab-item>
       <tab-item :selected="type===1?true:false" @on-item-click="filterSeller(1)">水
@@ -27,7 +20,7 @@
           <!--<swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in sellers"
                          :data-id="item.id" key="index" @click="toDetail(item.id)" v-cloak>-->
           <swipeout-item @on-close="" @on-open="" transition-mode="follow" v-for="(item, index) in sellers"
-                         :data-id="item.id" key="index" v-cloak>
+                         :data-id="item.id" key="index" disabled v-cloak>
             <div slot="right-menu">
               <swipeout-button @click.native="auth(item.id)" type="success" class="btn-audit" v-if="item.status===1">审核
               </swipeout-button>
@@ -46,7 +39,7 @@
                   <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
                   <section class="infos">
                     <h3>{{item.name}}<span :class="['service_type',item.serviceTypeCls]">{{item.serviceTypeName}}</span>
-                      <span class="businessTime">{{item.businessTime||'24小时'}}</span>
+                      <!--<span class="businessTime">{{(!item.businessTime||item.businessTime === '24小时') ? '24小时' : item.businessTime}}</span>-->
                     </h3>
                     <section class="middle">
                       <div class="score-con">
@@ -58,13 +51,16 @@
                         </ol>
                         <span>{{item.sellerScore | toFixed(1)}}分</span>
                       </div>
-                      <span class="hasSell">已售{{item.sellerCount}}单</span>
+                      <!--<span class="hasSell">已售{{item.sellerCount}}单</span>-->
                     </section>
                     <div class="tags">
                       <label :class="item.authLevelCls">{{item.authLevelName}}</label>
                       <!--<span class="dispatchTime" v-if="item.label">平均{{item.label}}分钟送达</span>-->
-                      <span class="dispatchTime">{{item.companyName}}</span>
+                      <!--<span class="dispatchTime">{{item.companyName}}</span>-->
                     </div>
+                    <button type="button" class="btn btn-assets" @click="viewAssets($event,item.id)"><i
+                      class="fa fa-eye"></i>&nbsp;资金状况
+                    </button>
                   </section>
                   <!--<div class="bottom" v-if="item.ticket">
                     <label class="note" v-if="item.ticket" v-cloak><i class="ico-hui"></i>{{item.ticket}}</label>
@@ -89,7 +85,7 @@
   import {storeApi} from '../../service/main.js'
 
   export default {
-    name: 'sellers',
+    name: 'sellers-con',
     data() {
       return {
         type: 0,
@@ -116,7 +112,7 @@
     },
     watch: {
       '$route'(to, from) {
-        if (to.name === 'sellers') {
+        if (to.name === 'assets_list') {
           vm.getSellers()
         }
       }
@@ -131,6 +127,10 @@
       },
       toDetail(id) {
         vm.$router.push({name: 'seller_detail', query: {id: id}})
+      },
+      viewAssets(e, id) {
+        e.stopPropagation()
+        vm.$router.push({name: 'assets', query: {id: id}})
       },
       getSellers(isLoadMore, status) {
         if (vm.isPosting) return false
@@ -413,6 +413,7 @@
             background-size: cover;
           }
           .infos {
+            .rel;
             .flex;
             .flex-d-v;
             .borBox;
@@ -474,18 +475,21 @@
                 .fl;
                 margin-right: 10/@rem;
                 padding: 1px 8px;
-                line-height: 1.8;
+                line-height: 1.5;
                 .cf;
-                .fz(20);
+                .fz(16);
                 .borR(4px);
                 &.c1 {
-                  .bdiy(#7facf9);
+                  .cdiy(#7facf9);
+                  .bor(1px, solid, #7facf9);
                 }
                 &.c2 {
-                  .bdiy(#84ce36);
+                  .cdiy(#84ce36);
+                  .bor(1px, solid, #84ce36);
                 }
                 &.c3 {
-                  .bdiy(#e8b52d);
+                  .cdiy(#e8b52d);
+                  .bor(1px, solid, #e8b52d);
                 }
               }
               .dispatchTime {
@@ -505,6 +509,18 @@
               top: 0;
               .c9;
               .fz(20);
+            }
+            .btn-assets {
+              .abs-center-vertical;
+              right: 0;
+              padding: 2px 20/@rem;
+              .fz(24);
+              .cf;
+              .bdiy(#ff8112);
+              /*background: -webkit-linear-gradient(45deg, #ff2525, #ffb20b);
+              background: linear-gradient(45deg, #ff2525, #ffb20b);
+              .bor(1px, solid, #ec9898);*/
+              .borR(4px);
             }
           }
           .bottom {

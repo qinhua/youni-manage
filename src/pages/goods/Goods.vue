@@ -77,7 +77,7 @@
                 <span class="unit-price">售价：￥{{item.goodsPrice|toFixed}}元</span>
                 <span class="order-info">已售：{{item.goodsSaleCount}}件</span>
               </section>
-              <label>来源：{{item.sellerName}}件</label>
+              <label>来源：{{item.sellerName}}</label>
             </div>
             <!--<div class="operate-con"></div>-->
             <!--<button type="button" class="btn btn-add" >添加首页</button>-->

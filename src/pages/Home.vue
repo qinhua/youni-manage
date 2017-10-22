@@ -46,7 +46,7 @@
           <grid-item label="客户管理" link="/clients">
             <img slot="icon" src="../../static/img/item_client.png">
           </grid-item>
-          <grid-item label="资金管理" link="/assets">
+          <grid-item label="资金管理" link="/assets_list">
             <img slot="icon" src="../../static/img/item_assets.png">
           </grid-item>
           <grid-item label="统计数据" link="/statistic">

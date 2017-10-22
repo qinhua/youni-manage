@@ -110,7 +110,7 @@
         }, 1000)
       },
       onItemClick(type) {
-        type ? (vm.params.goodsType = (type === 1 ? 'goods_type.1' : 'goods_type.21')) : delete vm.params.goodsType
+        type ? (vm.params.goodsType = (type === 1 ? 'goods_type.1' : 'goods_type.2')) : delete vm.params.goodsType
         vm.getCoupons()
       },
       getCoupons(isLoadMore) {

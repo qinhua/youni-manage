@@ -1,7 +1,8 @@
 <template>
   <div class="account-time">
     <group>
-      <popup-picker title="到账时间" :data="scopes" :columns="1" v-model="tmpScope" @on-change="changeType"></popup-picker>
+      <x-input title="到账时间：" placeholder="请输入天数" text-align="right" type="number" v-model="params.accountTime"></x-input>
+      <!--<popup-picker title="到账时间" :data="scopes" :columns="1" v-model="tmpScope" @on-change="changeType"></popup-picker>-->
     </group>
     <button type="button" class="btn btn-save" @click="update"><i class="fa fa-save"></i>&nbsp;保存</button>
   </div>
@@ -14,8 +15,7 @@
   import {
     Group,
     Cell,
-    XInput,
-    PopupPicker
+    XInput
   } from 'vux'
   import {topicApi} from '../../../service/main.js'
 
@@ -35,36 +35,36 @@
         }],
         tmpScope: ['请选择'],
         params: {
-          accountTime: ''
+          accountTime: null
         }
       }
     },
     components: {
       Group,
       Cell,
-      XInput,
-      PopupPicker
+      XInput
     },
     beforeMount() {
       me = window.me
     },
     mounted() {
       vm = this
-//      vm.getData()
+      vm.getData()
     },
     watch: {
       '$route'(to, from) {
-        if (to.name === 'banner') {
-//          vm.getData()
+        if (to.name === 'account_time') {
+          vm.getData()
         } else {
-          vm.params.accountTime = ''
+          // vm.tmpScope = ['请选择']
+          vm.params.accountTime = null
         }
       }
     },
     methods: {
       validate() {
         if (!vm.params.accountTime) {
-          vm.toast('请选择到账时间！', 'warn')
+          vm.toast('请输入到账天数！', 'warn')
           return false
         }
         return true
@@ -96,27 +96,33 @@
         if (vm.isPosting) return false
         vm.isPosting = true
         vm.processing()
-        vm.loadData(topicApi.list, {configKey: 'home_notice'}, 'POST', function (res) {
+        vm.loadData(topicApi.get, {configKey: 'account_time'}, 'POST', function (res) {
           vm.isPosting = false
           vm.processing(0, 1)
           if (res.data) {
-            vm.topics = res.data.itemList[0].itemList
+            vm.params.accountTime = res.data.configValue
+            // vm.switchData(vm.scopes, vm.params.accountTime, 'tmpScope')
           }
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)
-        })
+        }, true)
       },
       update() {
         if (vm.validate()) {
           if (vm.isPosting) return false
           vm.isPosting = true
+          var params = {
+            configKey: 'account_time',
+            configValue: vm.params.accountTime
+          }
           vm.loadData(topicApi.set, params, 'POST', function (res) {
             vm.isPosting = false
+            vm.toast('已保存', 'success')
             vm.jump('mall')
           }, function () {
             vm.isPosting = false
-          })
+          }, true)
         }
       }
     }
