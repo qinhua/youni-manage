@@ -22,12 +22,12 @@
       </cell>
     </group>
     <group class="list-modal bottom">
-      <cell title="收支明细" link="/income_list">
+      <cell title="收支明细" :link="'/income_list?id='+sellerId">
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-table"></i>-->
       </cell>
-      <!--<cell title="提现记录" link="/with_draw_list">
-        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>&ndash;&gt;
-      </cell>-->
+      <cell title="提现记录" :link="'/with_draw_list?id='+sellerId">
+        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-file-text-o"></i>-->
+      </cell>
     </group>
   </div>
 </template>

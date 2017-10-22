@@ -193,7 +193,6 @@
             } else {
               vm.noMore = true
             }
-//            resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
           }
           // console.log(vm.sellers, '店铺数据')
         }, function () {

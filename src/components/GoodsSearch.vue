@@ -111,7 +111,15 @@
             }
             vm.goods = resD.itemList
           } else {
-            resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
+            if (resD.itemList.length) {
+              for (var j = 0; j < resD.itemList.length; j++) {
+                var cur = resD.itemList[j];
+                vm.goods.push(cur)
+              }
+            } else {
+              vm.noMore = true
+            }
+            // resD.itemList.length ? vm.goods.concat(resD.itemList) : vm.noMore = true
           }
           vm.results = vm.goods
           console.log(vm.goods, '商品数据')

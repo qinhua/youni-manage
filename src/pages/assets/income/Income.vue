@@ -29,7 +29,8 @@
                   <img :src="item.userImage">
                   <div class="info-con">
                     <h3>{{item.userName}}<span>{{item.createTime}}</span></h3>
-                    <div class="nums"><span>订单总额：￥{{item.payAmount|toFixed}}元</span><span class="income">收入：+{{item.payAmount|toFixed}}元</span>
+                    <div class="nums"><span>订单总额：￥{{item.payAmount | toFixed}}元</span><span
+                      class="income">收入：+{{item.payAmount | toFixed}}元</span>
                     </div>
                     <!--<div class="progress">
                       <div style='width:150px;height:150px;'>
@@ -65,6 +66,7 @@
         onFetching: false,
         noMore: false,
         params: {
+          sellerId: null,
           status: 5,
           userType: 3,
           pageSize: 10,
@@ -99,20 +101,21 @@
         }
       },
       refresh(done) {
-        console.log('下拉加载')
+        // console.log('下拉加载')
         setTimeout(function () {
           vm.getIncome()
           vm.$refs.incomeScroller.finishPullToRefresh()
         }, 1000)
       },
       infinite(done) {
-        console.log('无限滚动')
+        // console.log('无限滚动')
         setTimeout(function () {
           vm.getIncome(true)
           vm.$refs.incomeScroller.finishInfinite(true)
         }, 1000)
       },
       getIncome(isLoadMore) {
+        vm.params.sellerId = vm.$route.query.id
         if (vm.onFecthing) return false
         !isLoadMore ? vm.params.pageNo = 1 : vm.params.pageNo++
         vm.processing()
@@ -129,7 +132,14 @@
               }
               vm.list = resD.itemList
             } else {
-              resD.itemList.length ? vm.list.concat(resD.itemList) : vm.noMore = true
+              if (resD.itemList.length) {
+                for (var j = 0; j < resD.itemList.length; j++) {
+                  var cur = resD.itemList[j];
+                  vm.list.push(cur)
+                }
+              } else {
+                vm.noMore = true
+              }
             }
             vm.results = vm.list.slice(0)
             console.log(vm.list, '订单数据')
@@ -168,18 +178,18 @@
       },
       onSubmit() {
         this.$refs.search.setBlur()
-        this.$vux.toast.show({
+        /*this.$vux.toast.show({
           type: 'text',
           position: 'top',
           text: 'on submit'
-        })
+        })*/
         vm.getIncome()
       },
       onFocus() {
-        console.log('on focus')
+        // console.log('on focus')
       },
       onCancel() {
-        console.log('on cancel')
+        // console.log('on cancel')
       }
     }
   }
