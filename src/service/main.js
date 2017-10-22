@@ -91,6 +91,8 @@ const depositApi = {
 }
 const assetsApi = {
   asset: host + '/seller/adminAmount',
+  ordersList: host + '/amount/orderAmountList',
+  ticketsList: host + '/amount/ticketAmountList',
   withDrawList: host + '/takeMoney/listByAdmin',
   withDraw: host + '/common/top10'
 }
