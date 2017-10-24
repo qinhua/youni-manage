@@ -58,8 +58,12 @@
                       <!--<span class="dispatchTime" v-if="item.label">平均{{item.label}}分钟送达</span>-->
                       <!--<span class="dispatchTime">{{item.companyName}}</span>-->
                     </div>
-                    <button type="button" class="btn btn-assets" @click="viewAssets($event,item.id)"><i
+                    <button type="button" class="btn btn-assets" @click="viewAssets($event,item.id)"
+                            v-if="!$route.query.isstatistic"><i
                       class="fa fa-eye"></i>&nbsp;资金状况
+                    </button>
+                    <button type="button" class="btn btn-statistic" @click="viewStatistic($event,item.id)" v-else><i
+                      class="fa fa-eye"></i>&nbsp;统计数据
                     </button>
                   </section>
                   <!--<div class="bottom" v-if="item.ticket">
@@ -131,6 +135,10 @@
       viewAssets(e, id) {
         e.stopPropagation()
         vm.$router.push({name: 'assets', query: {id: id}})
+      },
+      viewStatistic(e, id) {
+        e.stopPropagation()
+        vm.$router.push({name: 'statistic', query: {id: id}})
       },
       getSellers(isLoadMore, status) {
         if (vm.isPosting) return false
@@ -512,13 +520,22 @@
             .btn-assets {
               .abs-center-vertical;
               right: 0;
-              padding: 2px 20/@rem;
+              padding: 8/@rem 20/@rem;
               .fz(24);
               .cf;
-              .bdiy(#ff8112);
+              .bdiy(#ff912d);
               /*background: -webkit-linear-gradient(45deg, #ff2525, #ffb20b);
               background: linear-gradient(45deg, #ff2525, #ffb20b);
               .bor(1px, solid, #ec9898);*/
+              .borR(4px);
+            }
+            .btn-statistic {
+              .abs-center-vertical;
+              right: 0;
+              padding: 8/@rem 20/@rem;
+              .fz(24);
+              .cf;
+              .bdiy(#6e8fff);
               .borR(4px);
             }
           }

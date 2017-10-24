@@ -49,7 +49,7 @@
           <grid-item label="资金管理" link="/assets_list">
             <img slot="icon" src="../../static/img/item_assets.png">
           </grid-item>
-          <grid-item label="统计数据" link="/statistic">
+          <grid-item label="统计数据" link="/assets_list?isstatistic=true">
             <img slot="icon" src="../../static/img/item_statistic.png">
           </grid-item>
         </grid>
@@ -113,7 +113,8 @@
                 <div class="total-price" v-if="item.payAmount!==item.totalAmount">共{{item.totalGoodsNum}}件商品&nbsp;&nbsp;合计：<i
                   class="txt-normal txt-del c9">￥{{item.totalAmount | toFixed}}</i>&nbsp;&nbsp;实付：<span>￥{{item.payAmount | toFixed}}元</span>
                 </div>
-                <div class="total-price" v-else>共{{item.totalGoodsNum}}件商品&nbsp;&nbsp;合计：<span>￥{{item.payAmount | toFixed}}元</span></div>
+                <div class="total-price" v-else>共{{item.totalGoodsNum}}件商品&nbsp;&nbsp;合计：<span>￥{{item.payAmount | toFixed}}元</span>
+                </div>
                 <!--<a class="btn btn-del" @click="cancelOrder(item.orderId)">取消订单</a>-->
                 <!--<a class="btn btn-del" @click="delOrder(item.orderId)">删除订单</a>-->
                 <!--<div class="btns" v-if="item.status===1">-->
@@ -368,7 +369,7 @@
             // console.log(vm.orders, '订单数据')
           }, function () {
             vm.onFecthing = false
-             vm.processing(0, 1)
+            vm.processing(0, 1)
           }
         )
       },
@@ -685,7 +686,7 @@
             padding: 0 0 0 160/@rem;
             h3 {
               .borBox;
-              padding:0 200/@rem 10/@rem 0;
+              padding: 0 200/@rem 10/@rem 0;
               .txt-normal;
               .c3;
               .fz(26);
