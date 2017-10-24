@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div class="isWebTip" v-if="isWeb"><i class="fa fa-exclamation-triangle"></i>&nbsp;部分功能可能无法使用，建议在微信中打开</div>
     <!--<div class="btn flush-button s02" onclick="javascript:me.locals.clear();me.sessions.clear();me.lightPop('ok,已清理');">清理缓存</div>-->
     <!--地图容器-->
     <!--<div id="mapContainer"></div>-->
@@ -66,6 +67,7 @@
     name: 'app',
     data() {
       return {
+        isWeb: false,
         geo: null,
         transitionName: 'fade', // 默认动态路由过渡
         // showTabbar: false, // 是否显示标签栏
@@ -75,10 +77,11 @@
     },
     components: {Geo,Tabbar, TabbarItem},
     beforeMount() {
-      // console.log(window.me)
+      vm = this
+      // wx外部提示用户
+      !me.isWeixin ? vm.isWeb = true : false
     },
     mounted() {
-      // me.attachClick()
       vm = this
       window.youniMall.userAuth = vm.$store.state.global.wxInfo
 //      !vm.$store.state.global.dict ? vm.getDict() : null
