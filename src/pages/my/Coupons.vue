@@ -120,7 +120,7 @@
           } else {
             vm.coupons.push(resD)
           }
-          console.log(vm.coupons, '优惠券数据')
+          // console.log(vm.coupons, '优惠券数据')
           vm.onFetching = false
           vm.processing(0, 1)
         }, function () {

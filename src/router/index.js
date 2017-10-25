@@ -12,7 +12,6 @@ import EditAddress from '@/pages/my/EditAddress'
 import MyCoupons from '@/pages/my/Coupons'
 import MyGuarantee from '@/pages/my/Guarantee'
 import MyAddress from '@/pages/my/Address'
-import MyFavorite from '@/pages/my/Favorite'
 import Help from '@/pages/my/Help'
 import About from '@/pages/my/About'
 import GoodsDetail from '@/pages/goods/Detail'
@@ -365,15 +364,6 @@ export default new Router({
       component: EditAddress,
       meta: {
         title: '收货地址',
-        keepAlive: false
-      }
-    },
-    {
-      path: '/myfavor',
-      name: 'myfavor',
-      component: MyFavorite,
-      meta: {
-        title: '我的收藏',
         keepAlive: false
       }
     },

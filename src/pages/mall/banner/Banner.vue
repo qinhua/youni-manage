@@ -204,10 +204,9 @@
             let cur = vm.banners[i];
             if (cur.id === id) {
               for (var val in cur) {
-                console.log(val, cur[val], 5)
                 vm.params[val] = cur[val]
               }
-              console.log(vm.params, 5)
+              // console.log(vm.params, 5)
             }
           }
           // this.$router.push({name: 'edit_banner', query: {id: id}})

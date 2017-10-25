@@ -282,14 +282,14 @@
         }
       },
       refresh(done) {
-        console.log('下拉加载')
+        // console.log('下拉加载')
         setTimeout(function () {
           vm.getSellers()
           vm.$refs.sellerScroller.finishPullToRefresh()
         }, 1000)
       },
       infinite(done) {
-        console.log('无限滚动')
+        // console.log('无限滚动')
         setTimeout(function () {
           vm.getSellers(true)
           vm.$refs.sellerScroller.finishInfinite(true)
@@ -352,7 +352,7 @@
             resD.itemList.length ? vm.sellers.concat(resD.itemList) : vm.noMore = true
           }
           vm.results = vm.sellers
-          console.log(vm.sellers, '附近卖家')
+          // console.log(vm.sellers, '附近卖家')
         }, function () {
           vm.isPosting = false
           vm.processing(0, 1)

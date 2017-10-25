@@ -215,7 +215,7 @@
       },
       getGoods() {
         vm.lineData = vm.$route.query.linedata ? JSON.parse(decodeURIComponent(vm.$route.query.linedata)) : ''
-        console.log(vm.lineData)
+        // console.log(vm.lineData)
         if (vm.lineData&&vm.lineData.id) {
           vm.params = {
             id: vm.lineData.id,
@@ -265,7 +265,7 @@
             vm.switchData(vm.categories, vm.params.category, 'tmpCat')
             vm.renderTags(resD.label)
             vm.goods = resD
-            console.log(vm.goods)
+            // console.log(vm.goods)
           }
           vm.onFetching = false
         }, function () {
@@ -313,7 +313,7 @@
         } else {
           curApi = goodsApi.add
         }
-        console.log('最后选择的数据：', vm.params)
+        // console.log('最后选择的数据：', vm.params)
         vm.isPosting = true
         vm.processing()
         vm.loadData(curApi, vm.params, 'POST', function (res) {
@@ -327,30 +327,30 @@
         })
       },
       logHide(str) {
-        console.log('on-hide', str)
+        // console.log('on-hide', str)
       },
       changeArea(ids, names) {
-        console.log(ids, names)
+        // console.log(ids, names)
         vm.params.province = ids[0]
         vm.params.city = ids[1]
       },
       changeBrand(val) {
         vm.switchData(vm.brands, vm.tmpBrand, 'brandId')
-        console.log(val, vm.params.brandId)
+        // console.log(val, vm.params.brandId)
       },
       changeType(val) {
         vm.switchData(vm.types, vm.tmpType, 'type')
-        console.log(val, vm.params.type)
+        // console.log(val, vm.params.type)
       },
       changeStatus(value, disabled) {
         // console.log(value, disabled)
       },
       changeCategory(val) {
         vm.switchData(vm.categories, vm.tmpCat, 'category')
-        console.log(val, vm.params.category)
+        // console.log(val, vm.params.category)
       },
       changeTags(index, text) {
-        console.log(index, text)
+        // console.log(index, text)
         if(index===3){
           vm.toast('最多3个标签！','warn')
           return
@@ -381,7 +381,7 @@
         formData.append('image', file)
         vm.loadData(commonApi.uploadImg, formData, 'POST', function (res) {
           let url = res.data.url // Get url from response
-          console.log(res)
+          // console.log(res)
           Editor.insertEmbed(cursorLocation, 'image', url);
           vm.$router.back()
           vm.isPosting = false

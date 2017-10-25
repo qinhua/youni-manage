@@ -98,7 +98,7 @@
         }
         vm.isPosting = true
         vm.loadData(commonApi.updatePsw, vm.params, 'POST', function (res) {
-          console.log(res, '修改用户信息')
+          // console.log(res, '修改用户信息')
           vm.toast('密码已更新')
           vm.$router.back()
           vm.isPosting = false

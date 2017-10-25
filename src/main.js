@@ -59,7 +59,7 @@ var checkLogin = function (openid) {
       }
     },
     error: function (xhr, textStatus) {
-      console.log('error:' + textStatus);
+      // console.log('error:' + textStatus);
       vm.$router.push({path: '/login'})
     }
   })
@@ -67,7 +67,7 @@ var checkLogin = function (openid) {
 
 // 在路由路由跳转前判断一些东西
 router.beforeEach((to, from, next) => {
-  console.info(store.state, '当前vuex中的data')
+  // console.info(store.state, '当前vuex中的data')
 
   /* 判断授权是否存在或过期(页面刷新就会触发过期检查，不包含切换账号后的检查) */
   if (store.state.global.expired) {
@@ -339,7 +339,7 @@ Vue.directive('jump', {
           param[paramArr[i]] = el.getAttribute('data-' + paramArr[i])
         }
       }
-      console.log(pathName, param, type)
+      // console.log(pathName, param, type)
       // console.info(param, 'v-jump中的param')
       el.addEventListener('click', function () {
         if (pathName) {

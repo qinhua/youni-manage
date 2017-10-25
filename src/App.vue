@@ -102,7 +102,7 @@
       },
       // 全局定位
       getMap(data) {
-        console.log(data, 'home geo info')
+        // console.log(data, 'home geo info')
         this.geo = data
       },
       getDict() {

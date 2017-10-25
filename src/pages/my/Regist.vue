@@ -107,7 +107,7 @@
     methods: {
       getMap(data) {
         vm.showMap = false;
-        console.log(data, 'home amap info')
+        // console.log(data, 'home amap info')
         if(data) {
           vm.params.lon = data.lng
           vm.params.lat = data.lat
@@ -256,7 +256,7 @@
           } else {
             vm.params.address = vm.tmpAddress.detail
           }
-          console.log(vm.params)
+          // console.log(vm.params)
           vm.isPosting = true
           vm.processing()
           vm.loadData(commonApi.regist, vm.params, 'POST', function (res) {
@@ -275,7 +275,7 @@
         }
       },
       changeArea(ids, names) {
-        console.log(ids, names)
+        // console.log(ids, names)
         vm.params.province = ids[0]
         vm.params.city = ids[1]
         vm.tmpAddress.province = names[0]
@@ -285,15 +285,15 @@
       },
       changeType(val) {
         vm.switchData(vm.types, vm.tmpType, 'type')
-        console.log(val, vm.params.type)
+        // console.log(val, vm.params.type)
       },
       changeSerType(val) {
         vm.switchData(vm.serTypes, vm.tmpSerType, 'serviceType')
-        console.log(val, vm.params.serviceType)
+        // console.log(val, vm.params.serviceType)
       },
       changeLevel(val) {
         vm.switchData(vm.levels, vm.tmpLevel, 'authLevel')
-        console.log(val)
+        // console.log(val)
       }
     }
   }

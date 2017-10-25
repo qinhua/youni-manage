@@ -67,13 +67,13 @@
       vm = this
       // me.attachClick()
       vm.sellerId = vm.$route.params.id
-      console.log(vm.sellerId)
+      // console.log(vm.sellerId)
       vm.getSeller()
     },
     methods: {
       getMap(data) {
         vm.showMap = false;
-        console.log(data, 'home amap info')
+        // console.log(data, 'home amap info')
         if(data){
           vm.params.lon = data.lng
           vm.params.lat = data.lat
@@ -108,7 +108,7 @@
         }
       },
       updateStore() {
-        console.log({
+        /*console.log({
           id: vm.sellerId,
           name: vm.storeName,
           avtar: vm.storeImg,
@@ -116,7 +116,7 @@
           description: vm.description,
           area: vm.area,
           detailAddress: vm.detailAddress
-        })
+        })*/
         if (vm.isPosting || !vm.validate()) return false
         vm.isPosting = true
         vm.processing()
@@ -150,7 +150,7 @@
         })
       },
       changeArea(ids, names) {
-        console.log(ids, names)
+        // console.log(ids, names)
         // vm.area = names.join('')
       },
     }

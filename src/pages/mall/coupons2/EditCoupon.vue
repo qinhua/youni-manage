@@ -134,7 +134,7 @@
             /*此处转换一些字段类型*/
             vm.switchData(vm.types, vm.params.goodsType, 'tmpType')
             vm.coupons = resD
-            console.log(vm.coupons)
+            // console.log(vm.coupons)
           }
         }, function () {
           vm.isPosting = false
@@ -178,7 +178,7 @@
 //          delete vm.params.id
           curApi = userApi.addCoupon
         }
-        console.log('最后选择的数据：', vm.params)
+        // console.log('最后选择的数据：', vm.params)
         vm.isPosting = true
         vm.processing()
         vm.loadData(curApi, vm.params, 'POST', function (res) {
@@ -191,11 +191,11 @@
         })
       },
       onChange(val) {
-        console.log('change', val)
+        // console.log('change', val)
       },
       changeType(val) {
         vm.switchData(vm.types, vm.tmpType, 'goodsType')
-        console.log(val, vm.params.goodsType)
+        // console.log(val, vm.params.goodsType)
       }
     }
   }
