@@ -282,7 +282,7 @@ export default new Router({
       name: 'assets_list',
       component: AssetsList,
       meta: {
-        title: '店铺资金管理',
+        title: '店铺列表',
         keepAlive: false
       }
     },
