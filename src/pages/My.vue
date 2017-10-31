@@ -22,17 +22,17 @@
         <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-info-circle"></i>-->
       </cell>
     </group>
-    <group class="bottom">
-      <!--<cell title="修改密码" style="color:#666" @click.native="modPassword"><i slot="icon" width="20"
+    <!--<group class="bottom">
+      <cell title="修改密码" style="color:#666" @click.native="modPassword"><i slot="icon" width="20"
                                                                            style="margin-right:5px;"
-                                                                           class="fa fa-wrench"></i></cell>-->
-      <!--<cell title="修改密码" style="color:#666" @click.native="modPassword">
+                                                                           class="fa fa-wrench"></i></cell>
+      <cell title="修改密码" style="color:#666" @click.native="modPassword">
         &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>&ndash;&gt;
-      </cell>-->
-      <cell title="退出登录" style="color:#666" @click.native="logout">
-        <!--<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>-->
       </cell>
-    </group>
+      <cell title="退出登录" style="color:#666" @click.native="logout">
+        &lt;!&ndash;<i slot="icon" width="20" style="margin-right:5px;" class="fa fa-sign-out"></i>&ndash;&gt;
+      </cell>
+    </group>-->
   </div>
 </template>
 
