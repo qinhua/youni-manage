@@ -3,7 +3,7 @@
     <div class="scroll-view">
       <div class="banner-col" v-if="isEdit">
         <group>
-          <img-uploader title="banner图片：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
+          <img-uploader title="banner图片(建议640*320，否则影响展示)：" :api="fileApi" :limit="1" @on-uploaded="getImgUrl"></img-uploader>
           <!--<x-input title="banner标题：" placeholder="banner标题" required text-align="right"
                    v-model="params.title"></x-input>-->
           <x-input title="banner链接：" placeholder="跳转链接" text-align="right" v-model="params.linkUrl"></x-input>
