@@ -42,6 +42,7 @@
               <section class="v-items" :data-id="item.id" @click="toDetail(item.id)">
                 <section :class="['wrap',(item.status===3)?'disabled':'']">
                   <span class="r-status s02" v-if="item.status===3">已封禁</span>
+
                   <span class="r-status s01" v-if="item.status===1">待审核</span>
                   <div class="img-con" :style="item.headimgurl?('background-image:url('+item.headimgurl+')'):''"></div>
                   <section class="infos">
@@ -234,6 +235,7 @@
       auth(id) {
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
+          //同意
           vm.isPosting = true
           vm.loadData(storeApi.updateStatus, {sellerId: id, status: 2}, 'POST', function (res) {
             vm.isPosting = false
@@ -247,8 +249,20 @@
             vm.isPosting = false
           })
         }, function () {
-          // console.log('no')
-        })
+          //拒绝
+          vm.isPosting = true
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 4}, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.toast('已拒绝')
+              vm.getSeller()
+            } else {
+              vm.toast('操作失败！')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, '通过', '拒绝')
       },
       block(id) {
         if (vm.isPosting) return false

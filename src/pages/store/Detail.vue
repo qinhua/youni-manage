@@ -79,7 +79,7 @@
           <div class="title"><h3>营业执照</h3></div>
           <div class="content license">
             <div>
-              <img class="previewer-demo-img" :src="seller.businessLicense" width="100"
+              <img class="previewer-demo-img" v-lazy.container="seller.businessLicense" width="100"
                    @click="preview(0)">
             </div>
           </div>
@@ -94,9 +94,9 @@
                     @click="preview(1)">
                <img class="previewer-demo-img" :src="seller.businessLicense" width="100"
                     @click="preview(2)">-->
-              <img class="previewer-demo-img" :src="seller.idCardFace" width="100"
+              <img class="previewer-demo-img" v-lazy.container="seller.idCardFace" width="100"
                    @click="preview(1)">
-              <img class="previewer-demo-img" :src="seller.idCardBack" width="100"
+              <img class="previewer-demo-img" v-lazy.container="seller.idCardBack" width="100"
                    @click="preview(2)">
             </div>
           </div>
@@ -208,6 +208,9 @@
               case 3:
                 resD.statusName = '已封禁'
                 break
+              case 4:
+                resD.statusName = '已拒绝'
+                break
             }
             switch (resD.serviceType) {
               case 'seller_service_type.1':
@@ -234,11 +237,12 @@
       auth(id) {
         if (vm.isPosting) return false
         vm.confirm('确认通过审核？', '', function () {
+          //同意
           vm.isPosting = true
           vm.loadData(storeApi.updateStatus, {sellerId: id, status: 2}, 'POST', function (res) {
             vm.isPosting = false
             if (res.success) {
-              vm.toast('审核成功')
+              vm.toast('已通过审核')
               vm.getSeller()
             } else {
               vm.toast('操作失败！')
@@ -247,9 +251,20 @@
             vm.isPosting = false
           })
         }, function () {
-          vm.isPosting = false
-          // console.log('no')
-        })
+          //拒绝
+          vm.isPosting = true
+          vm.loadData(storeApi.updateStatus, {sellerId: id, status: 4}, 'POST', function (res) {
+            vm.isPosting = false
+            if (res.success) {
+              vm.toast('已拒绝')
+              vm.getSeller()
+            } else {
+              vm.toast('操作失败！')
+            }
+          }, function () {
+            vm.isPosting = false
+          })
+        }, '通过', '拒绝')
       },
       block(id) {
         if (vm.isPosting) return false
@@ -320,7 +335,7 @@
             }
           }, function () {
             vm.isPosting = false
-          },true)
+          }, true)
         }, function () {
           vm.isPosting = false
         }, null, null, true)
@@ -355,7 +370,7 @@
             }
           }, function () {
             vm.isPosting = false
-          },true)
+          }, true)
         }, function () {
           vm.isPosting = false
         }, null, null, true)
@@ -379,7 +394,7 @@
             }
           }, function () {
             vm.isPosting = false
-          },true)
+          }, true)
         }, function () {
           vm.isPosting = false
         }, null, null, true)
